@@ -31,6 +31,7 @@ public class FileContents extends Contents {
 			this.type = Contents.DIRECTORY_TYPE;
 			getDirectorySize(this.contents);
 			//this.isDirectory = true;
+			this.compress(); // 압축
 		}
 	}
 	
@@ -47,7 +48,12 @@ public class FileContents extends Contents {
 	
 	public void compress() {
 		try {
+			long startTime = System.currentTimeMillis();
+			
 			DirectoryCompression.compress(contents);
+			
+			long endTime = System.currentTimeMillis();
+			System.out.println("압축시간 : " + (endTime - startTime) + " ms");
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

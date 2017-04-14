@@ -1,5 +1,7 @@
 package contents;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -7,96 +9,90 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class DirectoryCompression {
-	/**
-	 * 압축 메소드
-	 *
-	 * @param path
-	 *            경로
-	 * @param outputFileName
-	 *            출력파일명
-	 */
-	public static void compress(File file) throws Throwable {
-		//File file = new File(path);
-		String outputFileName = file.getName() + ".zip";
-		int pos = outputFileName.lastIndexOf(".");
-		if (!outputFileName.substring(pos).equalsIgnoreCase(".zip")) {
-			outputFileName += ".zip";
-		}
-		// 압축 경로 체크
-		if (!file.exists()) {
-			throw new Exception("Not File!");
-		}
-		
-		FileOutputStream fos = null; // 출력 스트림
-		ZipOutputStream zos = null; // 압축 스트림
-		
-		try {
-			fos = new FileOutputStream(new File(outputFileName));
-			zos = new ZipOutputStream(fos);
-			// 디렉토리 검색
-			searchDirectory(file, file.getPath(), zos);
-		} catch (Throwable e) {
-			throw e;
-		} finally {
-			if (zos != null)
-				zos.close();
-			if (fos != null)
-				fos.close();
-		}
-	}
+	private static final int COMPRESSION_LEVEL = 1;
+    private static final int BUFFER_SIZE = 1024 * 2;
+    
+    /**
+     * 지정된 폴더를 Zip 파일로 압축한다.
+     * @param sourcePath - 압축 대상 디렉토리
+     * @param output - 저장 zip 파일 이름
+     * @throws Exception
+     */
+    public static void compress(File file) throws Exception {
 
-	/**
-	 * 디렉토리 탐색
-	 *
-	 * @param file
-	 *            현재 파일
-	 * @param root
-	 *            루트 경로
-	 * @param zos
-	 *            압축 스트림
-	 */
-	private static void searchDirectory(File file, String root, ZipOutputStream zos) throws Exception {
-		if (file.isDirectory()) { // 지정된 파일이 디렉토리인지 파일인지 검색
-			// 디렉토리일 경우 재탐색(재귀)
-			File[] files = file.listFiles();
-			for (File f : files) {
-				searchDirectory(f, root, zos);
-			}
-		} else {
-			// 파일일 경우 압축을 한다.
-			compressZip(file, root, zos);
-		}
-	}
+    	String filePath = file.getPath();
+    	String outputFileName = filePath + ".zip";
+    	System.out.println("outputFileName : " + outputFileName);
+    	
+        // 압축 대상이 디렉토리나 파일이 아니면 리턴한다.
+        if (!file.isFile() && !file.isDirectory()) {
+            throw new Exception("압축 대상의 파일을 찾을 수가 없습니다.");
+        }
 
-	/**
-	 * 압축 메소드
-	 *
-	 * @param file
-	 * @param root
-	 * @param zos
-	 * @throws Exception
-	 */
+        FileOutputStream fos = null;
+        BufferedOutputStream bos = null;
+        ZipOutputStream zos = null;
 
-	private static void compressZip(File file, String root, ZipOutputStream zos) throws Exception {
-		FileInputStream fis = null;
-		try {
-			String zipName = file.getPath().replace(root + "\\", "");
-			fis = new FileInputStream(file); // 파일을 읽어드림
-			ZipEntry zipentry = new ZipEntry(zipName); // Zip엔트리 생성(한글 깨짐 버그)
-			zos.putNextEntry(zipentry); // 스트림에 밀어넣기(자동 오픈)
-			
-			int length = (int) file.length();
-			byte[] buffer = new byte[length];
-			
-			fis.read(buffer, 0, length); // 스트림 읽어드리기
-			zos.write(buffer, 0, length); // 스트림 작성
-			zos.closeEntry(); // 스트림 닫기
+        try {
+            fos = new FileOutputStream(outputFileName); // FileOutputStream
+            bos = new BufferedOutputStream(fos); // BufferedStream
+            zos = new ZipOutputStream(bos); // ZipOutputStream
+            zos.setLevel(COMPRESSION_LEVEL); // 압축 레벨 - 최대 압축률은 9, 디폴트 8
+            zipEntry(file, filePath, zos); // Zip 파일 생성
+            zos.finish(); // ZipOutputStream finish
+        } finally {
+            if (zos != null) {
+                zos.close();
+            }
+            if (bos != null) {
+                bos.close();
+            }
+            if (fos != null) {
+                fos.close();
+            }
+        }
+    }
 
-		} catch (Throwable e) {
-			e.printStackTrace();
-		} finally {
-			if (fis != null)
-				fis.close();
-		}
-	}
+    /**
+     * 압축
+     * @param sourceFile
+     * @param sourcePath
+     * @param zos
+     * @throws Exception
+     */
+    private static void zipEntry(File file, String filePath, ZipOutputStream zos) throws Exception {
+        // sourceFile 이 디렉토리인 경우 하위 파일 리스트 가져와 재귀호출
+        if (file.isDirectory()) {
+            if (file.getName().equalsIgnoreCase(".metadata")) { // .metadata 디렉토리 return
+                return;
+            }
+            File[] fileArray = file.listFiles(); // sourceFile 의 하위 파일 리스트
+            for (int i = 0; i < fileArray.length; i++) {
+                zipEntry(fileArray[i], filePath, zos); // 재귀 호출
+            }
+        } else { // sourcehFile 이 디렉토리가 아닌 경우
+            BufferedInputStream bis = null;
+            try {
+                String sFilePath = file.getPath();
+                String zipEntryName = sFilePath.substring(filePath.length() + 1, sFilePath.length());
+
+                bis = new BufferedInputStream(new FileInputStream(file));
+                ZipEntry zentry = new ZipEntry(zipEntryName);
+                zentry.setTime(file.lastModified());
+                zos.putNextEntry(zentry);
+
+                byte[] buffer = new byte[BUFFER_SIZE];
+                int cnt = 0;
+                while ((cnt = bis.read(buffer, 0, BUFFER_SIZE)) != -1) {
+                    zos.write(buffer, 0, cnt);
+                }
+                zos.closeEntry();
+            } finally {
+                if (bis != null) {
+                    bis.close();
+                }
+            }
+        }
+    }
+
 }
