@@ -16,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class MainController implements Initializable{
+	
 	@FXML private Button exitBtn;
 	@FXML private Button addBtn;
 	@FXML private Button deleteBtn;
