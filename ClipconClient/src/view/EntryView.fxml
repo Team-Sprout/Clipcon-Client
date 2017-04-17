@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane minHeight="400.0" minWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.EntryScene">
+<AnchorPane minHeight="400.0" minWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.EntryController">
    <children>
       <Button fx:id="createBtn" layoutX="360.0" layoutY="137.0" mnemonicParsing="false" text="생성하기" />
       <Button fx:id="joinBtn" layoutX="360.0" layoutY="200.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="70.0" text="참여하기" />

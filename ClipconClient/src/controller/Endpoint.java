@@ -20,7 +20,7 @@ import userInterface.UserInterface;
 
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
 public class Endpoint {
-	private String uri = "ws://182.172.16.118:8080/websocketServerModule/ServerEndpoint";
+	private String uri = "ws://localhost:8080/websocketServerModule/ServerEndpoint";
 	private Session session = null;
 
 	private static Endpoint uniqueEndpoint;
@@ -31,8 +31,6 @@ public class Endpoint {
 		try {
 			if (uniqueEndpoint == null) {
 				uniqueEndpoint = new Endpoint();
-				
-				//userInterface = new UserInterface(); //????????????????????
 			}
 		} catch (DeploymentException | IOException | URISyntaxException e) {
 			e.printStackTrace();
@@ -54,9 +52,9 @@ public class Endpoint {
 
 	@OnMessage
 	public void onMessage(Message message) {
+		System.out.println("message type: " + message.getType());
 		switch (Message.TYPE) {
 		case Message.REQUEST_SIGN_IN: // 로그인 요청에 대한 응답
-			
 			switch (message.get("response")) {
 			case "OK":
 				userInterface.getStartingController().showEntryView(); // EntryView 보여줌
