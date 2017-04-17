@@ -10,9 +10,24 @@ public class Message {
 	private JSONObject json;
 
 	public Message(String jsonString) {
-		json = new JSONObject(jsonString);
-		type = json.get(TYPE).toString();
+		try {
+			json = new JSONObject(jsonString);
+		} catch (Exception e) {
+			json = new JSONObject();
+			type = jsonString;
+			json.put(TYPE, type);
+		}
 	}
+
+	// public Message(String jsonString) {
+	// json = new JSONObject(jsonString);
+	// if (json.getString(TYPE) == null) {
+//			json = new JSONObject();
+//			json = new JSONObject();
+//			type = jsonString;
+//			json.put(TYPE, type);
+//		}
+//	}
 
 	public Message(String type, String jsonString) {
 		this.type = type;
@@ -29,6 +44,10 @@ public class Message {
 
 	public void add(String key, String value) {
 		json.put(key, value);
+	}
+
+	public String get(String property) {
+		return json.getString(property);
 	}
 
 	public final static String TYPE = "message type";

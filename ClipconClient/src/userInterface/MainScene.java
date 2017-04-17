@@ -1,4 +1,4 @@
-package controller;
+package userInterface;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -15,7 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-public class MainController implements Initializable{
+public class MainScene implements Initializable{
 	
 	@FXML private Button exitBtn;
 	@FXML private Button addBtn;

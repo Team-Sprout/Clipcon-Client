@@ -1,8 +1,5 @@
 package application;
 
-import java.security.GeneralSecurityException;
-
-import controller.Endpoint;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

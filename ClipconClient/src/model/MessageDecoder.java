@@ -1,8 +1,6 @@
 package model;
 
 
-import java.io.StringReader;
-
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
@@ -17,7 +15,7 @@ public class MessageDecoder implements Decoder.Text<Message> {
 	}
 
 	public void init(EndpointConfig arg0) {
-		// tmp = new JSONObject();
+		tmp = new JSONObject();
 	}
 	
 	public Message decode(String incommingMessage) throws DecodeException {
