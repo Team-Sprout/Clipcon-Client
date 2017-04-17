@@ -3,7 +3,9 @@ package model;
 import org.json.JSONObject;
 
 import lombok.Getter;
+import lombok.Setter;
 
+@Setter
 @Getter
 public class Message {
 	private String type;
@@ -16,18 +18,21 @@ public class Message {
 			json = new JSONObject();
 			type = jsonString;
 			json.put(TYPE, type);
+			return;
 		}
+		type = json.getString(TYPE);
+		System.out.println("type: " + type);
 	}
 
 	// public Message(String jsonString) {
 	// json = new JSONObject(jsonString);
 	// if (json.getString(TYPE) == null) {
-//			json = new JSONObject();
-//			json = new JSONObject();
-//			type = jsonString;
-//			json.put(TYPE, type);
-//		}
-//	}
+	// json = new JSONObject();
+	// json = new JSONObject();
+	// type = jsonString;
+	// json.put(TYPE, type);
+	// }
+	// }
 
 	public Message(String type, String jsonString) {
 		this.type = type;
