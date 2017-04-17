@@ -6,15 +6,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserInterface {
-	private StartingScene startingController;
-	private SignupScene signupController;
-	private EntryScene entryController;
-	private MainScene mainController;
+	private StartingScene startingScene;
+	private SignupScene signupScene;
+	private EntryScene entryScene;
+	private MainScene mainScene;
 	
 	public UserInterface() {
-		startingController = new StartingScene();
-		signupController = new SignupScene();
-		entryController = new EntryScene();
-		mainController = new MainScene();
+		startingScene = new StartingScene();
+		signupScene = new SignupScene();
+		entryScene = new EntryScene();
+		mainScene = new MainScene();
 	}
 }

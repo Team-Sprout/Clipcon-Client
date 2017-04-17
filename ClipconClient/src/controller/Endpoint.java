@@ -59,9 +59,11 @@ public class Endpoint {
 			
 			switch (message.get("response")) {
 			case "OK":
-				userInterface.getStartingController().showEntryView(); // EntryView 보여줌
+				userInterface.getStartingScene().showEntryView(); // EntryView 보여줌
+				// 서버에서 이메일, 닉네임, 주소록 받아 User 객체 생성
 				break;
 			case "NOT OK":
+				System.out.println("이메일, 비밀번호 불일치");
 				break;
 			}
 			
@@ -71,9 +73,11 @@ public class Endpoint {
 			
 			switch (message.get("response")) {
 			case "OK":
-				userInterface.getSignupController().closeSignUpView(); // signUpView 닫음
+				userInterface.getSignupScene().closeSignUpView(); // signUpView 닫음
+				System.out.println("회원가입 완료");
 				break;
 			case "NOT OK":
+				System.out.println("이메일/닉네임 중복");
 				break;
 			}
 			
@@ -83,7 +87,8 @@ public class Endpoint {
 			
 			switch (message.get("response")) {
 			case "OK":
-				userInterface.getEntryController().showMainView(); // MainView 보여줌
+				userInterface.getEntryScene().showMainView(); // MainView 보여줌
+				// 서버에서 primaryKey, (name) 받아 Group 객체 생성 후 User에 할당
 				// 이후에 다른 User 들어올 때 마다 respond 받고 UI 갱신
 				break;
 			case "NOT OK":
@@ -96,8 +101,9 @@ public class Endpoint {
 			
 			switch (message.get("response")) {
 			case "OK":
-				userInterface.getEntryController().showMainView(); // MainView 보여줌
-				// 기존의 그룹원 명단 받기
+				userInterface.getEntryScene().showMainView(); // MainView 보여줌
+				// 서버에서 (primaryKey), name, 참여자 명단, 히스토리 받아 Group 객체 생성 후 User에 할당
+				// 이후에 다른 User 들어올 때 마다 respond 받고 UI 갱신
 				break;
 			case "NOT OK":
 				break;

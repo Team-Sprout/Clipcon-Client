@@ -34,14 +34,6 @@ public class EntryScene implements Initializable {
 	
 	private Endpoint endpoint = Endpoint.getIntance();
 	
-	public void setGroupName(String groupName) {
-		this.groupKeyTF.setText(groupName);
-	}
-	
-	public String getGroupName() {
-		return groupNameTF.getText();
-	}
-	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
@@ -61,15 +53,14 @@ public class EntryScene implements Initializable {
 				} catch (IOException | EncodeException e) {
 					e.printStackTrace();
 				}
-				
-				showMainView();
-				startHookProcess();
 			}
 		});
 		
 		joinBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
+				EntryScene.event = event;
+				
 				System.out.println("그룹참여");
 				
 				Message joinGroupMsg = new Message(Message.REQUEST_JOIN_GROUP);
@@ -79,29 +70,17 @@ public class EntryScene implements Initializable {
 				} catch (IOException | EncodeException e) {
 					e.printStackTrace();
 				}
-				
-				showMainView();
-				startHookProcess();
 			}
 		});
 		
 		backBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
+				EntryScene.event = event;
+				
 				System.out.println("초기화면으로");
 				
-				try {				
-					Parent toMain = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
-					Scene mainScene = new Scene(toMain);
-					Stage mainStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-					
-					mainStage.hide();
-					mainStage.setScene(mainScene);
-					mainStage.show();					
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				showStartingView();
 			}
 		});
 	}
@@ -114,10 +93,27 @@ public class EntryScene implements Initializable {
 			
 			mainStage.hide();
 			mainStage.setScene(mainScene);
-			mainStage.show();				
+			mainStage.show();
 			
-			System.out.println("만들어진 그룹명은 "+getGroupName()+" 입니다.");
+			startHookProcess(); // 키보드 후킹 시작
+			
+			System.out.println("만들어진 그룹명은 "+ groupNameTF.getText() +" 입니다.");
 					
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void showStartingView() {
+		try {				
+			Parent toMain = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
+			Scene mainScene = new Scene(toMain);
+			Stage mainStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			
+			mainStage.hide();
+			mainStage.setScene(mainScene);
+			mainStage.show();					
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

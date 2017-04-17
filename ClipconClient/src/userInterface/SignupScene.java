@@ -32,10 +32,11 @@ public class SignupScene implements Initializable{
 		confirmBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
-				if (email.getText().equals("") || password1.getText().equals("") || password2.getText().equals("")
-						|| nickname.getText().equals("")) {
+				if (email.getText().length()==0 || password1.getText().length()==0 || password2.getText().length()==0
+						|| nickname.getText().length()==0) {
 					System.out.println("모든 정보 입력");
-				} else {
+				} 
+				else {
 					if (password1.getText().equals(password2.getText())) {
 						Message signUpMsg = new Message(Message.REQUEST_SIGN_UP);
 						signUpMsg.add(Message.EMAIL, email.getText());
@@ -46,9 +47,6 @@ public class SignupScene implements Initializable{
 						} catch (IOException | EncodeException e) {
 							e.printStackTrace();
 						}
-						
-						closeSignUpView();
-
 					} else {
 						System.out.println("비밀번호 확인");
 					}

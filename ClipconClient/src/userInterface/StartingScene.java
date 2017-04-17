@@ -43,50 +43,31 @@ public class StartingScene implements Initializable {
 				System.out.println("로그인 눌림");
 				
 				Message signInMsg = new Message(Message.REQUEST_SIGN_IN);
-				System.out.println("Message 생성!");
 				signInMsg.add(Message.EMAIL, idTF.getText());
 				signInMsg.add("password", pwPF.getText());
+				
 				try {
 					endpoint.sendMessage(signInMsg);
-					System.out.println("보냄!");
 				} catch (IOException | EncodeException e) {
-					System.out.println("예외!");
 					e.printStackTrace();
 				}
 				
-				//showEntryView();
-						
-//				if(idTF.getText().equals("test") && pwPF.getText().equals("12")){
-//					System.out.println("로그인 성공");
-//					showEntryView(event);
-//				}
-//				else{
-//					System.out.println("로그인 실패");
-//				}
 			}
 		});
 		
 		signupBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
-				System.out.println("회원가입 눌림");	
+				StartingScene.event = event;
 				
-				try {
-					Parent signup = FXMLLoader.load(getClass().getResource("/view/SignupView.fxml"));
-					Scene signupScene = new Scene(signup);
-					Stage tempStage = new Stage();
-					tempStage.setScene(signupScene);
-					tempStage.show();
-//					Stage signupStage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-//					signupStage.setScene(signupScene);
-//					signupStage.show();
-				} catch (Exception e){
-					e.printStackTrace();
-				}
+				System.out.println("회원가입 눌림");
+				
+				showSignUpView();
 			}
 		});
 		System.out.println("초기화 끝");
 	}
+	
 	
 	public void showEntryView() {
 		try {
@@ -100,6 +81,21 @@ public class StartingScene implements Initializable {
 			
 			System.out.println("엔트리 화면 (만들기 or 참여) 으로 진입합니다.");
 			
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void showSignUpView() {
+		try {
+			Parent signup = FXMLLoader.load(getClass().getResource("/view/SignupView.fxml"));
+			Scene signupScene = new Scene(signup);
+			Stage tempStage = new Stage();
+			tempStage.setScene(signupScene);
+			tempStage.show();
+//			Stage signupStage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+//			signupStage.setScene(signupScene);
+//			signupStage.show();
 		} catch (Exception e){
 			e.printStackTrace();
 		}
