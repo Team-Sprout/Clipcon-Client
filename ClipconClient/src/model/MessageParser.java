@@ -32,6 +32,7 @@ public class MessageParser {
          users.put(email, name);
       }
       user.setAddressBook(addressBook);
+      
       return user;
    }
 
@@ -69,6 +70,7 @@ public class MessageParser {
          array.put(tmp);
       }
       message.getJson().put(Message.LIST, array);
+      
       return message;
    }
 
@@ -94,5 +96,19 @@ public class MessageParser {
 
       return message;
    }
+   
+   /**
+    * @param message 서버에서 받은 Message객체
+    * @return message 로부터 변환된 Group객체 */
+   public static Group getGroupByMessage(Message message) {
+		Group group = new Group();
+		String key = message.get("groupkey");
+		String name = message.get("groupname");
+		group.setPrimaryKey(key);
+		group.setName(name);
+
+		group.setUserList((Map<String, String>)message.getObject("list"));
+		return group;
+	}
 
 }

@@ -3,10 +3,14 @@ package userInterface;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.websocket.EncodeException;
 
 import controller.Endpoint;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -16,11 +20,17 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
+import lombok.Getter;
+import lombok.Setter;
 import model.Message;
 
+@Getter
+@Setter
 public class StartingScene implements Initializable {
 
 	private UserInterface ui = UserInterface.getIntance();
@@ -37,24 +47,26 @@ public class StartingScene implements Initializable {
 	private static ActionEvent event;
 
 	private Endpoint endpoint = Endpoint.getIntance();
+	
+	private Stage entryStage;
+	
+	/**
+	 * flag variable for checking it is initialize (success about login)
+	 */
+	private boolean flag;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
 		ui.setStartingScene(this);
-
-		System.out.println("StartingScene initialize");
-		System.out.println("StartingScene Tostring() : " + this.toString());
+		flag = false;
 
 		loginBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				System.out.println(event); // XXX: delf
-				StartingScene.event = event;
-				System.out.println("StartingScene evnet : " + StartingScene.event);
-
 				System.out.println("로그인 눌림");
+				StartingScene.event = event;
 
+				// 서버에 REQUEST_SIGN_IN Messgae 보냄
 				Message signInMsg = new Message().setType(Message.REQUEST_SIGN_IN);
 				signInMsg.add(Message.EMAIL, idTF.getText());
 				signInMsg.add("password", pwPF.getText());
@@ -65,34 +77,47 @@ public class StartingScene implements Initializable {
 					e.printStackTrace();
 				}
 				
-				showEntryView();
+				// run scheduler for checking
+				final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+				scheduler.scheduleAtFixedRate(new Runnable() {
+					@Override
+					public void run() {
+						Platform.runLater(new Runnable() {
+							@Override
+							public void run() {
+								// if flag turn on then client login game
+								if (flag) {
+									flag = false;
+									//checkTheNewUserRegisterSuccess();
+									showEntryView();
+									return;
+								}
+							}
+						});
+
+					}
+				}, 50, 50, TimeUnit.MILLISECONDS);
+				
 			}
 		});
 
 		signupBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				System.out.println(event); // XXX: delf
-				StartingScene.event = event;
-
 				System.out.println("회원가입 눌림");
 
 				showSignUpView();
 			}
 		});
-		System.out.println("초기화 끝");
+
 	}
 
 	public void showEntryView() {
 		try {
 			Parent entry = FXMLLoader.load(getClass().getResource("/view/EntryView.fxml"));
-			System.out.println("showEntryView: " + event);
 			Scene entryScene = new Scene(entry);
-			Stage entryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			// Stage entryStage = new Stage();
-			// System.out.println("StartingScene showEntryView evnet : " + StartingScene.event);
-			// System.out.println("StartingScene showEntryView entryStage : " + entryStage.toString());
-
+			entryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			entryStage.hide();
 			entryStage.setScene(entryScene);
 			entryStage.show();
@@ -111,11 +136,43 @@ public class StartingScene implements Initializable {
 			Stage tempStage = new Stage();
 			tempStage.setScene(signupScene);
 			tempStage.show();
-			// Stage signupStage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-			// signupStage.setScene(signupScene);
-			// signupStage.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void showLoginFailPopup() {
+		Platform.runLater(() -> handlePopup("이메일, 비밀번호 불일치"));
+	}
+	
+//	public void checkTheNewUserRegisterSuccess() {
+//		Platform.runLater(() -> handlePopup("로그인 성공"));
+//	}
+	
+	public void handlePopup(String text) {
+		Platform.runLater(() -> {
+			try {
+				Popup popup = new Popup();
+
+				Parent parent;
+
+				parent = FXMLLoader.load(getClass().getResource("/view/popup.fxml"));
+				Label lblMessage = (Label) parent.lookup("#lblMessage");
+				lblMessage.setText(text);
+				lblMessage.setOnMouseClicked(event -> popup.hide());
+
+				// set the popup window position
+				popup.setX(entryStage.getX() + 200);
+				popup.setY(entryStage.getY() + 370);
+
+				popup.getContent().add(parent);
+				popup.setAutoHide(true);
+				popup.show(entryStage);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		});
 	}
 }

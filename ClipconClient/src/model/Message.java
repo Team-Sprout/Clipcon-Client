@@ -51,6 +51,10 @@ public class Message {
 	public String toString() {
 		return json.toString();
 	}
+	
+	public Object getObject(String key) {
+	      return json.get(key);
+	   }
 
 	public final static String TYPE = "message type";
 
@@ -67,6 +71,9 @@ public class Message {
 	public final static String ADDRESS_BOOK = "address book";
 	public final static String LIST = "list";
 	public final static String USER_INFO = "user information";
+	public final static String GROUP_NAME = "group name";
+	public final static String GROUP_PK = "group pk";
+	public final static String GROUP_INFO = "group information";
 
 	public final static String TEST_DEBUG_MODE = "debug";
 	public final static String REQUEST_GET_ADDRESSBOOK = "address book";

@@ -13,6 +13,7 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 
+import model.Group;
 import model.Message;
 import model.MessageDecoder;
 import model.MessageEncoder;
@@ -22,14 +23,20 @@ import userInterface.UserInterface;
 
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
 public class Endpoint {
+	public final static String CONFIRM = "confirm";
+	public final static String REJECT = "reject";
+	
 	private String uri = "ws://182.172.16.118:8080/websocketServerModule/ServerEndpoint";
 	private Session session = null;
 
 	private static Endpoint uniqueEndpoint;
 	private static UserInterface ui;
+	
+	private User user;
+	private Group group;
 
 	public static Endpoint getIntance() {
-		System.out.println("getIntance()");
+		System.out.println("Endpoint getIntance()");
 		try {
 			if (uniqueEndpoint == null) {
 				uniqueEndpoint = new Endpoint();
@@ -59,14 +66,14 @@ public class Endpoint {
 		switch (message.get(Message.TYPE)) {
 		case Message.REQUEST_SIGN_IN: // 로그인 요청에 대한 응답
 			switch (message.get("result")) {
-			case "ok":
-				System.out.println("sign in ok");
-				User user = MessageParser.getUserByMessage(message);
-				//ui.getStartingScene().showEntryView(); // EntryView 보여줌
-				// 서버에서 이메일, 닉네임, 주소록 받아 User 객체 생성
+			case CONFIRM:
+				System.out.println("sign in confirm");
+				ui.getStartingScene().setFlag(true); // EntryView 보여줌
+				user = MessageParser.getUserByMessage(message); // 서버에서 이메일, 닉네임, 주소록 받아 User 객체 생성
 				break;
-			case "NOT OK":
-				System.out.println("이메일, 비밀번호 불일치");
+			case REJECT:
+				System.out.println("sign in reject");
+				ui.getStartingScene().showLoginFailPopup();
 				break;
 			}
 			
@@ -75,11 +82,12 @@ public class Endpoint {
 		case Message.REQUEST_SIGN_UP:
 			
 			switch (message.get("response")) {
-			case "OK":
-				//ui.getSignupScene().closeSignUpView(); // signUpView 닫음
-				System.out.println("회원가입 완료");
+			case CONFIRM:
+				System.out.println("sign up confirm");
+				ui.getSignupScene().setFlag(true); // signUpView 닫음
 				break;
-			case "NOT OK":
+			case REJECT:
+				System.out.println("sign up reject");
 				System.out.println("이메일/닉네임 중복");
 				break;
 			}
@@ -89,12 +97,15 @@ public class Endpoint {
 		case Message.REQUEST_CREATE_GROUP:
 			
 			switch (message.get("response")) {
-			case "OK":
-				//ui.getEntryScene().showMainView(); // MainView 보여줌
-				// 서버에서 primaryKey, (name) 받아 Group 객체 생성 후 User에 할당
+			case CONFIRM:
+				System.out.println("create group confirm");
+				ui.getEntryScene().setFlag(true); // MainView 보여줌
+				group = MessageParser.getGroupByMessage(message); // 서버에서 primaryKey, name 받아 Group 객체 생성 후
+				user.setGroup(group); // User에 할당
 				// 이후에 다른 User 들어올 때 마다 respond 받고 UI 갱신
 				break;
-			case "NOT OK":
+			case REJECT:
+				System.out.println("create group reject");
 				break;
 			}
 			
@@ -103,12 +114,14 @@ public class Endpoint {
 		case Message.REQUEST_JOIN_GROUP:
 			
 			switch (message.get("response")) {
-			case "OK":
-				//ui.getEntryScene().showMainView(); // MainView 보여줌
+			case CONFIRM:
+				System.out.println("join group confirm");
+				ui.getEntryScene().setFlag(true); // MainView 보여줌
 				// 서버에서 (primaryKey), name, 참여자 명단, 히스토리 받아 Group 객체 생성 후 User에 할당
 				// 이후에 다른 User 들어올 때 마다 respond 받고 UI 갱신
 				break;
-			case "NOT OK":
+			case REJECT:
+				System.out.println("join group reject");
 				break;
 			}
 			
