@@ -64,7 +64,8 @@ public class StartingScene implements Initializable {
 				} catch (IOException | EncodeException e) {
 					e.printStackTrace();
 				}
-
+				
+				showEntryView();
 			}
 		});
 

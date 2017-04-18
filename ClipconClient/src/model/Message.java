@@ -66,6 +66,7 @@ public class Message {
 	public final static String RESPONSE_SIGN_IN = "sign in";
 	public final static String ADDRESS_BOOK = "address book";
 	public final static String LIST = "list";
+	public final static String USER_INFO = "user information";
 
 	public final static String TEST_DEBUG_MODE = "debug";
 	public final static String REQUEST_GET_ADDRESSBOOK = "address book";
