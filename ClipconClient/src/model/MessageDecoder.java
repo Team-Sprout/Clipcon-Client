@@ -20,7 +20,7 @@ public class MessageDecoder implements Decoder.Text<Message> {
 	
 	public Message decode(String incommingMessage) throws DecodeException {
 		System.out.println("서버에서 받은 메시지: " + incommingMessage);
-		Message message = new Message(incommingMessage);
+		Message message = new Message().setJson(incommingMessage);
 		System.out.println(message.getType());
 		return message;
 	}

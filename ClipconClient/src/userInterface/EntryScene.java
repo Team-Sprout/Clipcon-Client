@@ -51,7 +51,7 @@ public class EntryScene implements Initializable {
 				System.out.println("그룹생성");
 				System.out.println("테스트");
 				
-				Message createGroupMsg = new Message(Message.REQUEST_CREATE_GROUP);
+				Message createGroupMsg = new Message().setType(Message.REQUEST_CREATE_GROUP);;
 				createGroupMsg.add("groupName", groupNameTF.getText());
 				try {
 					endpoint.sendMessage(createGroupMsg);
@@ -68,7 +68,7 @@ public class EntryScene implements Initializable {
 				
 				System.out.println("그룹참여");
 				
-				Message joinGroupMsg = new Message(Message.REQUEST_JOIN_GROUP);
+				Message joinGroupMsg = new Message().setType(Message.REQUEST_JOIN_GROUP);
 				joinGroupMsg.add("groupPK", groupKeyTF.getText());
 				try {
 					endpoint.sendMessage(joinGroupMsg);
