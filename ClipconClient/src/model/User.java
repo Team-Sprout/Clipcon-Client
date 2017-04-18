@@ -10,6 +10,6 @@ import lombok.Setter;
 public class User {
 	private String eMail;
 	private String nickName;
-	private AdressBook adressBook; // 林家废
+	private AddressBook adressBook; // 林家废
 	private Group group;
 }

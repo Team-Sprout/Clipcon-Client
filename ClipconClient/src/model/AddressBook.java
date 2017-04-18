@@ -8,25 +8,25 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AdressBook {
-	private Map<String, String> adressBook;
+public class AddressBook {
+	private Map<String, String> addressBook;
 	
-	public AdressBook() {
-		adressBook = new HashMap<String, String>();
+	public AddressBook() {
+		addressBook = new HashMap<String, String>();
 	}
 	
 	// 주소록 추가
 	public void addAdress(String eMail, String name) {
-		adressBook.put(eMail, name);
+		addressBook.put(eMail, name);
 	}
 	
 	// 주소록 삭제
 	public void deleteAdress(String eMail) {
-		adressBook.remove(eMail);
+		addressBook.remove(eMail);
 	}
 	
 	// 주소록 검색?
 	public String searchAdress(String eMail) {
-		return adressBook.get(eMail);
+		return addressBook.get(eMail);
 	}
 }
