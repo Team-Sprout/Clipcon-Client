@@ -58,6 +58,8 @@ public class EntryScene implements Initializable {
 				} catch (IOException | EncodeException e) {
 					e.printStackTrace();
 				}
+				
+				showMainView();
 			}
 		});
 		
@@ -75,6 +77,8 @@ public class EntryScene implements Initializable {
 				} catch (IOException | EncodeException e) {
 					e.printStackTrace();
 				}
+				
+				showMainView();
 			}
 		});
 		

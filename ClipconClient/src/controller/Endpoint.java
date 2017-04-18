@@ -16,11 +16,13 @@ import javax.websocket.Session;
 import model.Message;
 import model.MessageDecoder;
 import model.MessageEncoder;
+import model.MessageParser;
+import model.User;
 import userInterface.UserInterface;
 
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
 public class Endpoint {
-	private String uri = "ws://127.0.0.1:8080/websocketServerModule/ServerEndpoint";
+	private String uri = "ws://182.172.16.118:8080/websocketServerModule/ServerEndpoint";
 	private Session session = null;
 
 	private static Endpoint uniqueEndpoint;
@@ -59,9 +61,8 @@ public class Endpoint {
 			switch (message.get("result")) {
 			case "ok":
 				System.out.println("sign in ok");
-				System.out.println("Endpoint Tostring() : " + ui.getStartingScene().toString());
-				ui.getStartingScene().showEntryView();
-				//StartingScene.showEntryView(); // EntryView 보여줌
+				User user = MessageParser.getUserByMessage(message);
+				//ui.getStartingScene().showEntryView(); // EntryView 보여줌
 				// 서버에서 이메일, 닉네임, 주소록 받아 User 객체 생성
 				break;
 			case "NOT OK":
@@ -75,7 +76,7 @@ public class Endpoint {
 			
 			switch (message.get("response")) {
 			case "OK":
-				//userInterface.getSignupScene().closeSignUpView(); // signUpView 닫음
+				//ui.getSignupScene().closeSignUpView(); // signUpView 닫음
 				System.out.println("회원가입 완료");
 				break;
 			case "NOT OK":
@@ -89,7 +90,7 @@ public class Endpoint {
 			
 			switch (message.get("response")) {
 			case "OK":
-				//userInterface.getEntryScene().showMainView(); // MainView 보여줌
+				//ui.getEntryScene().showMainView(); // MainView 보여줌
 				// 서버에서 primaryKey, (name) 받아 Group 객체 생성 후 User에 할당
 				// 이후에 다른 User 들어올 때 마다 respond 받고 UI 갱신
 				break;
@@ -103,7 +104,7 @@ public class Endpoint {
 			
 			switch (message.get("response")) {
 			case "OK":
-				//userInterface.getEntryScene().showMainView(); // MainView 보여줌
+				//ui.getEntryScene().showMainView(); // MainView 보여줌
 				// 서버에서 (primaryKey), name, 참여자 명단, 히스토리 받아 Group 객체 생성 후 User에 할당
 				// 이후에 다른 User 들어올 때 마다 respond 받고 UI 갱신
 				break;
