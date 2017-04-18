@@ -44,7 +44,7 @@ public class SignupScene implements Initializable{
 				} 
 				else {
 					if (password1.getText().equals(password2.getText())) {
-						Message signUpMsg = new Message(Message.REQUEST_SIGN_UP);
+						Message signUpMsg = new Message().setType(Message.REQUEST_SIGN_UP);
 						signUpMsg.add(Message.EMAIL, email.getText());
 						signUpMsg.add("password", password1.getText());
 						signUpMsg.add("nickname", nickname.getText());

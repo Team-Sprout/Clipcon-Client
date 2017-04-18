@@ -3,36 +3,34 @@ package model;
 import org.json.JSONObject;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
+@NoArgsConstructor
 public class Message {
 	private String type;
 	private JSONObject json;
 
-	public Message(String jsonString) {
-		try {
-			json = new JSONObject(jsonString);
-		} catch (Exception e) {
-			json = new JSONObject();
-			type = jsonString;
-			json.put(TYPE, type);
-			return;
-		}
+	public Message setJson(String string) {
+		json = new JSONObject(string);
 		type = json.getString(TYPE);
-		System.out.println("type: " + type);
+		return this;
 	}
 
-	// public Message(String jsonString) {
-	// json = new JSONObject(jsonString);
-	// if (json.getString(TYPE) == null) {
-	// json = new JSONObject();
-	// json = new JSONObject();
-	// type = jsonString;
-	// json.put(TYPE, type);
-	// }
-	// }
+	public Message setJson(JSONObject json) {
+		this.json = json;
+		type = json.getString(TYPE);
+		return this;
+	}
+	
+	public Message setType(String type) {
+		json = new JSONObject();
+		this.type = type;
+		json.put(TYPE, type);
+		return this;
+	}
 
 	public Message(String type, String jsonString) {
 		this.type = type;
@@ -42,17 +40,16 @@ public class Message {
 		System.out.println(json.toString());
 	}
 
-	public JSONObject setJson(String json) {
-		this.json = new JSONObject(json);
-		return this.json;
-	}
-
 	public void add(String key, String value) {
 		json.put(key, value);
 	}
 
-	public String get(String property) {
-		return json.getString(property);
+	public String get(String key) {
+		return json.get(key).toString();
+	}
+	
+	public String toString() {
+		return json.toString();
 	}
 
 	public final static String TYPE = "message type";
@@ -66,4 +63,10 @@ public class Message {
 	public final static String EMAIL = "email";
 	public final static String NAME = "name";
 	public final static String CONTENTS = "contents";
+	public final static String RESPONSE_SIGN_IN = "sign in";
+	public final static String ADDRESS_BOOK = "address book";
+	public final static String LIST = "list";
+
+	public final static String TEST_DEBUG_MODE = "debug";
+	public final static String REQUEST_GET_ADDRESSBOOK = "address book";
 }
