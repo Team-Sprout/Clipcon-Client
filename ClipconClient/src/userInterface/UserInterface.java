@@ -10,11 +10,16 @@ public class UserInterface {
 	private SignupScene signupScene;
 	private EntryScene entryScene;
 	private MainScene mainScene;
-	
-	public UserInterface() {
-		startingScene = new StartingScene();
-		signupScene = new SignupScene();
-		entryScene = new EntryScene();
-		mainScene = new MainScene();
+
+	private static UserInterface uniqueUserInterface;
+
+	public static UserInterface getIntance() {
+		System.out.println("getIntance()");
+		if (uniqueUserInterface == null) {
+			uniqueUserInterface = new UserInterface();
+		}
+
+		return uniqueUserInterface;
 	}
+
 }

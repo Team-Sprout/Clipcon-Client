@@ -19,6 +19,8 @@ import model.Message;
 
 public class SignupScene implements Initializable{
 	
+	private UserInterface ui = UserInterface.getIntance();
+	
 	@FXML private TextField email;
 	@FXML private PasswordField password1;
 	@FXML private PasswordField password2;
@@ -29,6 +31,10 @@ public class SignupScene implements Initializable{
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		
+		ui.setSignupScene(this);
+		System.out.println("SignupScene initialize");
+		
 		confirmBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {

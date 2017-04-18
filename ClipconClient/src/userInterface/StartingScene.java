@@ -23,6 +23,8 @@ import model.Message;
 
 public class StartingScene implements Initializable {
 	
+	private UserInterface ui = UserInterface.getIntance();
+	
 	@FXML private Button loginBtn;
 	@FXML private Button signupBtn;	
 	@FXML private TextField idTF;	
@@ -35,10 +37,16 @@ public class StartingScene implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
+		ui.setStartingScene(this);
+		
+		System.out.println("StartingScene initialize");
+		System.out.println("StartingScene Tostring() : " + this.toString());
+		
 		loginBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
 				StartingScene.event = event;
+				System.out.println("StartingScene evnet : " + StartingScene.event);
 				
 				System.out.println("로그인 눌림");
 				
@@ -73,11 +81,14 @@ public class StartingScene implements Initializable {
 		try {
 			Parent entry = FXMLLoader.load(getClass().getResource("/view/EntryView.fxml"));
 			Scene entryScene = new Scene(entry);
-			Stage entryStage = (Stage) ((Node)StartingScene.event.getSource()).getScene().getWindow();
+			Stage entryStage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+			//Stage entryStage = new Stage();
+			//System.out.println("StartingScene showEntryView evnet : " + StartingScene.event);
+			//System.out.println("StartingScene showEntryView entryStage : " + entryStage.toString());
 			
 			entryStage.hide();
 			entryStage.setScene(entryScene);
-			entryStage.show();
+			entryStage.show();			
 			
 			System.out.println("엔트리 화면 (만들기 or 참여) 으로 진입합니다.");
 			

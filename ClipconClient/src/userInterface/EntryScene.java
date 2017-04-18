@@ -24,6 +24,8 @@ import model.Message;
 
 public class EntryScene implements Initializable {
 	
+	private UserInterface ui = UserInterface.getIntance();
+	
 	@FXML private Button createBtn;
 	@FXML private Button joinBtn;
 	@FXML private TextField groupNameTF;
@@ -36,7 +38,10 @@ public class EntryScene implements Initializable {
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
+		
+		ui.setEntryScene(this);
+		
+		System.out.println("EntryScene initialize");
 		
 		createBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override

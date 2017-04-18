@@ -17,6 +17,8 @@ import javafx.stage.Stage;
 
 public class MainScene implements Initializable{
 	
+	private UserInterface ui = UserInterface.getIntance();
+	
 	@FXML private Button exitBtn;
 	@FXML private Button addBtn;
 	@FXML private Button deleteBtn;
@@ -31,7 +33,8 @@ public class MainScene implements Initializable{
 		
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
+		ui.setMainScene(this);
+		System.out.println("MainScene initialize");
 		
 //		String groupName = entryControl.getGroupName();
 //		groupNameTF.setText(groupName);

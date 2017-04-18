@@ -20,11 +20,11 @@ import userInterface.UserInterface;
 
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
 public class Endpoint {
-	private String uri = "ws://localhost:8080/websocketServerModule/ServerEndpoint";
+	private String uri = "ws://182.172.16.118:8080/websocketServerModule/ServerEndpoint";
 	private Session session = null;
 
 	private static Endpoint uniqueEndpoint;
-	private static UserInterface userInterface;
+	private static UserInterface ui;
 
 	public static Endpoint getIntance() {
 		System.out.println("getIntance()");
@@ -43,6 +43,7 @@ public class Endpoint {
 		System.out.println("Endpoint 생성자");
 		URI uRI = new URI(uri);
 		ContainerProvider.getWebSocketContainer().connectToServer(this, uRI);
+		ui = UserInterface.getIntance();
 	}
 
 	@OnOpen
@@ -53,11 +54,14 @@ public class Endpoint {
 	@OnMessage
 	public void onMessage(Message message) {
 		System.out.println("message type: " + message.getType());
-		switch (Message.TYPE) {
+		switch (message.get(Message.TYPE)) {
 		case Message.REQUEST_SIGN_IN: // 로그인 요청에 대한 응답
-			switch (message.get("response")) {
-			case "OK":
-				userInterface.getStartingScene().showEntryView(); // EntryView 보여줌
+			switch (message.get("result")) {
+			case "ok":
+				System.out.println("sign in ok");
+				System.out.println("Endpoint Tostring() : " + ui.getStartingScene().toString());
+				ui.getStartingScene().showEntryView();
+				//StartingScene.showEntryView(); // EntryView 보여줌
 				// 서버에서 이메일, 닉네임, 주소록 받아 User 객체 생성
 				break;
 			case "NOT OK":
@@ -71,7 +75,7 @@ public class Endpoint {
 			
 			switch (message.get("response")) {
 			case "OK":
-				userInterface.getSignupScene().closeSignUpView(); // signUpView 닫음
+				//userInterface.getSignupScene().closeSignUpView(); // signUpView 닫음
 				System.out.println("회원가입 완료");
 				break;
 			case "NOT OK":
@@ -85,7 +89,7 @@ public class Endpoint {
 			
 			switch (message.get("response")) {
 			case "OK":
-				userInterface.getEntryScene().showMainView(); // MainView 보여줌
+				//userInterface.getEntryScene().showMainView(); // MainView 보여줌
 				// 서버에서 primaryKey, (name) 받아 Group 객체 생성 후 User에 할당
 				// 이후에 다른 User 들어올 때 마다 respond 받고 UI 갱신
 				break;
@@ -99,7 +103,7 @@ public class Endpoint {
 			
 			switch (message.get("response")) {
 			case "OK":
-				userInterface.getEntryScene().showMainView(); // MainView 보여줌
+				//userInterface.getEntryScene().showMainView(); // MainView 보여줌
 				// 서버에서 (primaryKey), name, 참여자 명단, 히스토리 받아 Group 객체 생성 후 User에 할당
 				// 이후에 다른 User 들어올 때 마다 respond 받고 UI 갱신
 				break;
@@ -110,6 +114,7 @@ public class Endpoint {
 			break;
 
 		default:
+			System.out.println("default");
 			break;
 		}
 	}
