@@ -1,5 +1,6 @@
 package userInterface;
 
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -9,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.websocket.EncodeException;
 
+import controller.ClipboardController;
 import controller.Endpoint;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -20,10 +22,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,47 +30,39 @@ import model.Message;
 @Getter
 @Setter
 public class StartingScene implements Initializable {
-
-	private UserInterface ui = UserInterface.getIntance();
-
-	@FXML
-	private Button loginBtn;
-	@FXML
-	private Button signupBtn;
-	@FXML
-	private TextField idTF;
-	@FXML
-	private PasswordField pwPF;
-
-	private static ActionEvent event;
-
-	private Endpoint endpoint = Endpoint.getIntance();
 	
-	private Stage entryStage;
+	private UserInterface ui = UserInterface.getIntance();
+	
+	@FXML private Button createBtn;
+	@FXML private Button joinBtn;
+	
+	private static ActionEvent event;
+	
+	private Endpoint endpoint = Endpoint.getIntance();
 	
 	/**
 	 * flag variable for checking it is initialize (success about login)
 	 */
-	private boolean flag;
-
+	private boolean createGroupSuccessFlag;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setStartingScene(this);
-		flag = false;
-
-		loginBtn.setOnAction(new EventHandler<ActionEvent>() {
+		createGroupSuccessFlag = false;
+		
+		createBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
-				System.out.println("로그인 눌림");
 				StartingScene.event = event;
-
-				// 서버에 REQUEST_SIGN_IN Messgae 보냄
-				Message signInMsg = new Message().setType(Message.REQUEST_SIGN_IN);
-				signInMsg.add(Message.EMAIL, idTF.getText());
-				signInMsg.add("password", pwPF.getText());
-
+				
+				System.out.println("그룹생성");
+				
+				showMainView();
+				
+				// 서버에 REQUEST_REQUEST_CREATE_GROUP Messgae 보냄
+				Message createGroupMsg = new Message().setType(Message.REQUEST_CREATE_GROUP);
 				try {
-					endpoint.sendMessage(signInMsg);
+					endpoint.sendMessage(createGroupMsg);
 				} catch (IOException | EncodeException e) {
 					e.printStackTrace();
 				}
@@ -87,10 +77,9 @@ public class StartingScene implements Initializable {
 							@Override
 							public void run() {
 								// if flag turn on then client login game
-								if (flag) {
-									flag = false;
-									//checkTheNewUserRegisterSuccess();
-									showEntryView();
+								if (createGroupSuccessFlag) {
+									createGroupSuccessFlag = false;
+									showMainView();
 									return;
 								}
 							}
@@ -98,81 +87,64 @@ public class StartingScene implements Initializable {
 
 					}
 				}, 50, 50, TimeUnit.MILLISECONDS);
-				
 			}
 		});
-
-		signupBtn.setOnAction(new EventHandler<ActionEvent>() {
+		
+		joinBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
-				System.out.println("회원가입 눌림");
-
-				showSignUpView();
+				StartingScene.event = event;
+				
+				showGroupJoinView();
 			}
 		});
-
 	}
-
-	public void showEntryView() {
-		try {
-			Parent entry = FXMLLoader.load(getClass().getResource("/view/EntryView.fxml"));
-			Scene entryScene = new Scene(entry);
-			entryStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			entryStage.hide();
-			entryStage.setScene(entryScene);
-			entryStage.show();
-
-			System.out.println("엔트리 화면 (만들기 or 참여) 으로 진입합니다.");
-
+	
+	public void showMainView() {
+		try {				
+			Parent toMain = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
+			Scene mainScene = new Scene(toMain);
+			Stage mainStage = (Stage) ((Node) StartingScene.event.getSource()).getScene().getWindow();
+			
+			mainStage.hide();
+			mainStage.setScene(mainScene);
+			mainStage.show();
+			
+			startHookProcess(); // 키보드 후킹 시작
+					
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void showSignUpView() {
+	public void showGroupJoinView() {
 		try {
-			Parent signup = FXMLLoader.load(getClass().getResource("/view/SignupView.fxml"));
-			Scene signupScene = new Scene(signup);
+			Parent groupJoin = FXMLLoader.load(getClass().getResource("/view/GroupJoinView.fxml"));
+			Scene groupJoinScene = new Scene(groupJoin);
 			Stage tempStage = new Stage();
-			tempStage.setScene(signupScene);
+			tempStage.setScene(groupJoinScene);
 			tempStage.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void showLoginFailPopup() {
-		Platform.runLater(() -> handlePopup("이메일, 비밀번호 불일치"));
-	}
-	
-//	public void checkTheNewUserRegisterSuccess() {
-//		Platform.runLater(() -> handlePopup("로그인 성공"));
-//	}
-	
-	public void handlePopup(String text) {
-		Platform.runLater(() -> {
-			try {
-				Popup popup = new Popup();
-
-				Parent parent;
-
-				parent = FXMLLoader.load(getClass().getResource("/view/popup.fxml"));
-				Label lblMessage = (Label) parent.lookup("#lblMessage");
-				lblMessage.setText(text);
-				lblMessage.setOnMouseClicked(event -> popup.hide());
-
-				// set the popup window position
-				popup.setX(entryStage.getX() + 200);
-				popup.setY(entryStage.getY() + 370);
-
-				popup.getContent().add(parent);
-				popup.setAutoHide(true);
-				popup.show(entryStage);
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		});
+	public void startHookProcess() {
+		hookManager.GlobalKeyboardHook hook = new hookManager.GlobalKeyboardHook();
+		int vitrualKey = KeyEvent.VK_H;
+        boolean CTRL_Key = true;
+        boolean ALT_Key = true;
+        boolean SHIFT_Key = false;
+        boolean WIN_Key = false;
+		
+        hook.setHotKey(vitrualKey, ALT_Key, CTRL_Key, SHIFT_Key, WIN_Key);
+        hook.startHook();
+        // waiting for the event
+        hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
+            public void onGlobalHotkeysPressed() {
+                System.out.println("CTRL + ALT + H was pressed");
+                System.out.println(ClipboardController.readClipboard());
+            }
+        });
 	}
 }

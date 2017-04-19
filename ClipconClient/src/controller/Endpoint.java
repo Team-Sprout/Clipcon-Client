@@ -64,45 +64,15 @@ public class Endpoint {
 	public void onMessage(Message message) {
 		System.out.println("message type: " + message.getType());
 		switch (message.get(Message.TYPE)) {
-		case Message.REQUEST_SIGN_IN: // 로그인 요청에 대한 응답
-			switch (message.get("result")) {
-			case CONFIRM:
-				System.out.println("sign in confirm");
-				ui.getStartingScene().setFlag(true); // EntryView 보여줌
-				user = MessageParser.getUserByMessage(message); // 서버에서 이메일, 닉네임, 주소록 받아 User 객체 생성
-				break;
-			case REJECT:
-				System.out.println("sign in reject");
-				ui.getStartingScene().showLoginFailPopup();
-				break;
-			}
-			
-			break;
-
-		case Message.REQUEST_SIGN_UP:
-			
-			switch (message.get("response")) {
-			case CONFIRM:
-				System.out.println("sign up confirm");
-				ui.getSignupScene().setFlag(true); // signUpView 닫음
-				break;
-			case REJECT:
-				System.out.println("sign up reject");
-				System.out.println("이메일/닉네임 중복");
-				break;
-			}
-			
-			break;
-
+		
 		case Message.REQUEST_CREATE_GROUP:
 			
 			switch (message.get("response")) {
 			case CONFIRM:
 				System.out.println("create group confirm");
-				ui.getEntryScene().setFlag(true); // MainView 보여줌
+				ui.getStartingScene().setCreateGroupSuccessFlag(true); // MainView 보여줌
 				group = MessageParser.getGroupByMessage(message); // 서버에서 primaryKey, name 받아 Group 객체 생성 후
 				user.setGroup(group); // User에 할당
-				// 이후에 다른 User 들어올 때 마다 respond 받고 UI 갱신
 				break;
 			case REJECT:
 				System.out.println("create group reject");
@@ -116,9 +86,9 @@ public class Endpoint {
 			switch (message.get("response")) {
 			case CONFIRM:
 				System.out.println("join group confirm");
-				ui.getEntryScene().setFlag(true); // MainView 보여줌
-				// 서버에서 (primaryKey), name, 참여자 명단, 히스토리 받아 Group 객체 생성 후 User에 할당
-				// 이후에 다른 User 들어올 때 마다 respond 받고 UI 갱신
+				ui.getGroupJoinScene().setJoinGroupSuccessFlag(true); // MainView 보여줌
+				group = MessageParser.getGroupByMessage(message); // 서버에서 primaryKey, name, 참여자 명단 받아 Group 객체 생성 후
+				user.setGroup(group); // User에 할당
 				break;
 			case REJECT:
 				System.out.println("join group reject");
@@ -126,7 +96,9 @@ public class Endpoint {
 			}
 			
 			break;
-
+			
+		// 그룹 내 다른 User 들어올 때 마다 Message 받고 UI 갱신
+			
 		default:
 			System.out.println("default");
 			break;

@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 
 <HBox xmlns:fx="http://javafx.com/fxml"
-	alignment="CENTER" style="-fx-background-color: #a6172d; -fx-background-radius: 30;" >
+	alignment="CENTER" style="-fx-background-color: skyblue; -fx-background-radius: 30;" >
    <children>
       <Label id="lblMessage" style="-fx-text-fill: white;">
          <HBox.margin>
