@@ -10,30 +10,10 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.StartingScene">
+<AnchorPane minHeight="400.0" minWidth="350.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.StartingScene">
    <children>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0">
-         <children>
-            <Button fx:id="signupBtn" layoutX="383.0" layoutY="263.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="97.0" style="-fx-background-color: #2196F3;" text="Sign up" textFill="WHITE" />
-            <Button fx:id="loginBtn" layoutX="141.0" layoutY="263.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="90.0" text="Login" />
-            <Label layoutX="141.0" layoutY="74.0" text="Clipcon Beta" textFill="#f57c00">
-               <font>
-                  <Font name="Arial" size="35.0" />
-               </font></Label>
-            <TextField fx:id="idTF" layoutX="236.0" layoutY="150.0" prefHeight="33.0" prefWidth="244.0" />
-            <PasswordField fx:id="pwPF" layoutX="236.0" layoutY="200.0" prefHeight="33.0" prefWidth="244.0" />
-            <Text fill="#00796b" layoutX="141.0" layoutY="173.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ID/Email">
-               <font>
-                  <Font name="Arial" size="18.0" />
-               </font>
-            </Text>
-            <Text fill="#00796b" layoutX="141.0" layoutY="223.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password">
-               <font>
-                  <Font name="Arial" size="18.0" />
-               </font>
-            </Text>
-            <Separator layoutX="141.0" layoutY="125.0" prefHeight="3.0" prefWidth="337.0" />
-         </children>
-      </AnchorPane>
+ 	  <Text layoutX="100.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" text="그룹을 생성하거나 참여합니다." />
+      <Button fx:id="createBtn" layoutX="150.0" layoutY="137.0" mnemonicParsing="false" text="생성하기" />
+      <Button fx:id="joinBtn" layoutX="150.0" layoutY="200.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="70.0" text="참여하기" />
    </children>
-</StackPane>
+</AnchorPane>
