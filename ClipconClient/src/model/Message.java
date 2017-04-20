@@ -53,33 +53,28 @@ public class Message {
 	}
 	
 	public Object getObject(String key) {
-		return json.get(key);
-	}
+	      return json.get(key);
+	   }
 
 	public final static String TYPE = "message type";
 
-	public final static String REQUEST_CREATE_GROUP = "request/create group";
-	public final static String REQUEST_JOIN_GROUP = "request/join group";
-	public final static String REQUEST_TEST = "request/test";
+	public final static String REQUEST_SIGN_IN = "sign in";
+	public final static String REQUEST_SIGN_UP = "sign up";
+	public final static String REQUEST_CREATE_GROUP = "create group";
+	public final static String REQUEST_JOIN_GROUP = "join group";
+	public final static String REQUEST_TEST = "test";
 
-	public final static String RESPONSE_CREATE_GROUP = "response/create group";
-	public final static String RESPONSE_JOIN_GROUP = "response/join group";
-	
-	public final static String NOTI_ADD_PARTICIPANT = "noti/add participant";
-
-	public final static String RESULT = "result";
-	public final static String CONFIRM = "confirm";
-	public final static String REJECT = "reject";
-
+	public final static String EMAIL = "email";
 	public final static String NAME = "name";
 	public final static String CONTENTS = "contents";
+	public final static String RESPONSE_SIGN_IN = "sign in";
+	public final static String ADDRESS_BOOK = "address book";
 	public final static String LIST = "list";
 	public final static String USER_INFO = "user information";
 	public final static String GROUP_NAME = "group name";
 	public final static String GROUP_PK = "group pk";
 	public final static String GROUP_INFO = "group information";
-	public final static String ADDED_PARTICIPANT_NAME = "added participant name";
-	
 
 	public final static String TEST_DEBUG_MODE = "debug";
+	public final static String REQUEST_GET_ADDRESSBOOK = "address book";
 }

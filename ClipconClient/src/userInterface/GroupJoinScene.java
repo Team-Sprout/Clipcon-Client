@@ -38,29 +38,27 @@ public class GroupJoinScene implements Initializable{
 	 */
 	private boolean joinGroupSuccessFlag;
 
-	private Stage stage;
+	Stage stage;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setGroupJoinScene(this);
 		joinGroupSuccessFlag = false;
 		
-		confirmBtn.setOnAction(new EventHandler<ActionEvent>() {
+		confirmBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
 				stage = (Stage) confirmBtn.getScene().getWindow();
-
+						
 				// ¼­¹ö¿¡ REQUEST_JOIN_GROUP Messgae º¸³¿
-				if (groupKey.getText().length() != 0) {
-					Message signUpMsg = new Message().setType(Message.REQUEST_JOIN_GROUP);
-					signUpMsg.add(Message.GROUP_PK, groupKey.getText());
-					try {
-						endpoint.sendMessage(signUpMsg);
-					} catch (IOException | EncodeException e) {
-						e.printStackTrace();
-					}
+				Message signUpMsg = new Message().setType(Message.REQUEST_JOIN_GROUP);
+				signUpMsg.add(Message.GROUP_PK, groupKey.getText());
+				try {
+					endpoint.sendMessage(signUpMsg);
+				} catch (IOException | EncodeException e) {
+					e.printStackTrace();
 				}
-
+				
 				// run scheduler for checking
 				final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -74,7 +72,6 @@ public class GroupJoinScene implements Initializable{
 								if (joinGroupSuccessFlag) {
 									joinGroupSuccessFlag = false;
 									closeSignUpView();
-									ui.getStartingScene().showMainView();
 									return;
 								}
 							}

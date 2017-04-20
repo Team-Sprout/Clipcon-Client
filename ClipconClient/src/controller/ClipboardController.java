@@ -5,7 +5,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
@@ -138,33 +137,6 @@ public class ClipboardController {
 			e.printStackTrace();
 		}
 		return null;
-	}
-	
-	/**
-	 * 전송받은 Contents 객체를 Transferable해서 클립보드에 삽입(문자열, 이미지인 경우)
-	 *
-	 * @param data
-	 *            전송받은 데이터
-	 * @param dataType
-	 *            전송받은 데이터 타입
-	 */
-	public static void writeClipboard(String data, int dataType) {
-		systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-
-		switch (dataType) {
-		case Contents.STRING_TYPE:
-			StringSelection stringTransferable = new StringSelection(data); // 클립보드에 넣을 수 있는 Transferable 객체 생성
-			systemClipboard.setContents(stringTransferable, null); // 시스템 클립보드에 삽입
-			break;
-		case Contents.IMAGE_TYPE:
-			//Image tmpImage = null ;
-			//ImageTransferable Imagetransferable = new ImageTransferable(tmpImage); // 클립보드에 넣을 수 있는 Transferable 객체 생성
-			//systemClipboard.setContents(Imagetransferable, null); // 시스템 클립보드에 삽입
-			break;
-		default:
-			
-			break;
-		}
 	}
 }
 
