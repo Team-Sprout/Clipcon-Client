@@ -1,6 +1,6 @@
 package model;
 
-import java.util.Map;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,8 +13,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Group {
 	private String primaryKey;
-	private String name;
-	private Map<String, String> userList;
-	// √ ¥Î¿⁄ List
+	//private String name;
+	private List<User> userList;
 	private History history;
+	
+	public Group(String primaryKey) {
+		this.primaryKey = primaryKey;
+	}
 }
