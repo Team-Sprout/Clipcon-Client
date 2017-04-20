@@ -57,7 +57,7 @@ public class StartingScene implements Initializable {
 				
 				System.out.println("그룹생성");
 				
-				showMainView();
+				//showMainView();//////////////////////////////////////임시
 				
 				// 서버에 REQUEST_REQUEST_CREATE_GROUP Messgae 보냄
 				Message createGroupMsg = new Message().setType(Message.REQUEST_CREATE_GROUP);
@@ -123,6 +123,7 @@ public class StartingScene implements Initializable {
 			Scene groupJoinScene = new Scene(groupJoin);
 			Stage tempStage = new Stage();
 			tempStage.setScene(groupJoinScene);
+			tempStage.setResizable(false);
 			tempStage.show();
 		} catch (Exception e) {
 			e.printStackTrace();
