@@ -60,6 +60,7 @@ public class Message {
 
 	public final static String REQUEST_CREATE_GROUP = "request/create group";
 	public final static String REQUEST_JOIN_GROUP = "request/join group";
+	public final static String REQUEST_EXIT_GROUP = "request/exit group";
 	public final static String REQUEST_TEST = "request/test";
 
 	public final static String RESPONSE_CREATE_GROUP = "response/create group";

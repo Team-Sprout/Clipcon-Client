@@ -1,10 +1,13 @@
 package userInterface;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import javax.websocket.EncodeException;
 
 import contents.Contents;
 import controller.ClipboardController;
@@ -27,6 +30,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
+import model.Message;
 import model.User;
 
 @Getter
@@ -47,6 +51,8 @@ public class MainScene implements Initializable{
 	@FXML private Text groupKeyText;
 	
 	private static ActionEvent event;
+	
+	private Endpoint endpoint = Endpoint.getIntance();
 	
 	private ObservableList<User> groupParticipantList;
 	
@@ -97,7 +103,15 @@ public class MainScene implements Initializable{
 				
 				System.out.println("그룹에서 나갑니다.");
 				
-				showStartingView();
+				// 서버에 REQUEST_REQUEST_CREATE_GROUP Messgae 보냄
+				Message createGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
+				try {
+					endpoint.sendMessage(createGroupMsg);
+				} catch (IOException | EncodeException e) {
+					e.printStackTrace();
+				}
+				
+				//showStartingView();
 			}
 		});
 		
