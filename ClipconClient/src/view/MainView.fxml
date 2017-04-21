@@ -12,42 +12,33 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.MainScene">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.MainScene">
    <children>
-      <TabPane layoutY="-1.0" prefHeight="540.0" prefWidth="700.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane layoutY="-1.0" prefHeight="540.0" prefWidth="350.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Info">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="464.0" prefWidth="700.0">
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="464.0" prefWidth="350.0">
                      <children>
                         <Separator layoutX="337.0" layoutY="-2.0" orientation="VERTICAL" prefHeight="510.0" prefWidth="27.0" />
                         <Separator layoutX="-1.0" layoutY="120.0" prefHeight="14.0" prefWidth="349.0" />
-                        <Separator layoutX="350.0" layoutY="41.0" prefHeight="14.0" prefWidth="349.0" />
                         <Text fill="#673ab7" layoutX="11.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Group Information" />
                         <Text fill="#673ab7" layoutX="10.0" layoutY="147.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Members" />
-                        <Text fill="#673ab7" layoutX="360.0" layoutY="69.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Contacts" />
+                        
                         <Text layoutX="10.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Name" />
                         <Text layoutX="16.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Key" />
                         <TextField fx:id="groupNameTF" layoutX="67.0" layoutY="52.0" prefHeight="27.0" prefWidth="202.0" />
-                        <TextField fx:id="groupKeyTF" layoutX="67.0" layoutY="86.0" prefHeight="27.0" prefWidth="202.0" />
-                        <TableView layoutX="10.0" layoutY="160.0" prefHeight="338.0" prefWidth="327.0">
+                        <Text fx:id="groupKeyText" layoutX="67.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Key" />
+                        
+                        <TableView fx:id="groupParticipantTable" layoutX="10.0" layoutY="160.0" prefHeight="338.0" prefWidth="327.0">
                           <columns>
-                            <TableColumn prefWidth="105.0" text="Nickname" />
-                            <TableColumn prefWidth="220.0" text="Email" />
+                            <TableColumn fx:id="groupPartiNicknameColumn" prefWidth="325.0" text="Nickname" />
                           </columns>
                         </TableView>
-                        <TableView layoutX="360.0" layoutY="85.0" prefHeight="370.0" prefWidth="329.0">
-                          <columns>
-                            <TableColumn prefWidth="100.0" text="NIckname" />
-                            <TableColumn prefWidth="228.0" text="Email" />
-                          </columns>
-                        </TableView>
-                        <Button fx:id="addBtn" layoutX="360.0" layoutY="12.0" mnemonicParsing="false" text="추가" />
+                        
                         <Button fx:id="exitBtn" layoutX="280.0" layoutY="12.0" mnemonicParsing="false" text="나가기" />
-                        <Button fx:id="deleteBtn" layoutX="415.0" layoutY="12.0" mnemonicParsing="false" text="삭제" />
-                        <Button fx:id="inviteBtn" layoutX="496.0" layoutY="466.0" mnemonicParsing="false" text="초대" />
-                        <Button fx:id="searchBtn" layoutX="645.0" layoutY="12.0" mnemonicParsing="false" text="검색" />
-                        <TextField fx:id="searchTF" layoutX="472.0" layoutY="12.0" promptText="Nickname or Email.." />
+                        <Button fx:id="groupKeyCopyBtn" layoutX="280.0" layoutY="90.0" mnemonicParsing="false" text="복사" />
+                        
                      </children>
                   </AnchorPane>
             </content>

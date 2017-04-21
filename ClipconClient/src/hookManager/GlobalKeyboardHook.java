@@ -81,6 +81,7 @@ public class GlobalKeyboardHook {
 	      
 	        public void run() {
 	            for(;;) {
+	            	//System.out.println("HHHOOOKKK");
 	                boolean hotKeyPressed = checkHotKey();
 	                if (hotKeyPressed) {
 	                    // hot key was pressed, send the event to all listeners
