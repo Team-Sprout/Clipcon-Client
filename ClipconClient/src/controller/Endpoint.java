@@ -28,8 +28,7 @@ public class Endpoint {
 	private static Endpoint uniqueEndpoint;
 	private static UserInterface ui;
 	
-	private User user;
-	//private Group group;
+	public static User user;
 
 	public static Endpoint getIntance() {
 		System.out.println("Endpoint getIntance()");
@@ -76,8 +75,6 @@ public class Endpoint {
 				}
 				
 				System.out.println("그룹키 : " + user.getGroup().getPrimaryKey());
-				ui.getMainScene().setGroupPK(user.getGroup().getPrimaryKey());
-				ui.getMainScene().setUserList(user.getGroup().getUserList()); // 서버에서 받은 userList set
 				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list 초기화
 				
 				break;
@@ -103,8 +100,6 @@ public class Endpoint {
 				}
 				
 				System.out.println("그룹키 : " + user.getGroup().getPrimaryKey());
-				ui.getMainScene().setGroupPK(user.getGroup().getPrimaryKey());
-				ui.getMainScene().setUserList(user.getGroup().getUserList()); // 서버에서 받은 userList set
 				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list 초기화
 				
 				break;
@@ -118,8 +113,8 @@ public class Endpoint {
 		case Message.NOTI_ADD_PARTICIPANT: // 그룹 내 다른 User 들어올 때 마다 Message 받고 UI 갱신
 
 			System.out.println("add participant confirm");
-
-			ui.getMainScene().setAddedParticipantName(message.get(Message.ADDED_PARTICIPANT_NAME)); // 서버에서 받은 userList name set
+			
+			user.getGroup().getUserList().add(new User(message.get(Message.ADDED_PARTICIPANT_NAME)));
 			ui.getMainScene().setAddGroupParticipantFlag(true); // UI list 추가
 
 			break;
