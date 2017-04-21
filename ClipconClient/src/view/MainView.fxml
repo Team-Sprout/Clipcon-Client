@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.MainScene">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="340.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.MainScene">
    <children>
       <TabPane layoutY="-1.0" prefHeight="540.0" prefWidth="350.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -20,7 +20,6 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="464.0" prefWidth="350.0">
                      <children>
-                        <Separator layoutX="337.0" layoutY="-2.0" orientation="VERTICAL" prefHeight="510.0" prefWidth="27.0" />
                         <Separator layoutX="-1.0" layoutY="120.0" prefHeight="14.0" prefWidth="349.0" />
                         <Text fill="#673ab7" layoutX="11.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Group Information" />
                         <Text fill="#673ab7" layoutX="10.0" layoutY="147.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Members" />
@@ -46,6 +45,13 @@
           <Tab text="History">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+             	 <children>
+             	 	<TableView fx:id="historyTable" layoutX="10.0" layoutY="10.0" prefHeight="500.0" prefWidth="327.0">
+                    	<columns>
+                        	<TableColumn fx:id="contentsColumn" prefWidth="325.0" text="Content" />
+                    	</columns>
+                    </TableView>
+             	 </children>
             </content>
           </Tab>
         </tabs>

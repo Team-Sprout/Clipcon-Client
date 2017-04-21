@@ -9,15 +9,13 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import contents.Contents;
-import contents.FileContents;
-import contents.ImageContents;
-import contents.StringContents;
 
 public class ClipboardController {
 	private static Clipboard systemClipboard; // 자신의 시스템 클립보드
-	private static Contents contents;
+	//private static Contents contents;
 	private static int type; // 데이터 타입
 	
 	/**
@@ -25,12 +23,12 @@ public class ClipboardController {
 	 * 
 	 * @return settingObject 서버에 전송할 Contents 객체
 	 */
-	public static String readClipboard() {
+	public static Object readClipboard() {
 		Transferable t = getSystmeClipboardContets();
 		setDataFlavor(t);
-		String clipboardInfo = extractDataFromContents(t);
+		Object clipboardData = extractDataFromTransferable(t);
 
-		return clipboardInfo;
+		return clipboardData;
 	}
 	
 	/**
@@ -78,43 +76,53 @@ public class ClipboardController {
 	 *            클립보드의 Transferable 객체
 	 * @return sendObject 실제 전송 객체(Contents 타입) 리턴
 	 */
-	private static String extractDataFromContents(Transferable t) {
+	private static Object extractDataFromTransferable(Transferable t) {
 		try {
-			String extractString = null;
+			Object extractData = null;
 
 			// 클립보드의 내용을 추출
 			if (type == Contents.STRING_TYPE) {
 				System.out.println("[ClipboardManager]클립보드 내용 타입: 문자열");
-				contents = new StringContents((String) t.getTransferData(DataFlavor.stringFlavor));
-				extractString = contents.toString();
+				//contents = new StringContents((String) t.getTransferData(DataFlavor.stringFlavor));
+				//extractString = contents.toString();
+				extractData = (String) t.getTransferData(DataFlavor.stringFlavor);
 				
 			} else if (type == Contents.IMAGE_TYPE) {
 				System.out.println("[ClipboardManager]클립보드 내용 타입: 이미지");
-				contents = new ImageContents((Image) t.getTransferData(DataFlavor.imageFlavor));
-				extractString = contents.toString();
+				//contents = new ImageContents((Image) t.getTransferData(DataFlavor.imageFlavor));
+				//extractString = contents.toString();
+				extractData = (Image) t.getTransferData(DataFlavor.imageFlavor);
 				
 			} else if (type == Contents.FILE_TYPE) {
 				String [] filePath = getFilePathInSystemClipboard().split(", ");
-
-				if (filePath.length == 1) {
-					contents = new FileContents(filePath[0]);
-					extractString = contents.toString();
-				} else {
-					System.out.println("[ClipboardManager]클립보드 내용 타입: 여러개의 파일 또는 디렉터리");
-					extractString = "";
-
-					Contents [] contentsList = new FileContents [filePath.length];
-					
-					for (int i = 0; i < filePath.length; i++) {
-						contentsList[i] = new FileContents(filePath[i]);
-						extractString += contentsList[i].toString() + "\n";
-					}
+				
+				ArrayList<String> filePathList = new ArrayList<String>();
+				
+				for(int i=0; i<filePath.length; i++) {
+					filePathList.add(filePath[i]);
 				}
+				
+				extractData = filePathList;
+
+//				if (filePathList.size() == 1) {
+//					contents = new FileContents(filePath[0]);
+//					extractString = contents.toString();
+//				} else {
+//					System.out.println("[ClipboardManager]클립보드 내용 타입: 여러개의 파일 또는 디렉터리");
+//					extractString = "";
+//
+//					Contents [] contentsList = new FileContents [filePath.length];
+//					
+//					for (int i = 0; i < filePath.length; i++) {
+//						contentsList[i] = new FileContents(filePath[i]);
+//						extractString += contentsList[i].toString() + "\n";
+//					}
+//				}
 			} else {
 				System.out.println("[ClipboardManager]클립보드 내용 타입: 문자열, 이미지, 파일, 디렉터리가 아님");
 			}
 
-			return extractString;
+			return extractData;
 
 		} catch (UnsupportedFlavorException e) {
 			e.printStackTrace();
