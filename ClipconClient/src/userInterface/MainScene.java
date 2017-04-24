@@ -31,54 +31,59 @@ import model.User;
 
 @Getter
 @Setter
-public class MainScene implements Initializable{
-	
+public class MainScene implements Initializable {
+
 	private UserInterface ui = UserInterface.getIntance();
-	
-	@FXML private TableView<User> groupParticipantTable;
-	@FXML private TableColumn<User, String> groupPartiNicknameColumn;
-	
-	@FXML private Button exitBtn;
-	@FXML private Button groupKeyCopyBtn;
-	
-	//@FXML private TextField groupNameTF;
-	//@FXML private TextField groupKeyTF;
-	
-	@FXML private Text groupKeyText;
-	
+
+	@FXML
+	private TableView<User> groupParticipantTable;
+	@FXML
+	private TableColumn<User, String> groupPartiNicknameColumn;
+
+	@FXML
+	private Button exitBtn;
+	@FXML
+	private Button groupKeyCopyBtn;
+
+	// @FXML private TextField groupNameTF;
+	// @FXML private TextField groupKeyTF;
+
+	@FXML
+	private Text groupKeyText;
+
 	private static ActionEvent event;
-	
+
 	private ObservableList<User> groupParticipantList;
-	
+
 	/**
 	 * flag variable for checking it is initialize (success about login)
 	 */
 	private boolean initGroupParticipantFlag;
 	private boolean addGroupParticipantFlag;
-	
+
 	private String groupPK;
 	private List<User> userList;
 	private String addedParticipantName;
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setMainScene(this);
 		initGroupParticipantFlag = false;
 		addGroupParticipantFlag = false;
-		
+
 		System.out.println("MainScene initialize");
-		
+
 		groupParticipantList = FXCollections.observableArrayList();
-		
-//		groupParticipantList.add(new User("doy"));
-//		groupParticipantList.add(new User("doy2"));
-//		groupParticipantList.add(new User("doy3"));
-//		groupParticipantList.add(new User("doy4"));
-//		
-//		groupParticipantTable.setItems(groupParticipantList);
-//		
-//		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
-		
+
+		// groupParticipantList.add(new User("doy"));
+		// groupParticipantList.add(new User("doy2"));
+		// groupParticipantList.add(new User("doy3"));
+		// groupParticipantList.add(new User("doy4"));
+		//
+		// groupParticipantTable.setItems(groupParticipantList);
+		//
+		// groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
+
 		// run scheduler for checking
 		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -102,54 +107,54 @@ public class MainScene implements Initializable{
 
 			}
 		}, 50, 50, TimeUnit.MILLISECONDS);
-		
-		exitBtn.setOnAction(new EventHandler<ActionEvent>(){
+
+		exitBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				MainScene.event = event;
-				
+
 				System.out.println("그룹에서 나갑니다.");
-				
+
 				showStartingView();
 			}
 		});
-		
-		groupKeyCopyBtn.setOnAction(new EventHandler<ActionEvent>(){
+
+		groupKeyCopyBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				ClipboardController.writeClipboard(groupPK, Contents.STRING_TYPE);
 			}
 		});
 	}
-	
+
 	public void initGroupParticipantList() {
 		groupKeyText.setText(groupPK);
-		
-		for(int i=0; i<userList.size(); i++) {
+
+		for (int i = 0; i < userList.size(); i++) {
 			groupParticipantList.add(userList.get(i));
 		}
-		
+
 		groupParticipantTable.setItems(groupParticipantList);
 		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
 	}
-	
+
 	public void addGroupParticipantList() {
 		groupParticipantList.add(new User(addedParticipantName));
-		
+
 		groupParticipantTable.setItems(groupParticipantList);
 		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
 	}
-	
+
 	public void showStartingView() {
-		try {				
+		try {
 			Parent goBack = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
 			Scene scene = new Scene(goBack);
 			Stage backStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			
+
 			backStage.hide();
 			backStage.setScene(scene);
 			backStage.show();
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
