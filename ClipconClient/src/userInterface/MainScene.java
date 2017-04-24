@@ -35,43 +35,48 @@ import model.User;
 
 @Getter
 @Setter
-public class MainScene implements Initializable{
-	
+public class MainScene implements Initializable {
+
 	private UserInterface ui = UserInterface.getIntance();
-	
-	@FXML private TableView<User> groupParticipantTable;
-	@FXML private TableColumn<User, String> groupPartiNicknameColumn;
-	
-	@FXML private Button exitBtn;
-	@FXML private Button groupKeyCopyBtn;
-	
-	//@FXML private TextField groupNameTF;
-	//@FXML private TextField groupKeyTF;
-	
-	@FXML private Text groupKeyText;
-	
+
+	@FXML
+	private TableView<User> groupParticipantTable;
+	@FXML
+	private TableColumn<User, String> groupPartiNicknameColumn;
+
+	@FXML
+	private Button exitBtn;
+	@FXML
+	private Button groupKeyCopyBtn;
+
+	// @FXML private TextField groupNameTF;
+	// @FXML private TextField groupKeyTF;
+
+	@FXML
+	private Text groupKeyText;
+
 	private static ActionEvent event;
-	
+
 	private Endpoint endpoint = Endpoint.getIntance();
-	
+
 	private ObservableList<User> groupParticipantList;
-	
+
 	/**
 	 * flag variable for checking it is initialize (success about login)
 	 */
 	private boolean initGroupParticipantFlag;
 	private boolean addGroupParticipantFlag;
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setMainScene(this);
 		initGroupParticipantFlag = false;
 		addGroupParticipantFlag = false;
-		
+
 		System.out.println("MainScene initialize");
-		
+
 		groupParticipantList = FXCollections.observableArrayList();
-		
+
 		// run scheduler for checking
 		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -95,46 +100,39 @@ public class MainScene implements Initializable{
 
 			}
 		}, 50, 50, TimeUnit.MILLISECONDS);
-		
-		exitBtn.setOnAction(new EventHandler<ActionEvent>(){
+
+		exitBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				MainScene.event = event;
-				
-				System.out.println("±◊∑Ïø°º≠ ≥™∞©¥œ¥Ÿ.");
-				
-				// º≠πˆø° REQUEST_REQUEST_CREATE_GROUP Messgae ∫∏≥ø
-				Message createGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
-				try {
-					endpoint.sendMessage(createGroupMsg);
-				} catch (IOException | EncodeException e) {
-					e.printStackTrace();
-				}
-				
-				//showStartingView();
+
+				System.out.println("Í∑∏Î£πÏóêÏÑú ÎÇòÍ∞ëÎãàÎã§.");
+
 			}
 		});
-		
-		groupKeyCopyBtn.setOnAction(new EventHandler<ActionEvent>(){
+
+		groupKeyCopyBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				ClipboardController.writeClipboard(Endpoint.user.getGroup().getPrimaryKey(), Contents.STRING_TYPE);
 			}
 		});
 	}
-	
+
 	public void initGroupParticipantList() {
+
 		groupKeyText.setText(Endpoint.user.getGroup().getPrimaryKey());
 		
 		for(int i=0; i<Endpoint.user.getGroup().getUserList().size(); i++) {
 			groupParticipantList.add(Endpoint.user.getGroup().getUserList().get(i));
 		}
-		
+
 		groupParticipantTable.setItems(groupParticipantList);
 		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
 	}
-	
+
 	public void addGroupParticipantList() {
+
 		int index = Endpoint.user.getGroup().getUserList().size() - 1;
 		User addedParticipantUser = Endpoint.user.getGroup().getUserList().get(index);
 		groupParticipantList.add(addedParticipantUser);
@@ -142,17 +140,17 @@ public class MainScene implements Initializable{
 		groupParticipantTable.setItems(groupParticipantList);
 		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
 	}
-	
+
 	public void showStartingView() {
-		try {				
+		try {
 			Parent goBack = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
 			Scene scene = new Scene(goBack);
 			Stage backStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			
+
 			backStage.hide();
 			backStage.setScene(scene);
 			backStage.show();
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
