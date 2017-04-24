@@ -1,14 +1,17 @@
 package userInterface;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.websocket.EncodeException;
+
 import contents.Contents;
 import controller.ClipboardController;
+import controller.Endpoint;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,6 +30,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
+import model.Message;
 import model.User;
 
 @Getter
@@ -53,6 +57,8 @@ public class MainScene implements Initializable {
 
 	private static ActionEvent event;
 
+	private Endpoint endpoint = Endpoint.getIntance();
+
 	private ObservableList<User> groupParticipantList;
 
 	/**
@@ -60,10 +66,6 @@ public class MainScene implements Initializable {
 	 */
 	private boolean initGroupParticipantFlag;
 	private boolean addGroupParticipantFlag;
-
-	private String groupPK;
-	private List<User> userList;
-	private String addedParticipantName;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -74,15 +76,6 @@ public class MainScene implements Initializable {
 		System.out.println("MainScene initialize");
 
 		groupParticipantList = FXCollections.observableArrayList();
-
-		// groupParticipantList.add(new User("doy"));
-		// groupParticipantList.add(new User("doy2"));
-		// groupParticipantList.add(new User("doy3"));
-		// groupParticipantList.add(new User("doy4"));
-		//
-		// groupParticipantTable.setItems(groupParticipantList);
-		//
-		// groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
 
 		// run scheduler for checking
 		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -113,25 +106,25 @@ public class MainScene implements Initializable {
 			public void handle(ActionEvent event) {
 				MainScene.event = event;
 
-				System.out.println("±◊∑Ïø°º≠ ≥™∞©¥œ¥Ÿ.");
+				System.out.println("Í∑∏Î£πÏóêÏÑú ÎÇòÍ∞ëÎãàÎã§.");
 
-				showStartingView();
 			}
 		});
 
 		groupKeyCopyBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				ClipboardController.writeClipboard(groupPK, Contents.STRING_TYPE);
+				ClipboardController.writeClipboard(Endpoint.user.getGroup().getPrimaryKey(), Contents.STRING_TYPE);
 			}
 		});
 	}
 
 	public void initGroupParticipantList() {
-		groupKeyText.setText(groupPK);
 
-		for (int i = 0; i < userList.size(); i++) {
-			groupParticipantList.add(userList.get(i));
+		groupKeyText.setText(Endpoint.user.getGroup().getPrimaryKey());
+		
+		for(int i=0; i<Endpoint.user.getGroup().getUserList().size(); i++) {
+			groupParticipantList.add(Endpoint.user.getGroup().getUserList().get(i));
 		}
 
 		groupParticipantTable.setItems(groupParticipantList);
@@ -139,8 +132,11 @@ public class MainScene implements Initializable {
 	}
 
 	public void addGroupParticipantList() {
-		groupParticipantList.add(new User(addedParticipantName));
 
+		int index = Endpoint.user.getGroup().getUserList().size() - 1;
+		User addedParticipantUser = Endpoint.user.getGroup().getUserList().get(index);
+		groupParticipantList.add(addedParticipantUser);
+		
 		groupParticipantTable.setItems(groupParticipantList);
 		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
 	}

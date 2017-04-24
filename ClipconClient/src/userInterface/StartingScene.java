@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.websocket.EncodeException;
 
+import contentsTransfer.contentsUpload;
 import controller.ClipboardController;
 import controller.Endpoint;
 import javafx.application.Platform;
@@ -45,10 +46,13 @@ public class StartingScene implements Initializable {
 	 */
 	private boolean createGroupSuccessFlag;
 	
+	private contentsUpload contentsUpload;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setStartingScene(this);
 		createGroupSuccessFlag = false;
+		contentsUpload = new contentsUpload();
 		
 		createBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
@@ -144,7 +148,8 @@ public class StartingScene implements Initializable {
         hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
             public void onGlobalHotkeysPressed() {
                 System.out.println("CTRL + ALT + H was pressed");
-                System.out.println(ClipboardController.readClipboard());
+                //System.out.println(ClipboardController.readClipboard());
+                contentsUpload.upload();
             }
         });
 	}
