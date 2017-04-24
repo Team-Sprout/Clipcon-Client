@@ -32,7 +32,7 @@ public class HttpRequest {
 		this.requestType = requestType;
 		json.put(TYPE_OF_REQUEST, requestType);
 	}
-
+	
 	public int send() {
 		try {
 			/* request ¼Û½Å ºÎ */
@@ -92,35 +92,6 @@ public class HttpRequest {
 		json.put(key, value);
 	}
 
-	/* here is example code to send message to server. */
 	public static void main(String[] args) {
-		// create HttpRequest and insert 'request type'.
-		// for example, [sign in], [sign up], [upload file]...
-		HttpRequest msg = new HttpRequest(HttpRequest.REQUEST_TEST);
-		// add property as you want.
-		msg.addProperty("id", "ttjs2008");
-		msg.addProperty("password", "1234");
-		msg.addProperty("filesize", "1024000");
-		msg.addProperty("filename", "picture.jpg");
-		// and send. this method return a server's http response code.
-		int status = msg.send();
-
-		// you can handle the response like this.
-		switch (status) {
-		case HttpURLConnection.HTTP_OK:
-			break;
-		default:
-			break;
-		}
-
-		// or handled response code like this.
-		if (status == HttpURLConnection.HTTP_OK) {
-			// normal
-		} else {
-			// exception
-		}
-		// and you also get response message from server like this.
-		String responseMsg = msg.getResponseMessage("error"); // parameter is type of response
-		System.out.println(status + " " + responseMsg);
 	}
 }

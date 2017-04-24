@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.websocket.EncodeException;
 
-import contentsTransfer.contentsUpload;
+import contentsTransfer.ContentsUpload;
 import controller.ClipboardController;
 import controller.Endpoint;
 import javafx.application.Platform;
@@ -46,13 +46,13 @@ public class StartingScene implements Initializable {
 	 */
 	private boolean createGroupSuccessFlag;
 	
-	private contentsUpload contentsUpload;
+	private ContentsUpload contentsUpload;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setStartingScene(this);
 		createGroupSuccessFlag = false;
-		contentsUpload = new contentsUpload();
+		contentsUpload = new ContentsUpload();
 		
 		createBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
