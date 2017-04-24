@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import javax.websocket.EncodeException;
 
 import contents.Contents;
+import contentsTransfer.ContentsUpload;
 import controller.ClipboardController;
 import controller.Endpoint;
 import javafx.application.Platform;
@@ -60,7 +61,7 @@ public class MainScene implements Initializable {
 	private Endpoint endpoint = Endpoint.getIntance();
 
 	private ObservableList<User> groupParticipantList;
-
+	private ContentsUpload contentsUpload; // delf: for test
 	/**
 	 * flag variable for checking it is initialize (success about login)
 	 */
@@ -73,6 +74,7 @@ public class MainScene implements Initializable {
 		initGroupParticipantFlag = false;
 		addGroupParticipantFlag = false;
 
+		contentsUpload = ui.getStartingScene().getContentsUpload();// delf: for test
 		System.out.println("MainScene initialize");
 
 		groupParticipantList = FXCollections.observableArrayList();
@@ -105,9 +107,8 @@ public class MainScene implements Initializable {
 			@Override
 			public void handle(ActionEvent event) {
 				MainScene.event = event;
-
-				System.out.println("ê·¸ë£¹ì—ì„œ ë‚˜ê°‘ë‹ˆë‹¤.");
-
+				contentsUpload.upload();
+				System.out.println("±×·ì ³ª°¡±â Å¬¸¯");
 			}
 		});
 
@@ -122,8 +123,8 @@ public class MainScene implements Initializable {
 	public void initGroupParticipantList() {
 
 		groupKeyText.setText(Endpoint.user.getGroup().getPrimaryKey());
-		
-		for(int i=0; i<Endpoint.user.getGroup().getUserList().size(); i++) {
+
+		for (int i = 0; i < Endpoint.user.getGroup().getUserList().size(); i++) {
 			groupParticipantList.add(Endpoint.user.getGroup().getUserList().get(i));
 		}
 
@@ -136,7 +137,7 @@ public class MainScene implements Initializable {
 		int index = Endpoint.user.getGroup().getUserList().size() - 1;
 		User addedParticipantUser = Endpoint.user.getGroup().getUserList().get(index);
 		groupParticipantList.add(addedParticipantUser);
-		
+
 		groupParticipantTable.setItems(groupParticipantList);
 		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
 	}
