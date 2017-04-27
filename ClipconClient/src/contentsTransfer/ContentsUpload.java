@@ -7,9 +7,6 @@ import controller.Endpoint;
 
 public class ContentsUpload {
 	public static UploadData uploader;
-	
-	// test git commit and push in branch
-	public String heejeongTest; 
 
 	public void upload() {
 		uploader = new UploadData("delf", Endpoint.user.getGroup().getPrimaryKey());
