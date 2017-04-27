@@ -1,15 +1,16 @@
 package userInterface;
 
-import java.io.IOException;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.websocket.EncodeException;
-
-import contents.Contents;
+import contentsTransfer.DownloadData;
+import contentsTransfer.contentsUpload;
 import controller.ClipboardController;
 import controller.Endpoint;
 import javafx.application.Platform;
@@ -30,7 +31,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
-import model.Message;
+import model.Contents;
+import model.History;
 import model.User;
 
 @Getter
@@ -39,41 +41,31 @@ public class MainScene implements Initializable {
 
 	private UserInterface ui = UserInterface.getIntance();
 
-	@FXML
-	private TableView<User> groupParticipantTable;
-	@FXML
-	private TableColumn<User, String> groupPartiNicknameColumn;
-
-	@FXML
-	private Button exitBtn;
-	@FXML
-	private Button groupKeyCopyBtn;
-
-	// @FXML private TextField groupNameTF;
-	// @FXML private TextField groupKeyTF;
-
-	@FXML
-	private Text groupKeyText;
+	@FXML private TableView<User> groupParticipantTable;
+	@FXML private TableColumn<User, String> groupPartiNicknameColumn;
+	@FXML private Button exitBtn, groupKeyCopyBtn;
+	@FXML private Text groupKeyText;
 
 	private static ActionEvent event;
-
 	private Endpoint endpoint = Endpoint.getIntance();
 
-	private ObservableList<User> groupParticipantList;
-
-	/**
-	 * flag variable for checking it is initialize (success about login)
-	 */
 	private boolean initGroupParticipantFlag;
 	private boolean addGroupParticipantFlag;
+	
+	private ObservableList<User> groupParticipantList;
+	private contentsUpload contentsUpload;
+	
+	// download test
+	private DownloadData downloader = new DownloadData("gmlwjd9405@naver.com", "doyyyy");
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setMainScene(this);
 		initGroupParticipantFlag = false;
 		addGroupParticipantFlag = false;
-
-		System.out.println("MainScene initialize");
+		
+		contentsUpload = new contentsUpload();
+		startHookProcess();
 
 		groupParticipantList = FXCollections.observableArrayList();
 
@@ -105,8 +97,21 @@ public class MainScene implements Initializable {
 			@Override
 			public void handle(ActionEvent event) {
 				MainScene.event = event;
-
-				System.out.println("Í∑∏Î£πÏóêÏÑú ÎÇòÍ∞ëÎãàÎã§.");
+				
+				// test
+				testDownload(); 
+				
+				// º≠πˆø° REQUEST_EXIT_GROUP Messgae ∫∏≥ø
+//				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
+//				try {
+//					if (endpoint == null) {
+//						System.out.println("debuger_delf: endpoint is null");
+//					}
+//					endpoint = Endpoint.getIntance();
+//					endpoint.sendMessage(exitGroupMsg);
+//				} catch (IOException | EncodeException e) {
+//					e.printStackTrace();
+//				}
 
 			}
 		});
@@ -114,7 +119,7 @@ public class MainScene implements Initializable {
 		groupKeyCopyBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				ClipboardController.writeClipboard(Endpoint.user.getGroup().getPrimaryKey(), Contents.STRING_TYPE);
+				ClipboardController.writeClipboard(new StringSelection(Endpoint.user.getGroup().getPrimaryKey()));
 			}
 		});
 	}
@@ -152,6 +157,75 @@ public class MainScene implements Initializable {
 			backStage.show();
 
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void startHookProcess() {
+		hookManager.GlobalKeyboardHook hook = new hookManager.GlobalKeyboardHook();
+		int vitrualKey = KeyEvent.VK_H;
+		boolean CTRL_Key = true;
+		boolean ALT_Key = true;
+		boolean SHIFT_Key = false;
+		boolean WIN_Key = false;
+
+		hook.setHotKey(vitrualKey, ALT_Key, CTRL_Key, SHIFT_Key, WIN_Key);
+		hook.startHook();
+		// waiting for the event
+		hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
+			public void onGlobalHotkeysPressed() {
+				System.out.println("CTRL + ALT + H was pressed");
+				contentsUpload.upload();
+			}
+		});
+	}
+	
+	// download test
+	public void testDownload() {
+		/* test∏¶ ¿ß«— setting (ø¯∑°¥¬ æÀ∏≤¿ª πﬁæ“¿ª ∂ß ºº∆√) */
+		Contents content1 = new Contents();
+		content1.setContentsPKName("1");
+		content1.setContentsSize(400);
+		content1.setContentsType(Contents.TYPE_STRING);
+		content1.setContentsValue("");
+		content1.setUploadTime("");
+		content1.setUploadUserName("testHee");
+
+		// Contents content1 = new Contents("1");
+		// content1.setContentsSize(10000);
+		// content1.setContentsType(Contents.TYPE_IMAGE);
+		// content1.setFileOriginName("");
+		// content1.setUploadTime("");
+		// content1.setUploadUserName("testHee");
+
+		Contents content2 = new Contents();
+		content2.setContentsPKName("2");
+		content2.setContentsSize(80451275);
+		content2.setContentsType(Contents.TYPE_FILE);
+		content2.setContentsValue("taeyeon.mp3");
+		content2.setUploadTime("");
+		content2.setUploadUserName("testHee");
+
+		Contents content3 = new Contents();
+		content3.setContentsPKName("3");
+		content3.setContentsSize(387);
+		content3.setContentsType(Contents.TYPE_FILE);
+		content3.setContentsValue("bbbb.jpeg");
+		content3.setUploadTime("");
+		content3.setUploadUserName("testHee");
+
+		// test) ≥™¿« History
+		History myhistory = new History();
+		myhistory.addContents(content1);
+		myhistory.addContents(content2);
+		myhistory.addContents(content3);
+
+		// ø‰√ª«“ µ•¿Ã≈Õ¿« ∞Ì¿Ø≈∞ ∞™
+		String downloadDataPK = "1";
+
+		try {
+			downloader.requestDataDownload(downloadDataPK, myhistory);
+		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 	}

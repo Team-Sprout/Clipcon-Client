@@ -12,7 +12,7 @@ import java.util.List;
  * This program demonstrates a usage of the MultipartUtility class.
  */
 public class UploadData {
-   public final static String SERVER_URL = "http://localhost:8080/TomcatServer";
+   public final static String SERVER_URL = "http://182.172.16.118:8080/websocketServerModule";
    public final static String SERVER_SERVLET = "/UploadServlet";
    private String charset = "UTF-8";
    

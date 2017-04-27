@@ -15,7 +15,7 @@ public class ImageContents extends Contents {
 	private int contentsHeight;
 	
 	public ImageContents(Image contents) {
-		this.type = Contents.IMAGE_TYPE;
+		//this.type = Contents.IMAGE_TYPE;
 		this.contents = contents;
 		this.contentsWidth = contents.getWidth(null);
 		this.contentsHeight = contents.getHeight(null);

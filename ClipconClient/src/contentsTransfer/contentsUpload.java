@@ -13,7 +13,9 @@ public class contentsUpload {
 		 
 		 uploader = new UploadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 		 
-		 Object clipboardData = ClipboardController.getSystmeClipboardContets();
+		 Object clipboardData = ClipboardController.readClipboard();
+		 
+		 System.out.println("cliboardData toString() : " + clipboardData.toString());
 		 
 		 if (clipboardData instanceof String) {
 			 System.out.println("instanceof String");

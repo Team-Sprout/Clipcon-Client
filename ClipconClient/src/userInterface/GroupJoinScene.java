@@ -30,16 +30,12 @@ public class GroupJoinScene implements Initializable{
 
 	@FXML private TextField groupKey;
 	@FXML private Button confirmBtn;
-
+	
+	private Stage stage;
 	private Endpoint endpoint = Endpoint.getIntance();
-
-	/**
-	 * flag variable for checking it is initialize (success about login)
-	 */
+	
 	private boolean joinGroupSuccessFlag;
 
-	private Stage stage;
-	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setGroupJoinScene(this);

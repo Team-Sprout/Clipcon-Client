@@ -1,6 +1,5 @@
 package userInterface;
 
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -10,8 +9,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.websocket.EncodeException;
 
-import contentsTransfer.contentsUpload;
-import controller.ClipboardController;
 import controller.Endpoint;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -31,46 +28,41 @@ import model.Message;
 @Getter
 @Setter
 public class StartingScene implements Initializable {
-	
+
 	private UserInterface ui = UserInterface.getIntance();
-	
-	@FXML private Button createBtn;
-	@FXML private Button joinBtn;
-	
+
+	@FXML private Button createBtn, joinBtn;
+
 	private static ActionEvent event;
-	
 	private Endpoint endpoint = Endpoint.getIntance();
-	
-	/**
-	 * flag variable for checking it is initialize (success about login)
-	 */
+
 	private boolean createGroupSuccessFlag;
-	
-	private contentsUpload contentsUpload;
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setStartingScene(this);
 		createGroupSuccessFlag = false;
-		contentsUpload = new contentsUpload();
-		
-		createBtn.setOnAction(new EventHandler<ActionEvent>(){
+
+		createBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				StartingScene.event = event;
-				
-				System.out.println("그룹생성");
-				
-				//showMainView();//////////////////////////////////////임시
-				
+
 				// 서버에 REQUEST_REQUEST_CREATE_GROUP Messgae 보냄
 				Message createGroupMsg = new Message().setType(Message.REQUEST_CREATE_GROUP);
 				try {
+					if (endpoint == null) {
+						System.out.println("debuger_delf: endpoint is null");
+					}
+					if (createGroupMsg == null) {
+						System.out.println("debuger_delf: createGroupMsg is null");
+					}
+					endpoint = Endpoint.getIntance();
 					endpoint.sendMessage(createGroupMsg);
 				} catch (IOException | EncodeException e) {
 					e.printStackTrace();
 				}
-				
+
 				// run scheduler for checking
 				final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -93,29 +85,27 @@ public class StartingScene implements Initializable {
 				}, 50, 50, TimeUnit.MILLISECONDS);
 			}
 		});
-		
-		joinBtn.setOnAction(new EventHandler<ActionEvent>(){
+
+		joinBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				StartingScene.event = event;
-				
+
 				showGroupJoinView();
 			}
 		});
 	}
-	
+
 	public void showMainView() {
-		try {				
+		try {
 			Parent toMain = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
 			Scene mainScene = new Scene(toMain);
 			Stage mainStage = (Stage) ((Node) StartingScene.event.getSource()).getScene().getWindow();
-			
+
 			mainStage.hide();
 			mainStage.setScene(mainScene);
 			mainStage.show();
-			
-			startHookProcess(); // 키보드 후킹 시작
-					
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -133,24 +123,5 @@ public class StartingScene implements Initializable {
 			e.printStackTrace();
 		}
 	}
-	
-	public void startHookProcess() {
-		hookManager.GlobalKeyboardHook hook = new hookManager.GlobalKeyboardHook();
-		int vitrualKey = KeyEvent.VK_H;
-        boolean CTRL_Key = true;
-        boolean ALT_Key = true;
-        boolean SHIFT_Key = false;
-        boolean WIN_Key = false;
-		
-        hook.setHotKey(vitrualKey, ALT_Key, CTRL_Key, SHIFT_Key, WIN_Key);
-        hook.startHook();
-        // waiting for the event
-        hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
-            public void onGlobalHotkeysPressed() {
-                System.out.println("CTRL + ALT + H was pressed");
-                //System.out.println(ClipboardController.readClipboard());
-                contentsUpload.upload();
-            }
-        });
-	}
+
 }
