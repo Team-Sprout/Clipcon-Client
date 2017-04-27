@@ -9,8 +9,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import contentsTransfer.ContentsUpload;
 import contentsTransfer.DownloadData;
-import contentsTransfer.contentsUpload;
 import controller.ClipboardController;
 import controller.Endpoint;
 import javafx.application.Platform;
@@ -41,20 +41,24 @@ public class MainScene implements Initializable {
 
 	private UserInterface ui = UserInterface.getIntance();
 
-	@FXML private TableView<User> groupParticipantTable;
-	@FXML private TableColumn<User, String> groupPartiNicknameColumn;
-	@FXML private Button exitBtn, groupKeyCopyBtn;
-	@FXML private Text groupKeyText;
+	@FXML
+	private TableView<User> groupParticipantTable;
+	@FXML
+	private TableColumn<User, String> groupPartiNicknameColumn;
+	@FXML
+	private Button exitBtn, groupKeyCopyBtn;
+	@FXML
+	private Text groupKeyText;
 
 	private static ActionEvent event;
 	private Endpoint endpoint = Endpoint.getIntance();
 
 	private boolean initGroupParticipantFlag;
 	private boolean addGroupParticipantFlag;
-	
+
 	private ObservableList<User> groupParticipantList;
-	private contentsUpload contentsUpload;
-	
+	private ContentsUpload contentsUpload;
+
 	// download test
 	private DownloadData downloader = new DownloadData("gmlwjd9405@naver.com", "doyyyy");
 
@@ -63,8 +67,8 @@ public class MainScene implements Initializable {
 		ui.setMainScene(this);
 		initGroupParticipantFlag = false;
 		addGroupParticipantFlag = false;
-		
-		contentsUpload = new contentsUpload();
+
+		contentsUpload = new ContentsUpload();
 		startHookProcess();
 
 		groupParticipantList = FXCollections.observableArrayList();
@@ -97,22 +101,22 @@ public class MainScene implements Initializable {
 			@Override
 			public void handle(ActionEvent event) {
 				MainScene.event = event;
-				
-				// test
-				testDownload(); 
-				
-				// 서버에 REQUEST_EXIT_GROUP Messgae 보냄
-//				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
-//				try {
-//					if (endpoint == null) {
-//						System.out.println("debuger_delf: endpoint is null");
-//					}
-//					endpoint = Endpoint.getIntance();
-//					endpoint.sendMessage(exitGroupMsg);
-//				} catch (IOException | EncodeException e) {
-//					e.printStackTrace();
-//				}
 
+				// test
+				testDownload();
+
+				// 서버에 REQUEST_EXIT_GROUP Messgae 보냄
+				// Message exitGroupMsg = new
+				// Message().setType(Message.REQUEST_EXIT_GROUP);
+				// try {
+				// if (endpoint == null) {
+				// System.out.println("debuger_delf: endpoint is null");
+				// }
+				// endpoint = Endpoint.getIntance();
+				// endpoint.sendMessage(exitGroupMsg);
+				// } catch (IOException | EncodeException e) {
+				// e.printStackTrace();
+				// }
 			}
 		});
 
@@ -127,8 +131,8 @@ public class MainScene implements Initializable {
 	public void initGroupParticipantList() {
 
 		groupKeyText.setText(Endpoint.user.getGroup().getPrimaryKey());
-		
-		for(int i=0; i<Endpoint.user.getGroup().getUserList().size(); i++) {
+
+		for (int i = 0; i < Endpoint.user.getGroup().getUserList().size(); i++) {
 			groupParticipantList.add(Endpoint.user.getGroup().getUserList().get(i));
 		}
 
@@ -141,7 +145,7 @@ public class MainScene implements Initializable {
 		int index = Endpoint.user.getGroup().getUserList().size() - 1;
 		User addedParticipantUser = Endpoint.user.getGroup().getUserList().get(index);
 		groupParticipantList.add(addedParticipantUser);
-		
+
 		groupParticipantTable.setItems(groupParticipantList);
 		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
 	}
@@ -160,7 +164,7 @@ public class MainScene implements Initializable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void startHookProcess() {
 		hookManager.GlobalKeyboardHook hook = new hookManager.GlobalKeyboardHook();
 		int vitrualKey = KeyEvent.VK_H;
@@ -179,7 +183,7 @@ public class MainScene implements Initializable {
 			}
 		});
 	}
-	
+
 	// download test
 	public void testDownload() {
 		/* test를 위한 setting (원래는 알림을 받았을 때 세팅) */

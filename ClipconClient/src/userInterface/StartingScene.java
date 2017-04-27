@@ -123,5 +123,4 @@ public class StartingScene implements Initializable {
 			e.printStackTrace();
 		}
 	}
-
 }
