@@ -7,6 +7,8 @@ import controller.Endpoint;
 
 public class ContentsUpload {
 	public static UploadData uploader;
+	
+	//testagain
 
 	public void upload() {
 		uploader = new UploadData("delf", Endpoint.user.getGroup().getPrimaryKey());
