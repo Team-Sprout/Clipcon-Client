@@ -1,0 +1,36 @@
+[33m167f2f9[m Merge pull request #8 from Delfie/test/request-reading
+[33mfc68bd0[m version to test request parameter reading speed.
+[33m38dcb0d[m Merge pull request #7 from Delfie/master
+[33m56b9b5b[m Merge branch 'master' into master
+[33mb41ae1c[m to synchronize branch
+[33m0626d02[m Merge pull request #6 from doooyeon/master
+[33m6079952[m add send exit group message to server.
+[33m7dbe42c[m Merge pull request #5 from doooyeon/master
+[33md9ea744[m merge data upload code (before upload test)
+[33me2abd02[m Merge branch 'master' of https://github.com/Capstone-Sprout/Clipcon-Client.git
+[33m6f4849f[m commit to merge
+[33m1879335[m Merge pull request #4 from doooyeon/master
+[33m0cca100[m Add FileTransferable and ImageTransferable Class in model.
+[33m98fa41b[m Merge pull request #3 from doooyeon/master
+[33m9e5f24c[m Revert "Revert "Switch javaFX scene what communicate with server and Add writeClipboard method in ClipboardC""
+[33mf5192c9[m Revert "Switch javaFX scene what communicate with server and Add writeClipboard method in ClipboardC"
+[33m6afef76[m Switch javaFX scene what communicate with server and Add writeClipboard method in ClipboardC
+[33m215b6d5[m Delete sign up, in scene and controller and Add group join scene and controller.
+[33m7f912ae[m commit for merge
+[33mf3a37fd[m Javafx scene change using thread and Add popup fxml.
+[33med419cf[m Merge branch 'master' of https://github.com/Capstone-Sprout/Clipcon-Client.git
+[33mf8d9f1b[m synchronize repository
+[33m2f93715[m Merge pull request #2 from doooyeon/master
+[33mdb54b03[m Add MessageParser class.
+[33m79e3a0a[m Merge pull request #1 from Delfie/master
+[33m4503c73[m modify Message class
+[33m4674bcf[m Try javaFx scene change and Add AdressBook class.
+[33md7fef1c[m Merge branch 'master' of https://github.com/Capstone-Sprout/Clipcon-Client.git
+[33m0a3b401[m commit to merge.
+[33m2a3832e[m complete create part of communication to server and client.
+[33md5d3099[m Change fx:controller class name.
+[33mf2e5db7[m Changed the Class name UIController to UIScene and add userInterface package and moved UIScene Classes, add the model User and Group classes, add EndPoint and Message Classes what communicate with server.
+[33mc5101ee[m merge with communication part to server
+[33meb0e5ce[m Change directory compression algorithm.
+[33m50a6676[m first commit
+[33mc7e9a9f[m Update .gitignore
