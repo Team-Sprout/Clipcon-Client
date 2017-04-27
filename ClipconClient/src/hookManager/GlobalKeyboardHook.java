@@ -80,8 +80,7 @@ public class GlobalKeyboardHook {
 	    private class DLLStateThread implements Runnable {
 	      
 	        public void run() {
-	            for(;;) {
-	            	//System.out.println("HHHOOOKKK");
+	            while(true) {
 	                boolean hotKeyPressed = checkHotKey();
 	                if (hotKeyPressed) {
 	                    // hot key was pressed, send the event to all listeners

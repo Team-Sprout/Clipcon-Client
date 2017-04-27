@@ -22,13 +22,13 @@ public class FileContents extends Contents {
 		this.contentsName = contents.getName();
 		if(contents.isFile()) {
 			System.out.println("[ClipboardManager]전송 객체의 타입: 파일");
-			this.type = Contents.FILE_TYPE;
+			//this.type = Contents.FILE_TYPE;
 			this.contentSize = contents.length();
 			//this.isDirectory = false;
 		}
 		else if(contents.isDirectory()) {
 			System.out.println("[ClipboardManager]전송 객체의 타입: 디렉터리");
-			this.type = Contents.DIRECTORY_TYPE;
+			//this.type = Contents.DIRECTORY_TYPE;
 			getDirectorySize(this.contents);
 			//this.isDirectory = true;
 			this.compress(); // 압축

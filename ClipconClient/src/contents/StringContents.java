@@ -12,7 +12,7 @@ public class StringContents extends Contents {
 	private int contentsLength;
 	
 	public StringContents(String contents) {
-		this.type = Contents.STRING_TYPE;
+		//this.type = Contents.STRING_TYPE;
 		this.contents = contents;
 		contentsLength = contents.length();
 	}

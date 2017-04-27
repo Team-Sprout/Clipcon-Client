@@ -1,16 +1,16 @@
 package userInterface;
 
-import java.io.IOException;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.websocket.EncodeException;
-
-import contents.Contents;
 import contentsTransfer.ContentsUpload;
+import contentsTransfer.DownloadData;
 import controller.ClipboardController;
 import controller.Endpoint;
 import javafx.application.Platform;
@@ -31,7 +31,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
-import model.Message;
+import model.Contents;
+import model.History;
 import model.User;
 
 @Getter
@@ -44,29 +45,22 @@ public class MainScene implements Initializable {
 	private TableView<User> groupParticipantTable;
 	@FXML
 	private TableColumn<User, String> groupPartiNicknameColumn;
-
 	@FXML
-	private Button exitBtn;
-	@FXML
-	private Button groupKeyCopyBtn;
-
-	// @FXML private TextField groupNameTF;
-	// @FXML private TextField groupKeyTF;
-
+	private Button exitBtn, groupKeyCopyBtn;
 	@FXML
 	private Text groupKeyText;
 
 	private static ActionEvent event;
-
 	private Endpoint endpoint = Endpoint.getIntance();
 
-	private ObservableList<User> groupParticipantList;
-	private ContentsUpload contentsUpload; // delf: for test
-	/**
-	 * flag variable for checking it is initialize (success about login)
-	 */
 	private boolean initGroupParticipantFlag;
 	private boolean addGroupParticipantFlag;
+
+	private ObservableList<User> groupParticipantList;
+	private ContentsUpload contentsUpload;
+
+	// download test
+	private DownloadData downloader = new DownloadData("gmlwjd9405@naver.com", "doyyyy");
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -74,8 +68,8 @@ public class MainScene implements Initializable {
 		initGroupParticipantFlag = false;
 		addGroupParticipantFlag = false;
 
-		contentsUpload = ui.getStartingScene().getContentsUpload();// delf: for test
-		System.out.println("MainScene initialize");
+		contentsUpload = new ContentsUpload();
+		startHookProcess();
 
 		groupParticipantList = FXCollections.observableArrayList();
 
@@ -107,15 +101,29 @@ public class MainScene implements Initializable {
 			@Override
 			public void handle(ActionEvent event) {
 				MainScene.event = event;
-				contentsUpload.upload();
-				System.out.println("그룹 나가기 클릭");
+
+				// test
+				testDownload();
+
+				// 서버에 REQUEST_EXIT_GROUP Messgae 보냄
+				// Message exitGroupMsg = new
+				// Message().setType(Message.REQUEST_EXIT_GROUP);
+				// try {
+				// if (endpoint == null) {
+				// System.out.println("debuger_delf: endpoint is null");
+				// }
+				// endpoint = Endpoint.getIntance();
+				// endpoint.sendMessage(exitGroupMsg);
+				// } catch (IOException | EncodeException e) {
+				// e.printStackTrace();
+				// }
 			}
 		});
 
 		groupKeyCopyBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				ClipboardController.writeClipboard(Endpoint.user.getGroup().getPrimaryKey(), Contents.STRING_TYPE);
+				ClipboardController.writeClipboard(new StringSelection(Endpoint.user.getGroup().getPrimaryKey()));
 			}
 		});
 	}
@@ -153,6 +161,75 @@ public class MainScene implements Initializable {
 			backStage.show();
 
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void startHookProcess() {
+		hookManager.GlobalKeyboardHook hook = new hookManager.GlobalKeyboardHook();
+		int vitrualKey = KeyEvent.VK_H;
+		boolean CTRL_Key = true;
+		boolean ALT_Key = true;
+		boolean SHIFT_Key = false;
+		boolean WIN_Key = false;
+
+		hook.setHotKey(vitrualKey, ALT_Key, CTRL_Key, SHIFT_Key, WIN_Key);
+		hook.startHook();
+		// waiting for the event
+		hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
+			public void onGlobalHotkeysPressed() {
+				System.out.println("CTRL + ALT + H was pressed");
+				contentsUpload.upload();
+			}
+		});
+	}
+
+	// download test
+	public void testDownload() {
+		/* test를 위한 setting (원래는 알림을 받았을 때 세팅) */
+		Contents content1 = new Contents();
+		content1.setContentsPKName("1");
+		content1.setContentsSize(400);
+		content1.setContentsType(Contents.TYPE_STRING);
+		content1.setContentsValue("");
+		content1.setUploadTime("");
+		content1.setUploadUserName("testHee");
+
+		// Contents content1 = new Contents("1");
+		// content1.setContentsSize(10000);
+		// content1.setContentsType(Contents.TYPE_IMAGE);
+		// content1.setFileOriginName("");
+		// content1.setUploadTime("");
+		// content1.setUploadUserName("testHee");
+
+		Contents content2 = new Contents();
+		content2.setContentsPKName("2");
+		content2.setContentsSize(80451275);
+		content2.setContentsType(Contents.TYPE_FILE);
+		content2.setContentsValue("taeyeon.mp3");
+		content2.setUploadTime("");
+		content2.setUploadUserName("testHee");
+
+		Contents content3 = new Contents();
+		content3.setContentsPKName("3");
+		content3.setContentsSize(387);
+		content3.setContentsType(Contents.TYPE_FILE);
+		content3.setContentsValue("bbbb.jpeg");
+		content3.setUploadTime("");
+		content3.setUploadUserName("testHee");
+
+		// test) 나의 History
+		History myhistory = new History();
+		myhistory.addContents(content1);
+		myhistory.addContents(content2);
+		myhistory.addContents(content3);
+
+		// 요청할 데이터의 고유키 값
+		String downloadDataPK = "1";
+
+		try {
+			downloader.requestDataDownload(downloadDataPK, myhistory);
+		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 	}

@@ -16,7 +16,7 @@ import java.util.List;
  * This program demonstrates a usage of the MultipartUtility class.
  */
 public class UploadData {
-	public final static String SERVER_URL = "http://127.0.0.1:8080/websocketServerModule";
+	public final static String SERVER_URL = "http://182.172.16.118:8080/websocketServerModule";
 	public final static String SERVER_SERVLET = "/UploadServlet";
 	private String charset = "UTF-8";
 
@@ -111,10 +111,13 @@ public class UploadData {
 		}
 	}
 
-	/** 여러 File Data를 업로드
+	/**
+	 * 여러 File Data를 업로드
 	 * 
-	 * @param dir 업로드할 파일의 위치
-	 * @param dir 업로드할 파일명
+	 * @param dir
+	 *            업로드할 파일의 위치
+	 * @param dir
+	 *            업로드할 파일명
 	 */
 	public void uploadMultipartData(ArrayList<String> fileFullPathList) {
 
@@ -135,7 +138,11 @@ public class UploadData {
 				// 업로드할 파일 생성
 				File uploadFile = new File(fileFullPath);
 
-				/* uploadFilename is the name of the sequence input variable in the called project the value is the name that will be given to the file */
+				/*
+				 * uploadFilename is the name of the sequence input variable in
+				 * the called project the value is the name that will be given
+				 * to the file
+				 */
 				multipart.addFilePart("multipartFileData", uploadFile);
 			}
 
@@ -151,8 +158,9 @@ public class UploadData {
 		}
 	}
 
-	/** 모든 Data에서 공통으로 설정해야하는 Parameter
-	 * userEmail, groupPK, uploadTime */
+	/**
+	 * 모든 Data에서 공통으로 설정해야하는 Parameter userEmail, groupPK, uploadTime
+	 */
 	public void setCommonParameter(MultipartUtility multipart) {
 		multipart.addHeaderField("User-Agent", "Heeee");
 		multipart.addFormField("userName", userName);
@@ -176,7 +184,6 @@ public class UploadData {
 		} else {
 			hour = "오전 " + hour;
 		}
-		
 
 		String minute = Integer.toString(cal.get(Calendar.MINUTE));
 		if (Integer.parseInt(minute) < 10) {
