@@ -102,10 +102,12 @@ public class MultipartUtility {
       writer.flush();
 
       // image data array Au¨ùU
-      BufferedImage originalImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+      //BufferedImage originalImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+      
+      BufferedImage originalImage = (BufferedImage) image;
 
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      ImageIO.write(originalImage, "jpg", baos);
+      ImageIO.write(originalImage, "jpeg", baos);
       baos.flush();
       byte[] imageInByte = baos.toByteArray();
       baos.close();
@@ -139,6 +141,7 @@ public class MultipartUtility {
       int bytesRead = -1;
 
       while ((bytesRead = inputStream.read(buffer)) != -1) {
+    	 System.out.println("bytesRead = " + bytesRead);
          outputStream.write(buffer, 0, bytesRead);
       }
 
