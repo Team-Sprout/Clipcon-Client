@@ -13,6 +13,8 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 
+import model.Contents;
+import model.Group;
 import model.Message;
 import model.MessageDecoder;
 import model.MessageEncoder;
@@ -22,10 +24,10 @@ import userInterface.UserInterface;
 
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
 public class Endpoint {
-//	private String uri = "ws://182.172.16.118:8080/websocketServerModule/ServerEndpoint";
-	private String uri = "ws://223.194.157.244:8080/websocketServerModule/ServerEndpoint"; 
+	// private String uri = "ws://182.172.16.118:8080/websocketServerModule/ServerEndpoint";
+	// private String uri = "ws://223.194.157.244:8080/websocketServerModule/ServerEndpoint";
+	private String uri = "ws://211.210.238.157:8080/websocketServerModule/ServerEndpoint";
 	private Session session = null;
-	
 	private static Endpoint uniqueEndpoint;
 	private static UserInterface ui;
 
@@ -66,7 +68,7 @@ public class Endpoint {
 				System.out.println("create group confirm");
 
 				ui.getStartingScene().setCreateGroupSuccessFlag(true); // MainView 보여줌
-				user = MessageParser.getUserAndGroupByMessage(message); // 서버에서 primaryKey, name 받아 Group 객체 생성 후 user에 set
+				user = MessageParser.getUserAndGroupByMessage(message); // 서버에서  primaryKey, name 받아  Group 객체 생성 후 user에 set
 
 				while (true) {
 					if (ui.getMainScene() != null) {
@@ -91,7 +93,7 @@ public class Endpoint {
 			case Message.CONFIRM:
 				System.out.println("join group confirm");
 
-				ui.getGroupJoinScene().setJoinGroupSuccessFlag(true); // Group join close 하고 MainView/ 보여줌
+				ui.getGroupJoinScene().setJoinGroupSuccessFlag(true); // Group join close 하고 MainView 보여줌
 				user = MessageParser.getUserAndGroupByMessage(message); // 서버에서 primaryKey, name 받아 Group 객체 생성 후 user에 set
 
 				while (true) {
@@ -115,15 +117,26 @@ public class Endpoint {
 
 			System.out.println("add participant confirm");
 
-			user.getGroup().getUserList().add(new User(message.get(Message.ADDED_PARTICIPANT_NAME)));
+			user.getGroup().getUserList().add(new User(message.get(Message.PARTICIPANT_NAME)));
 			ui.getMainScene().setAddGroupParticipantFlag(true); // UI list 추가
 
+			break;
+
+		case Message.NOTI_EXIT_PARTICIPANT:
+			// TODO[도연]: 클라이언트 그룹 탈퇴 메시지 처리
+			break;
+
+		case Message.NOTI_UPLOAD_DATA:
+			Contents contents = MessageParser.getContentsbyMessage(message);
+			user.getGroup().addContents(contents);
+			// TODO[도연]: 히스토리 업데이트 UI처리
 			break;
 
 		default:
 			System.out.println("default");
 			break;
 		}
+
 	}
 
 	public void sendMessage(Message message) throws IOException, EncodeException {
