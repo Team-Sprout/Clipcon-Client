@@ -14,7 +14,6 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 
 import model.Contents;
-import model.Group;
 import model.Message;
 import model.MessageDecoder;
 import model.MessageEncoder;
@@ -112,10 +111,24 @@ public class Endpoint {
 			}
 
 			break;
+			
+		case Message.RESPONSE_EXIT_GROUP:
+			
+			System.out.println("exit group");
 
+			while (true) {
+				if (ui.getMainScene() != null) {
+					break;
+				}
+			}
+
+			ui.getMainScene().setShowStartingViewFlag(true); // StartingView 보여줌
+
+			break;
+			
 		case Message.NOTI_ADD_PARTICIPANT: // 그룹 내 다른 User 들어올 때 마다 Message 받고 UI 갱신
 
-			System.out.println("add participant confirm");
+			System.out.println("add participant noti");
 
 			user.getGroup().getUserList().add(new User(message.get(Message.PARTICIPANT_NAME)));
 			ui.getMainScene().setAddGroupParticipantFlag(true); // UI list 추가
@@ -123,7 +136,19 @@ public class Endpoint {
 			break;
 
 		case Message.NOTI_EXIT_PARTICIPANT:
-			// TODO[도연]: 클라이언트 그룹 탈퇴 메시지 처리
+			
+			System.out.println("exit participant noti");
+
+			int removeIndex = -1;
+			for(int i=0; i<user.getGroup().getUserList().size(); i++) {
+				if(message.get(Message.PARTICIPANT_NAME).equals(user.getGroup().getUserList().get(i))) {
+					removeIndex = i;
+				}
+			}
+			
+			user.getGroup().getUserList().remove(removeIndex);
+			ui.getMainScene().setInitGroupParticipantFlag(true); // UI list 제거
+			
 			break;
 
 		case Message.NOTI_UPLOAD_DATA:

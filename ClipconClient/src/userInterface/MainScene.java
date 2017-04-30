@@ -2,12 +2,15 @@ package userInterface;
 
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import javax.websocket.EncodeException;
 
 import contentsTransfer.ContentsUpload;
 import contentsTransfer.DownloadData;
@@ -33,6 +36,7 @@ import lombok.Getter;
 import lombok.Setter;
 import model.Contents;
 import model.History;
+import model.Message;
 import model.User;
 
 @Getter
@@ -55,6 +59,7 @@ public class MainScene implements Initializable {
 
 	private boolean initGroupParticipantFlag;
 	private boolean addGroupParticipantFlag;
+	private boolean showStartingViewFlag;
 
 	private ObservableList<User> groupParticipantList;
 	private ContentsUpload contentsUpload;
@@ -91,6 +96,11 @@ public class MainScene implements Initializable {
 							addGroupParticipantFlag = false;
 							addGroupParticipantList();
 						}
+						if (showStartingViewFlag) {
+							showStartingViewFlag = false;
+							showStartingView();
+							return;
+						}
 					}
 				});
 
@@ -103,20 +113,19 @@ public class MainScene implements Initializable {
 				MainScene.event = event;
 
 				// test
-				testDownload();
+				//testDownload();
 
-				// ¼­¹ö¿¡ REQUEST_EXIT_GROUP Messgae º¸³¿
-				// Message exitGroupMsg = new
-				// Message().setType(Message.REQUEST_EXIT_GROUP);
-				// try {
-				// if (endpoint == null) {
-				// System.out.println("debuger_delf: endpoint is null");
-				// }
-				// endpoint = Endpoint.getIntance();
-				// endpoint.sendMessage(exitGroupMsg);
-				// } catch (IOException | EncodeException e) {
-				// e.printStackTrace();
-				// }
+				 //¼­¹ö¿¡ REQUEST_EXIT_GROUP Messgae º¸³¿
+				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
+				try {
+					if (endpoint == null) {
+						System.out.println("debuger_delf: endpoint is null");
+					}
+					endpoint = Endpoint.getIntance();
+					endpoint.sendMessage(exitGroupMsg);
+				} catch (IOException | EncodeException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 
