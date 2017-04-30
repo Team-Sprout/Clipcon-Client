@@ -55,6 +55,10 @@ public class Message {
 	public Object getObject(String key) {
 		return json.get(key);
 	}
+	
+	public long getLong(String key) {
+		return json.getLong(key);
+	}
 
 	public final static String TYPE = "message type";
 
@@ -67,7 +71,9 @@ public class Message {
 	public final static String RESPONSE_JOIN_GROUP = "response/join group";
 	
 	public final static String NOTI_ADD_PARTICIPANT = "noti/add participant";
-
+	public final static String NOTI_EXIT_PARTICIPANT = "noti/exit participant";
+	public final static String NOTI_UPLOAD_DATA = "noti/upload data";
+	
 	public final static String RESULT = "result";
 	public final static String CONFIRM = "confirm";
 	public final static String REJECT = "reject";
@@ -79,7 +85,7 @@ public class Message {
 	public final static String GROUP_NAME = "group name";
 	public final static String GROUP_PK = "group pk";
 	public final static String GROUP_INFO = "group information";
-	public final static String ADDED_PARTICIPANT_NAME = "added participant name";
+	public final static String PARTICIPANT_NAME = "participant name";
 	
 
 	public final static String TEST_DEBUG_MODE = "debug";

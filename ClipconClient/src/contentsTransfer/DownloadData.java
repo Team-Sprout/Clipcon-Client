@@ -31,14 +31,15 @@ public class DownloadData {
 	// 다운로드 파일을 임시로 저장할 위치
 	private final String DOWNLOAD_LOCATION = "C:\\Users\\Administrator\\Desktop\\Clipcon";
 
-	//public final static String SERVER_URL = "http://182.172.16.118:8080/websocketServerModule";
-	public final static String SERVER_URL = "http://223.194.157.244:8080/websocketServerModule";
+	// public final static String SERVER_URL = "http://182.172.16.118:8080/websocketServerModule";
+	// public final static String SERVER_URL = "http://223.194.157.244:8080/websocketServerModule";
+	public final static String SERVER_URL = "http://211.210.238.157:8080/websocketServerModule"; // delf's
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 
 	private final String charset = "UTF-8";
 	private HttpURLConnection httpConn;
 
-	private String userEmail = null;
+	private String userName = null;
 	private String groupPK = null;
 
 	private Contents requestContents; // Contents Info to download
@@ -46,15 +47,19 @@ public class DownloadData {
 	// private History myhistory; // The Group History to which I belong
 
 	/** 생성자 userEmail과 groupPK를 설정한다. */
-	public DownloadData(String userEmail, String groupPK) {
-		this.userEmail = userEmail;
+	public DownloadData(String userName, String groupPK) {
+		this.userName = userName;
 		this.groupPK = groupPK;
 	}
 
-	/** 다운로드하기 원하는 Data를 request 
-	 * 복수 선택은 File Data의 경우만 가능(추후 개선) 
-	 * @param downloadDataPK 다운로드할 Data의 고유키 
-	 * @param myhistory 내가 속한 그룹의 History 정보 */
+	/**
+	 * 다운로드하기 원하는 Data를 request 복수 선택은 File Data의 경우만 가능(추후 개선)
+	 * 
+	 * @param downloadDataPK
+	 *            다운로드할 Data의 고유키
+	 * @param myhistory
+	 *            내가 속한 그룹의 History 정보
+	 */
 	public void requestDataDownload(String downloadDataPK, History myhistory) throws MalformedURLException {
 		// Create a temporary folder to save the imageFile, file
 		createFileReceiveFolder(DOWNLOAD_LOCATION);
@@ -62,7 +67,8 @@ public class DownloadData {
 		requestContents = myhistory.getContentsByPK(downloadDataPK);
 
 		// Parameter to be sent by the GET method
-		String parameters = "userEmail=" + userEmail + "&" + "groupPK=" + groupPK + "&" + "downloadDataPK=" + downloadDataPK;
+		String parameters = "userEmail=" + userName + "&" + "groupPK=" + groupPK + "&" + "downloadDataPK="
+				+ downloadDataPK;
 		// Type of data to download
 		String contentsType = requestContents.getContentsType();
 
@@ -96,7 +102,7 @@ public class DownloadData {
 					System.out.println("ImageData 결과: " + imageData.toString());
 					ImageTransferable imageTransferable = new ImageTransferable(imageData);
 					ClipboardController.writeClipboard(imageTransferable);
-					
+
 					break;
 				case "FILE":
 					String fileOriginName = requestContents.getContentsValue();
@@ -151,8 +157,9 @@ public class DownloadData {
 		return stringBuilder.toString();
 	}
 
-	/** Captured Image Data를 다운로드 
-	 * file 형태의 Image Data를 전송받아 Image 객체로 변경 */
+	/**
+	 * Captured Image Data를 다운로드 file 형태의 Image Data를 전송받아 Image 객체로 변경
+	 */
 	private Image downloadCapturedImageData(InputStream inputStream) {
 		byte[] imageInByte = null;
 		BufferedImage bImageFromConvert = null;
