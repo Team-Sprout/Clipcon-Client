@@ -1,10 +1,14 @@
 package model;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
+
+import javafx.scene.image.Image;
 
 public class MessageParser {
 
@@ -38,8 +42,18 @@ public class MessageParser {
 		return user;
 	}
 
+	// Image임시
 	public static Contents getContentsbyMessage(Message m) {
+		Image img = null;
+		
+		try {
+			img = new Image(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1.png"));
+			System.out.println("Image 객체 생성");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} 
+
 		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"),
-				m.get("uploadUserName"), m.get("uploadTime"));
+				m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), img);
 	}
 }

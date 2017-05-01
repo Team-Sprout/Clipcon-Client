@@ -130,7 +130,10 @@ public class Endpoint {
 
 			System.out.println("add participant noti");
 
-			user.getGroup().getUserList().add(new User(message.get(Message.PARTICIPANT_NAME)));
+			User newParticipant = new User(message.get(Message.PARTICIPANT_NAME));
+			
+			user.getGroup().getUserList().add(newParticipant);
+			ui.getMainScene().getGroupParticipantList().add(newParticipant);
 			ui.getMainScene().setAddGroupParticipantFlag(true); // UI list 추가
 
 			break;
@@ -152,9 +155,15 @@ public class Endpoint {
 			break;
 
 		case Message.NOTI_UPLOAD_DATA:
+			
+			System.out.println("update date noti");
+			
 			Contents contents = MessageParser.getContentsbyMessage(message);
+			
 			user.getGroup().addContents(contents);
-			// TODO[도연]: 히스토리 업데이트 UI처리
+			ui.getMainScene().getHistoryList().add(contents);
+			ui.getMainScene().setAddContentsInHistoryFlag(true); // UI list 추가
+			
 			break;
 
 		default:

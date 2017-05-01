@@ -30,6 +30,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -45,24 +46,30 @@ public class MainScene implements Initializable {
 
 	private UserInterface ui = UserInterface.getIntance();
 
-	@FXML
-	private TableView<User> groupParticipantTable;
-	@FXML
-	private TableColumn<User, String> groupPartiNicknameColumn;
-	@FXML
-	private Button exitBtn, groupKeyCopyBtn;
-	@FXML
-	private Text groupKeyText;
+	@FXML private TableView<User> groupParticipantTable;
+	@FXML private TableColumn<User, String> groupPartiNicknameColumn;
+	
+	@FXML private TableView<Contents> historyTable;
+	@FXML private TableColumn<Contents, String> typeColumn, uploaderColumn;
+	@FXML private TableColumn<Contents, ImageView> contentsColumn;
+	//@FXML private TableColumn<Contents, String> contentsColumn;
+	@FXML private TableColumn<Contents, Long> sizeColumn;
+	
+	@FXML private Button exitBtn, groupKeyCopyBtn;
+	@FXML private Text groupKeyText;
 
 	private static ActionEvent event;
 	private Endpoint endpoint = Endpoint.getIntance();
 
 	private boolean initGroupParticipantFlag;
 	private boolean addGroupParticipantFlag;
+	private boolean addContentsInHistoryFlag;
 	private boolean showStartingViewFlag;
 
 	private ObservableList<User> groupParticipantList;
 	private ContentsUpload contentsUpload;
+	
+	private ObservableList<Contents> historyList;
 
 	// download test
 	private DownloadData downloader = new DownloadData("gmlwjd9405@naver.com", "doyyyy");
@@ -77,6 +84,7 @@ public class MainScene implements Initializable {
 		startHookProcess();
 
 		groupParticipantList = FXCollections.observableArrayList();
+		historyList = FXCollections.observableArrayList();
 
 		// run scheduler for checking
 		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -95,6 +103,10 @@ public class MainScene implements Initializable {
 						if (addGroupParticipantFlag) {
 							addGroupParticipantFlag = false;
 							addGroupParticipantList();
+						}
+						if (addContentsInHistoryFlag) {
+							addContentsInHistoryFlag = false;
+							addContentsInHistory();
 						}
 						if (showStartingViewFlag) {
 							showStartingViewFlag = false;
@@ -151,12 +163,26 @@ public class MainScene implements Initializable {
 
 	public void addGroupParticipantList() {
 
-		int index = Endpoint.user.getGroup().getUserList().size() - 1;
-		User addedParticipantUser = Endpoint.user.getGroup().getUserList().get(index);
-		groupParticipantList.add(addedParticipantUser);
-
 		groupParticipantTable.setItems(groupParticipantList);
+		
 		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
+	}
+	
+	public void addContentsInHistory() {
+		historyTable.setItems(historyList);
+		
+		Contents c = historyList.get(historyList.size() - 1);
+		//if(c.getContentsType().equals(Contents.TYPE_IMAGE)) {
+			contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsImageProperty());
+		//}
+		//else {
+			//contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsProperty());
+		//}
+		
+		typeColumn.setCellValueFactory(cellData -> cellData.getValue().getTypeProperty());
+		//sizeColumn.setCellValueFactory(cellData -> cellData.getValue().getSizeProperty());
+		uploaderColumn.setCellValueFactory(cellData -> cellData.getValue().getUploaderProperty());
+		
 	}
 
 	public void showStartingView() {
