@@ -40,6 +40,6 @@ public class MessageParser {
 
 	public static Contents getContentsbyMessage(Message m) {
 		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"),
-				m.get("uploadUserName"), m.get("uploadTime"));
+				m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"));
 	}
 }

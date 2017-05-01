@@ -126,12 +126,13 @@ public class MultipartUtility {
     * @param uploadFile a File to be uploaded
     * @throws IOException
     */
-   public void addFilePart(String fieldName, File uploadFile) throws IOException {
+   public void addFilePart(String fieldName, File uploadFile, String relativePath) throws IOException {
       String fileName = uploadFile.getName();
       
       writer.append("--" + boundary).append(LINE_FEED);
       writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + fileName + "\"").append(LINE_FEED);
       writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName)).append(LINE_FEED);
+      writer.append("Content-RelativePath: " + relativePath).append(LINE_FEED);
       writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
       writer.append(LINE_FEED);
       writer.flush();
@@ -141,7 +142,7 @@ public class MultipartUtility {
       int bytesRead = -1;
 
       while ((bytesRead = inputStream.read(buffer)) != -1) {
-    	 System.out.println("bytesRead = " + bytesRead);
+//    	 System.out.println("bytesRead = " + bytesRead);
          outputStream.write(buffer, 0, bytesRead);
       }
 
@@ -179,6 +180,8 @@ public class MultipartUtility {
       } else {
          throw new IOException("Server returned non-OK status: " + status);
       }
+      
+      System.out.println("SERVER REPLIED");
 
       return response;
    }
