@@ -1,5 +1,14 @@
 package model;
 
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,29 +18,53 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class Contents {
 	public static String TYPE_STRING = "STRING";
 	public static String TYPE_IMAGE = "IMAGE";
 	public static String TYPE_FILE = "FILE";
-	
+
 	private String contentsType;
 	private long contentsSize;
-	
+
 	// 그룹내의 각 Data를 구분하는 고유키값
 	public String contentsPKName;
-	
+
 	private String uploadUserName;
 	private String uploadTime;
-	
+	// XXX[희정]: uploadTime을 클라이언트에서 관리하는 이유를 묻고 parser 수정
+
 	// String Type: String값, File Type: FileOriginName
 	private String contentsValue;
+	private Image contentsImage;
 	
-	public Contents(String type, String userEmail, String time, long size) {
-		this();
-		this.contentsType = type;
-		this.uploadUserName = userEmail;
-		this.uploadTime = time;
-		this.contentsSize = size;
-	}
+	private StringProperty typeProperty;
+	//private StringProperty contentsProperty;
+	private LongProperty sizeProperty;
+	private StringProperty uploaderProperty;
+	private ObjectProperty<ImageView> contentsImageProperty;
+	//private ObjectProperty contentsProperty;
 
+	/**
+	 * @author delf 임시 생성자
+	 */
+	public Contents(String contentsType, long contentsSize, String contentsPKName, String uploadUserName, String uploadTime, String contentsValue, Image contentsImage) {
+		// this(contentsType, contentsSize, contentsPKName, uploadUserName, uploadTime, null);
+		this.contentsType = contentsType;
+		this.contentsSize = contentsSize;
+		this.contentsPKName = contentsPKName;
+		this.uploadUserName = uploadUserName;
+		this.uploadTime = uploadTime;
+		this.contentsValue = contentsValue;
+		this.contentsImage = contentsImage;
+		
+		this.typeProperty = new SimpleStringProperty(contentsType);
+		//this.contentsProperty = new SimpleStringProperty(contentsValue);
+		this.sizeProperty = new SimpleLongProperty(contentsSize);
+		this.uploaderProperty = new SimpleStringProperty(uploadUserName);
+		
+		ImageView imageView = new ImageView(contentsImage);
+		this.contentsImageProperty = new SimpleObjectProperty<ImageView>(imageView);
+		//contentsProperty = new SimpleObjectProperty();
+	}
 }

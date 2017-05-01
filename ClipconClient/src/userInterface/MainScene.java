@@ -2,12 +2,15 @@ package userInterface;
 
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import javax.websocket.EncodeException;
 
 import contentsTransfer.ContentsUpload;
 import contentsTransfer.DownloadData;
@@ -27,12 +30,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
 import model.Contents;
 import model.History;
+import model.Message;
 import model.User;
 
 @Getter
@@ -41,23 +46,30 @@ public class MainScene implements Initializable {
 
 	private UserInterface ui = UserInterface.getIntance();
 
-	@FXML
-	private TableView<User> groupParticipantTable;
-	@FXML
-	private TableColumn<User, String> groupPartiNicknameColumn;
-	@FXML
-	private Button exitBtn, groupKeyCopyBtn;
-	@FXML
-	private Text groupKeyText;
+	@FXML private TableView<User> groupParticipantTable;
+	@FXML private TableColumn<User, String> groupPartiNicknameColumn;
+	
+	@FXML private TableView<Contents> historyTable;
+	@FXML private TableColumn<Contents, String> typeColumn, uploaderColumn;
+	@FXML private TableColumn<Contents, ImageView> contentsColumn;
+	//@FXML private TableColumn<Contents, String> contentsColumn;
+	@FXML private TableColumn<Contents, Long> sizeColumn;
+	
+	@FXML private Button exitBtn, groupKeyCopyBtn;
+	@FXML private Text groupKeyText;
 
 	private static ActionEvent event;
 	private Endpoint endpoint = Endpoint.getIntance();
 
 	private boolean initGroupParticipantFlag;
 	private boolean addGroupParticipantFlag;
+	private boolean addContentsInHistoryFlag;
+	private boolean showStartingViewFlag;
 
 	private ObservableList<User> groupParticipantList;
 	private ContentsUpload contentsUpload;
+	
+	private ObservableList<Contents> historyList;
 
 	// download test
 	private DownloadData downloader = new DownloadData("gmlwjd9405@naver.com", "doyyyy");
@@ -72,6 +84,7 @@ public class MainScene implements Initializable {
 		startHookProcess();
 
 		groupParticipantList = FXCollections.observableArrayList();
+		historyList = FXCollections.observableArrayList();
 
 		// run scheduler for checking
 		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -91,6 +104,15 @@ public class MainScene implements Initializable {
 							addGroupParticipantFlag = false;
 							addGroupParticipantList();
 						}
+						if (addContentsInHistoryFlag) {
+							addContentsInHistoryFlag = false;
+							addContentsInHistory();
+						}
+						if (showStartingViewFlag) {
+							showStartingViewFlag = false;
+							showStartingView();
+							return;
+						}
 					}
 				});
 
@@ -103,20 +125,19 @@ public class MainScene implements Initializable {
 				MainScene.event = event;
 
 				// test
-				testDownload();
+				//testDownload();
 
-				// ¼­¹ö¿¡ REQUEST_EXIT_GROUP Messgae º¸³¿
-				// Message exitGroupMsg = new
-				// Message().setType(Message.REQUEST_EXIT_GROUP);
-				// try {
-				// if (endpoint == null) {
-				// System.out.println("debuger_delf: endpoint is null");
-				// }
-				// endpoint = Endpoint.getIntance();
-				// endpoint.sendMessage(exitGroupMsg);
-				// } catch (IOException | EncodeException e) {
-				// e.printStackTrace();
-				// }
+				 //¼­¹ö¿¡ REQUEST_EXIT_GROUP Messgae º¸³¿
+				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
+				try {
+					if (endpoint == null) {
+						System.out.println("debuger_delf: endpoint is null");
+					}
+					endpoint = Endpoint.getIntance();
+					endpoint.sendMessage(exitGroupMsg);
+				} catch (IOException | EncodeException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -142,12 +163,26 @@ public class MainScene implements Initializable {
 
 	public void addGroupParticipantList() {
 
-		int index = Endpoint.user.getGroup().getUserList().size() - 1;
-		User addedParticipantUser = Endpoint.user.getGroup().getUserList().get(index);
-		groupParticipantList.add(addedParticipantUser);
-
 		groupParticipantTable.setItems(groupParticipantList);
+		
 		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
+	}
+	
+	public void addContentsInHistory() {
+		historyTable.setItems(historyList);
+		
+		Contents c = historyList.get(historyList.size() - 1);
+		//if(c.getContentsType().equals(Contents.TYPE_IMAGE)) {
+			contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsImageProperty());
+		//}
+		//else {
+			//contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsProperty());
+		//}
+		
+		typeColumn.setCellValueFactory(cellData -> cellData.getValue().getTypeProperty());
+		//sizeColumn.setCellValueFactory(cellData -> cellData.getValue().getSizeProperty());
+		uploaderColumn.setCellValueFactory(cellData -> cellData.getValue().getUploaderProperty());
+		
 	}
 
 	public void showStartingView() {

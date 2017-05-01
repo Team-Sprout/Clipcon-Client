@@ -48,7 +48,10 @@
              	 <children>
              	 	<TableView fx:id="historyTable" layoutX="10.0" layoutY="10.0" prefHeight="500.0" prefWidth="327.0">
                     	<columns>
-                        	<TableColumn fx:id="contentsColumn" prefWidth="325.0" text="Content" />
+	                    	<TableColumn fx:id="typeColumn" prefWidth="60.0" text="Type" />
+                        	<TableColumn fx:id="contentsColumn" prefWidth="135.0" text="Content" />
+                        	<TableColumn fx:id="sizeColumn" prefWidth="60.0" text="Size" />
+                        	<TableColumn fx:id="uploaderColumn" prefWidth="70.0" text="Uploader" />
                     	</columns>
                     </TableView>
              	 </children>

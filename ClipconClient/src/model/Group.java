@@ -7,17 +7,29 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Group {
+
+	@Getter
+	@Setter
 	private String primaryKey;
-	//private String name;
+	@Getter
+	@Setter
 	private List<User> userList;
-	private History history;
-	
+	@Getter
+	@Setter
+	private History history = new History();
+
 	public Group(String primaryKey) {
 		this.primaryKey = primaryKey;
+	}
+
+	public void addContents(Contents contents) {
+		history.addContents(contents);
+	}
+
+	public Contents getContents(String key) {
+		return history.getContentsByPK(key);
 	}
 }
