@@ -172,7 +172,7 @@ public class MainScene implements Initializable {
 		historyTable.setItems(historyList);
 		
 		Contents c = historyList.get(historyList.size() - 1);
-		//if(c.getContentsType().equals(Contents.TYPE_IMAGE)) {
+		//if(c.getContentsType().equals(Contents.TYPE_IMAGE)) \
 			contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsImageProperty());
 		//}
 		//else {
