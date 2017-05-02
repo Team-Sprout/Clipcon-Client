@@ -11,7 +11,7 @@ import java.util.List;
 public class UploadData {
 	// public final static String SERVER_URL = "http://182.172.16.118:8080/websocketServerModule";
 	// public final static String SERVER_URL = "http://223.194.157.244:8080/websocketServerModule";
-	public final static String SERVER_URL = "http://223.194.153.216:8080/websocketServerModule";
+	public final static String SERVER_URL = "http://223.194.152.19:8080/websocketServerModule";
 	public final static String SERVER_SERVLET = "/UploadServlet";
 	private String charset = "UTF-8";
 
@@ -81,13 +81,13 @@ public class UploadData {
 			
 			/* case: 전송할 파일이 1개인 경우(폴더가 아닌 경우) createFolder = FALSE */
 			if (fileFullPathList.size() == 1 && firstUploadFile.isFile()) {
-				System.out.println("전송할 파일이 하나요~~");
+				System.out.println("\n전송할 파일이 하나요~~\n");
 				multipart.addFormField("createFolder", "FALSE");
 				multipart.addFilePart("multipartFileData", firstUploadFile, "/");
 			}
 			/* case: 전송할 파일이 2개 이상, 폴더가 하나 이상인 경우 createFolder = TRUE */
 			else{
-				System.out.println("전송할 파일이 여러개요~~");
+				System.out.println("\n전송할 파일이 여러개요~~\n");
 				multipart.addFormField("createFolder", "TRUE");
 				// Iterator 통한 전체 조회
 				Iterator iterator = fileFullPathList.iterator();
@@ -99,7 +99,7 @@ public class UploadData {
 					// 업로드할 파일 생성
 					File uploadFile = new File(fileFullPath);
 
-					System.out.println("fileFullPathList: " + fileFullPath + "\n");
+					System.out.println("<<fileFullPathList>>: "+ fileFullPath);
 
 					/* case: File */
 					if(uploadFile.isFile()){
@@ -113,8 +113,12 @@ public class UploadData {
 						// 상대경로명을 위한 초기값(처음 root dir의 시작 위치 설정)
 						startIndex = uploadFile.getPath().lastIndexOf(uploadFile.getName());
 						
+						multipart.addFormField("directoryData", uploadFile.getPath().substring(startIndex));
+						System.out.println("디렉토리 이름 = " + uploadFile.getName() + ", 상대 경로: " + uploadFile.getPath().substring(startIndex));
+						
 						subDirList(uploadFile, multipart);
 					}
+					System.out.println();
 				}
 			}
 
@@ -140,7 +144,7 @@ public class UploadData {
 				/* case: 업로드할 파일 내부에 또 다른 파일이 있는 경우 */
 				if (file.isFile()) {
 					multipart.addFilePart("multipartFileData", file, getFileRelativePath(file));
-					System.out.println("\t 파일 이름 = " + file.getName() + ", 상대 경로: " + getFileRelativePath(file));
+					System.out.println("파일 이름 = " + file.getName() + ", 상대 경로: " + getFileRelativePath(file));
 				} 
 				/* case: 업로드할 파일 내부에 서브디렉토리가 존재하는 경우 다시 탐색 */
 				else if (file.isDirectory()) {
