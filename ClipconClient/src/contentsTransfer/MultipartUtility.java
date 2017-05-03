@@ -96,7 +96,8 @@ public class MultipartUtility {
 
       writer.append("--" + boundary).append(LINE_FEED);
       writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + imageName + "\"").append(LINE_FEED);
-      writer.append("Content-Type: image/jpeg").append(LINE_FEED);
+      //writer.append("Content-Type: image/jpeg").append(LINE_FEED);
+      writer.append("Content-Type: image/png").append(LINE_FEED);
       writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
       writer.append(LINE_FEED);
       writer.flush();
