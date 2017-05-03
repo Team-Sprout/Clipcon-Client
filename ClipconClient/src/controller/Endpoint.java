@@ -26,7 +26,7 @@ import userInterface.UserInterface;
 public class Endpoint {
 	// private String uri = "ws://182.172.16.118:8080/websocketServerModule/ServerEndpoint";
 	// private String uri = "ws://223.194.157.244:8080/websocketServerModule/ServerEndpoint";
-	private String uri = "ws://211.210.238.157:8080/websocketServerModule/ServerEndpoint";
+	private String uri = "ws://223.194.152.19:8080/websocketServerModule/ServerEndpoint";
 	private Session session = null;
 	private static Endpoint uniqueEndpoint;
 	private static UserInterface ui;
@@ -130,6 +130,9 @@ public class Endpoint {
 			Contents contents = MessageParser.getContentsbyMessage(message);
 			user.getGroup().addContents(contents);
 			// TODO[도연]: 히스토리 업데이트 UI처리
+			System.out.println("-----<Endpoint> contentsValue 내용-----");
+			System.out.println(contents.getContentsValue());
+			
 			break;
 
 		default:

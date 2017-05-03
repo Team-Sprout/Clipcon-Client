@@ -33,7 +33,7 @@ public class DownloadData {
 
 	// public final static String SERVER_URL = "http://182.172.16.118:8080/websocketServerModule";
 	// public final static String SERVER_URL = "http://223.194.157.244:8080/websocketServerModule";
-	public final static String SERVER_URL = "http://211.210.238.157:8080/websocketServerModule"; // delf's
+	public final static String SERVER_URL = "http://223.194.152.19:8080/websocketServerModule"; // delf's
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 
 	private final String charset = "UTF-8";
@@ -46,7 +46,7 @@ public class DownloadData {
 	// private String downloadDataPK; // Contents' Primary Key to download
 	// private History myhistory; // The Group History to which I belong
 
-	/** 생성자 userEmail과 groupPK를 설정한다. */
+	/** 생성자 userName과 groupPK를 설정한다. */
 	public DownloadData(String userName, String groupPK) {
 		this.userName = userName;
 		this.groupPK = groupPK;
@@ -67,7 +67,7 @@ public class DownloadData {
 		requestContents = myhistory.getContentsByPK(downloadDataPK);
 
 		// Parameter to be sent by the GET method
-		String parameters = "userEmail=" + userName + "&" + "groupPK=" + groupPK + "&" + "downloadDataPK="
+		String parameters = "userName=" + userName + "&" + "groupPK=" + groupPK + "&" + "downloadDataPK="
 				+ downloadDataPK;
 		// Type of data to download
 		String contentsType = requestContents.getContentsType();
