@@ -9,141 +9,201 @@ import java.util.Iterator;
 import java.util.List;
 
 public class UploadData {
-	   //public final static String SERVER_URL = "http://182.172.16.118:8080/websocketServerModule";
-	   // public final static String SERVER_URL = "http://223.194.157.244:8080/websocketServerModule";
-		public final static String SERVER_URL = "http://211.210.238.157:8080/websocketServerModule";
-	   public final static String SERVER_SERVLET = "/UploadServlet";
-	   private String charset = "UTF-8";
-	   
-	   private String userName = null;
-	   private String groupPK = null;
+	// public final static String SERVER_URL = "http://182.172.16.118:8080/websocketServerModule";
+	// public final static String SERVER_URL = "http://223.194.157.244:8080/websocketServerModule";
+	public final static String SERVER_URL = "http://223.194.152.19:8080/websocketServerModule";
+	public final static String SERVER_SERVLET = "/UploadServlet";
+	private String charset = "UTF-8";
 
-	   /** »ı¼ºÀÚ userEmail°ú groupPK¸¦ ¼³Á¤ÇÑ´Ù. */
-	   public UploadData(String userName, String groupPK) {
-	      this.userName = userName;
-	      this.groupPK = groupPK;
-	   }
-	   
-	   /** String Data¸¦ ¾÷·Îµå */
-	   public void uploadStringData(String stringData) {
-	      try {
-	         MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
-	         setCommonParameter(multipart);
-	         
-	         multipart.addFormField("stringData", stringData);
+	private String userName = null;
+	private String groupPK = null;
+	private int startIndex = 0;
 
-	         List<String> response = multipart.finish();
-	         System.out.println("SERVER REPLIED");
-	         // responseMsgLog();
-
-	         for (String line : response) {
-	            System.out.println(line);
-	         }
-	      } catch (IOException ex) {
-	         System.err.println(ex);
-	      }
-	   }
-
-	   /** Clipboard¿¡ ÀÖ´Â Captured Image Data¸¦ ¾÷·Îµå */
-	   public void uploadCapturedImageData(Image capturedImageData) {
-		   // XXX[ÈñÁ¤,µµ¿¬]: ¿ØÁø ¸ô¶óµµ ÀÌ¹ÌÁö È­ÁúÀÌ ³Ê¹« ¾ÈÁÁÀ½.
-	      try {
-	         MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
-	         setCommonParameter(multipart);
-
-	         System.out.println("<uploadCapturedImageData> getWidth: " + capturedImageData.getWidth(null));
-	         System.out.println("<uploadCapturedImageData> getHeight: " + capturedImageData.getHeight(null));
-	         multipart.addImagePart("imageData", capturedImageData);
-
-	         List<String> response = multipart.finish();
-	         System.out.println("SERVER REPLIED");
-	         // responseMsgLog();
-
-	         for (String line : response) {
-	            System.out.println(line);
-	         }
-
-	      } catch (IOException ex) {
-	         System.err.println(ex);
-	      }
-	   }
-
-	   /** ¿©·¯ File Data¸¦ ¾÷·Îµå
-	    * 
-	    * @param dir ¾÷·ÎµåÇÒ ÆÄÀÏÀÇ À§Ä¡
-	    * @param dir ¾÷·ÎµåÇÒ ÆÄÀÏ¸í
-	    */
-	   public void uploadMultipartData(ArrayList<String> fileFullPathList) {
-
-	      try {
-	         MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
-	         setCommonParameter(multipart);
-
-	         // Iterator ÅëÇÑ ÀüÃ¼ Á¶È¸
-	         Iterator iterator = fileFullPathList.iterator();
-
-	         // ¿©·¯ ÆÄÀÏÀ» ¼ø¼­´ë·Î Ã³¸®
-	         while (iterator.hasNext()) {
-	            String fileFullPath = (String) iterator.next();
-
-	            System.out.println("fileFullPathList: " + fileFullPath);
-	            System.out.println();
-
-	            // ¾÷·ÎµåÇÒ ÆÄÀÏ »ı¼º
-	            File uploadFile = new File(fileFullPath);
-
-	            /* uploadFilename is the name of the sequence input variable in the called project the value is the name that will be given to the file */
-	            multipart.addFilePart("multipartFileData", uploadFile);
-	         }
-
-	         List<String> response = multipart.finish();
-	         System.out.println("SERVER REPLIED");
-	         // responseMsgLog();
-
-	         for (String line : response) {
-	            System.out.println(line);
-	         }
-	      } catch (IOException ex) {
-	         System.err.println(ex);
-	      }
-	   } 
-	   
-	   /** ¸ğµç Data¿¡¼­ °øÅëÀ¸·Î ¼³Á¤ÇØ¾ßÇÏ´Â Parameter
-	    * userEmail, groupPK, uploadTime */
-	   public void setCommonParameter(MultipartUtility multipart){
-	      multipart.addHeaderField("User-Agent", "Heeee");
-	      multipart.addFormField("userName", userName);
-	      multipart.addFormField("groupPK", groupPK);
-	      multipart.addFormField("uploadTime", uploadTime());
-	   }
-	   
-	   /** @return YYYY-MM-DD HH:MM:SS Çü½ÄÀÇ ÇöÀç ½Ã°£ */
-	   public String uploadTime() {
-	      Calendar cal = Calendar.getInstance();
-	      String year = Integer.toString(cal.get(Calendar.YEAR));
-	      String month = Integer.toString(cal.get(Calendar.MONTH)+1);
-	      
-	      String date = Integer.toString(cal.get(Calendar.DATE));
-	      String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
-	      if(Integer.parseInt(hour) < 10) {
-	         hour = "0" + hour;
-	      }
-	      if(Integer.parseInt(hour) > 12) {
-	         hour = "PM " + Integer.toString(Integer.parseInt(hour)-12);
-	      }
-	      else {
-	         hour = "AM " + hour;
-	      }
-	      
-	      String minute = Integer.toString(cal.get(Calendar.MINUTE));
-	      if(Integer.parseInt(minute) < 10) {
-	         minute = "0" + minute;
-	      }
-	      String sec = Integer.toString(cal.get(Calendar.SECOND));
-	      if(Integer.parseInt(sec) < 10) {
-	         sec = "0" + sec;
-	      }
-
-	      return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + sec;
-	   }
+	/** ìƒì„±ì userNameê³¼ groupPKë¥¼ ì„¤ì •í•œë‹¤. */
+	public UploadData(String userName, String groupPK) {
+		this.userName = userName;
+		this.groupPK = groupPK;
 	}
+
+	/** String Dataë¥¼ ì—…ë¡œë“œ */
+	public void uploadStringData(String stringData) {
+		try {
+			MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
+			setCommonParameter(multipart);
+
+			multipart.addFormField("createFolder", "FALSE");
+			multipart.addFormField("stringData", stringData);
+			System.out.println("stringData: " + stringData);
+
+			List<String> response = multipart.finish();
+
+			for (String line : response) {
+				System.out.println(line);
+			}
+		} catch (IOException ex) {
+			System.err.println(ex);
+		}
+	}
+
+	/** Clipboardì— ìˆëŠ” Captured Image Dataë¥¼ ì—…ë¡œë“œ */
+	public void uploadCapturedImageData(Image capturedImageData) {
+		try {
+			MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
+			setCommonParameter(multipart);
+
+			multipart.addFormField("createFolder", "FALSE");
+			multipart.addImagePart("imageData", capturedImageData);
+			System.out.println("imageData: " + capturedImageData.toString());
+
+			List<String> response = multipart.finish();
+
+			for (String line : response) {
+				System.out.println(line);
+			}
+
+		} catch (IOException ex) {
+			System.err.println(ex);
+		}
+	}
+
+	/** ì—¬ëŸ¬ File Dataë¥¼ ì—…ë¡œë“œ
+	 * 
+	 * @param dir ì—…ë¡œë“œí•  íŒŒì¼ì˜ ìœ„ì¹˜
+	 * @param dir ì—…ë¡œë“œí•  íŒŒì¼ëª…
+	 */
+	public void uploadMultipartData(ArrayList<String> fileFullPathList) {
+		try {
+			MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
+			setCommonParameter(multipart);
+			
+			// ì—…ë¡œë“œí•  íŒŒì¼ ìƒì„±
+			File firstUploadFile = new File(fileFullPathList.get(0));
+			
+			/* case: ì „ì†¡í•  íŒŒì¼ì´ 1ê°œì¸ ê²½ìš°(í´ë”ê°€ ì•„ë‹Œ ê²½ìš°) createFolder = FALSE */
+			if (fileFullPathList.size() == 1 && firstUploadFile.isFile()) {
+				System.out.println("\nì „ì†¡í•  íŒŒì¼ì´ í•˜ë‚˜ìš”~~\n");
+				multipart.addFormField("createFolder", "FALSE");
+				multipart.addFilePart("multipartFileData", firstUploadFile, "/");
+			}
+			/* case: ì „ì†¡í•  íŒŒì¼ì´ 2ê°œ ì´ìƒ, í´ë”ê°€ í•˜ë‚˜ ì´ìƒì¸ ê²½ìš° createFolder = TRUE */
+			else{
+				System.out.println("\nì „ì†¡í•  íŒŒì¼ì´ ì—¬ëŸ¬ê°œìš”~~\n");
+				multipart.addFormField("createFolder", "TRUE");
+				// Iterator í†µí•œ ì „ì²´ ì¡°íšŒ
+				Iterator iterator = fileFullPathList.iterator();
+
+				// ì—¬ëŸ¬ íŒŒì¼ì„ ìˆœì„œëŒ€ë¡œ ì²˜ë¦¬
+				while (iterator.hasNext()) {
+					String fileFullPath = (String) iterator.next();
+					
+					// ì—…ë¡œë“œí•  íŒŒì¼ ìƒì„±
+					File uploadFile = new File(fileFullPath);
+
+					System.out.println("<<fileFullPathList>>: "+ fileFullPath);
+
+					/* case: File */
+					if(uploadFile.isFile()){
+						System.out.println("ì „ì†¡í•  íŒŒì¼ì´ Fileì´ìš”~~");
+						multipart.addFilePart("multipartFileData", uploadFile, "/");
+					}
+					/* case: Directory */
+					else if(uploadFile.isDirectory()){
+						System.out.println("ì „ì†¡í•  íŒŒì¼ì´ Directoryìš”~~");
+						
+						// ìƒëŒ€ê²½ë¡œëª…ì„ ìœ„í•œ ì´ˆê¸°ê°’(ì²˜ìŒ root dirì˜ ì‹œì‘ ìœ„ì¹˜ ì„¤ì •)
+						startIndex = uploadFile.getPath().lastIndexOf(uploadFile.getName());
+						
+						multipart.addFormField("directoryData", uploadFile.getPath().substring(startIndex));
+						System.out.println("ë””ë ‰í† ë¦¬ ì´ë¦„ = " + uploadFile.getName() + ", ìƒëŒ€ ê²½ë¡œ: " + uploadFile.getPath().substring(startIndex));
+						
+						subDirList(uploadFile, multipart);
+					}
+					System.out.println();
+				}
+			}
+
+			List<String> response = multipart.finish();
+
+			for (String line : response) {
+				System.out.println(line);
+			}
+		} catch (IOException ex) {
+			System.err.println(ex);
+		}
+	}
+
+	/** File Dataì˜ êµ¬ì¡°ì— ë”°ë¼ <ìƒëŒ€ê²½ë¡œëª…, íŒŒì¼ëª…> ì„¤ì • 
+	 * directoryì´ë©´ addFormFieldë¡œ ìƒëŒ€ê²½ë¡œ ì •ë³´ ë³´ë‚´ê¸° 
+	 * fileì´ë©´ addFilePartë¡œ íŒŒì¼ê³¼ ìƒëŒ€ê²½ë¡œ ì •ë³´ ë³´ë‚´ê¸°*/
+	public void subDirList(File uploadFile, MultipartUtility multipart) {
+		File[] fileList = uploadFile.listFiles(); //directory ì•ˆì˜ file data list
+
+		for (int i = 0; i < fileList.length; i++) {
+			File file = fileList[i];
+			try {
+				/* case: ì—…ë¡œë“œí•  íŒŒì¼ ë‚´ë¶€ì— ë˜ ë‹¤ë¥¸ íŒŒì¼ì´ ìˆëŠ” ê²½ìš° */
+				if (file.isFile()) {
+					multipart.addFilePart("multipartFileData", file, getFileRelativePath(file));
+					System.out.println("íŒŒì¼ ì´ë¦„ = " + file.getName() + ", ìƒëŒ€ ê²½ë¡œ: " + getFileRelativePath(file));
+				} 
+				/* case: ì—…ë¡œë“œí•  íŒŒì¼ ë‚´ë¶€ì— ì„œë¸Œë””ë ‰í† ë¦¬ê°€ ì¡´ì¬í•˜ëŠ” ê²½ìš° ë‹¤ì‹œ íƒìƒ‰ */
+				else if (file.isDirectory()) {
+					multipart.addFormField("directoryData", file.getPath().substring(startIndex));
+					// subDirList(file.getCanonicalPath().toString());
+					subDirList(file, multipart);
+					System.out.println("ë””ë ‰í† ë¦¬ ì´ë¦„ = " + file.getName() + ", ìƒëŒ€ ê²½ë¡œ: " + file.getPath().substring(startIndex));
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/** relative path ì–»ì–´ì˜¤ê¸° */
+	public String getFileRelativePath(File file){
+		String filePath = file.getPath();
+		String fileName = file.getName();
+		int endIndex = filePath.lastIndexOf(fileName);
+		
+		// íŒŒì¼ëª…ì„ ì œì™¸í•œ ìƒëŒ€ê²½ë¡œ ì •ë³´
+		return filePath.substring(startIndex, endIndex-1); 
+	}
+	
+	/** ëª¨ë“  Dataì—ì„œ ê³µí†µìœ¼ë¡œ ì„¤ì •í•´ì•¼í•˜ëŠ” Parameter
+	 * userName, groupPK, uploadTime */
+	public void setCommonParameter(MultipartUtility multipart) {
+		multipart.addHeaderField("User-Agent", "Heeee");
+		multipart.addFormField("userName", userName);
+		multipart.addFormField("groupPK", groupPK);
+		multipart.addFormField("uploadTime", uploadTime());
+	}
+
+	/** @return YYYY-MM-DD HH:MM:SS í˜•ì‹ì˜ í˜„ì¬ ì‹œê°„ */
+	public String uploadTime() {
+		Calendar cal = Calendar.getInstance();
+		String year = Integer.toString(cal.get(Calendar.YEAR));
+		String month = Integer.toString(cal.get(Calendar.MONTH) + 1);
+
+		String date = Integer.toString(cal.get(Calendar.DATE));
+		String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
+		if (Integer.parseInt(hour) < 10) {
+			hour = "0" + hour;
+		}
+		if (Integer.parseInt(hour) > 12) {
+			hour = "PM " + Integer.toString(Integer.parseInt(hour) - 12);
+		} else {
+			hour = "AM " + hour;
+		}
+
+		String minute = Integer.toString(cal.get(Calendar.MINUTE));
+		if (Integer.parseInt(minute) < 10) {
+			minute = "0" + minute;
+		}
+		String sec = Integer.toString(cal.get(Calendar.SECOND));
+		if (Integer.parseInt(sec) < 10) {
+			sec = "0" + sec;
+		}
+
+		return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + sec;
+	}
+}

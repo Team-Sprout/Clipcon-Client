@@ -20,8 +20,8 @@ public class MessageParser {
 
 	/**
 	 * @param message
-	 *            ¼­¹ö¿¡¼­ ¹ŞÀº Message°´Ã¼
-	 * @return message ·ÎºÎÅÍ º¯È¯µÈ Group°´Ã¼
+	 *            ì„œë²„ì—ì„œ ë°›ì€ Messageê°ì²´
+	 * @return message ë¡œë¶€í„° ë³€í™˜ëœ Groupê°ì²´
 	 */
 	public static User getUserAndGroupByMessage(Message message) {
 		User user = new User(message.get(Message.NAME));
@@ -48,19 +48,21 @@ public class MessageParser {
 		return user;
 	}
 
-	// ImageÀÓ½Ã
+	// Imageì„ì‹œ
 	public static Contents getContentsbyMessage(Message m) {
+
 		Image img = null;
 
-		/*µµ¿¬ÀÌ ÄÚµå*/
+		/*ë„ì—°ì´ ì½”ë“œ*/
 		// try {
 		// img = new Image(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1.png"));
-		// System.out.println("Image °´Ã¼ »ı¼º");
+		// System.out.println("Image ê°ì²´ ìƒì„±");
 		// } catch (FileNotFoundException e) {
 		// e.printStackTrace();
 		// }
 
 		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"), m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), img);
+
 	}
 	
 	/** @author delf

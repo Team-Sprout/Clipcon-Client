@@ -93,6 +93,7 @@ public class ClipboardController {
 				extractData = (Image) t.getTransferData(DataFlavor.imageFlavor);
 				
 			} else if (type.equals(Contents.TYPE_FILE)) {
+				System.out.println("[ClipboardManager]클립보드 내용 타입: 파일");
 				String [] filePath = getFilePathInSystemClipboard().split(", ");
 				
 				ArrayList<String> filePathList = new ArrayList<String>();

@@ -25,7 +25,7 @@ import userInterface.UserInterface;
 public class Endpoint {
 	// private String uri = "ws://182.172.16.118:8080/websocketServerModule/ServerEndpoint";
 	// private String uri = "ws://223.194.157.244:8080/websocketServerModule/ServerEndpoint";
-	private String uri = "ws://211.210.238.157:8080/websocketServerModule/ServerEndpoint";
+	private String uri = "ws://223.194.152.19:8080/websocketServerModule/ServerEndpoint";
 	private Session session = null;
 	private static Endpoint uniqueEndpoint;
 	private static UserInterface ui;
@@ -66,8 +66,8 @@ public class Endpoint {
 			case Message.CONFIRM:
 				System.out.println("create group confirm");
 
-				ui.getStartingScene().setCreateGroupSuccessFlag(true); // MainView º¸¿©ÁÜ
-				user = MessageParser.getUserAndGroupByMessage(message); // ¼­¹ö¿¡¼­ primaryKey, name ¹Ş¾Æ Group °´Ã¼ »ı¼º ÈÄ user¿¡ set
+				ui.getStartingScene().setCreateGroupSuccessFlag(true); // MainView ë³´ì—¬ì¤Œ
+				user = MessageParser.getUserAndGroupByMessage(message); // ì„œë²„ì—ì„œ primaryKey, name ë°›ì•„ Group ê°ì²´ ìƒì„± í›„ userì— set
 
 				while (true) {
 					if (ui.getMainScene() != null) {
@@ -75,8 +75,8 @@ public class Endpoint {
 					}
 				}
 
-				System.out.println("±×·ìÅ° : " + user.getGroup().getPrimaryKey());
-				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list ÃÊ±âÈ­
+				System.out.println("ê·¸ë£¹í‚¤ : " + user.getGroup().getPrimaryKey());
+				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list ì´ˆê¸°í™”
 
 				break;
 			case Message.REJECT:
@@ -92,8 +92,8 @@ public class Endpoint {
 			case Message.CONFIRM:
 				System.out.println("join group confirm");
 
-				ui.getGroupJoinScene().setJoinGroupSuccessFlag(true); // Group join close ÇÏ°í MainView º¸¿©ÁÜ
-				user = MessageParser.getUserAndGroupByMessage(message); // ¼­¹ö¿¡¼­ primaryKey, name ¹Ş¾Æ Group °´Ã¼ »ı¼º ÈÄ user¿¡ set
+				ui.getGroupJoinScene().setJoinGroupSuccessFlag(true); // Group join close í•˜ê³  MainView ë³´ì—¬ì¤Œ
+				user = MessageParser.getUserAndGroupByMessage(message); // ì„œë²„ì—ì„œ primaryKey, name ë°›ì•„ Group ê°ì²´ ìƒì„± í›„ userì— set
 
 				while (true) {
 					if (ui.getMainScene() != null) {
@@ -101,8 +101,8 @@ public class Endpoint {
 					}
 				}
 
-				System.out.println("±×·ìÅ° : " + user.getGroup().getPrimaryKey());
-				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list ÃÊ±âÈ­
+				System.out.println("ê·¸ë£¹í‚¤ : " + user.getGroup().getPrimaryKey());
+				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list ì´ˆê¸°í™”
 
 				break;
 			case Message.REJECT:
@@ -122,11 +122,11 @@ public class Endpoint {
 				}
 			}
 
-			ui.getMainScene().setShowStartingViewFlag(true); // StartingView º¸¿©ÁÜ
+			ui.getMainScene().setShowStartingViewFlag(true); // StartingView ë³´ì—¬ì¤Œ
 
 			break;
 
-		case Message.NOTI_ADD_PARTICIPANT: // ±×·ì ³» ´Ù¸¥ User µé¾î¿Ã ¶§ ¸¶´Ù Message ¹Ş°í UI °»½Å
+		case Message.NOTI_ADD_PARTICIPANT: // ê·¸ë£¹ ë‚´ ë‹¤ë¥¸ User ë“¤ì–´ì˜¬ ë•Œ ë§ˆë‹¤ Message ë°›ê³  UI ê°±ì‹ 
 
 			System.out.println("add participant noti");
 
@@ -134,7 +134,7 @@ public class Endpoint {
 
 			user.getGroup().getUserList().add(newParticipant);
 			ui.getMainScene().getGroupParticipantList().add(newParticipant);
-			ui.getMainScene().setAddGroupParticipantFlag(true); // UI list Ãß°¡
+			ui.getMainScene().setAddGroupParticipantFlag(true); // UI list ì¶”ê°€
 
 			break;
 
@@ -150,7 +150,7 @@ public class Endpoint {
 			}
 
 			user.getGroup().getUserList().remove(removeIndex);
-			ui.getMainScene().setInitGroupParticipantFlag(true); // UI list Á¦°Å
+			ui.getMainScene().setInitGroupParticipantFlag(true); // UI list ì œê±°
 
 			break;
 
@@ -162,18 +162,20 @@ public class Endpoint {
 			
 			/* delf's debug code ~ */
 			if (contents.getContentsType().equals(Contents.TYPE_IMAGE)) {
-				System.out.println("[debuger_delf] Àü¼ÛµÈ Å¸ÀÔÀº ÀÌ¹ÌÁö");
+				System.out.println("[debuger_delf] ì „ì†¡ëœ íƒ€ì…ì€ ì´ë¯¸ì§€");
 				if (message.get("imageString") == null) {
-					System.out.println("[debuger_delf] ¸Ş½ÃÁö¿¡ ÀÌ¹ÌÁö°¡ Æ÷ÇÔµÇÁö ¾ÊÀ½");
+					System.out.println("[debuger_delf] ë©”ì‹œì§€ì— ì´ë¯¸ì§€ê°€ í¬í•¨ë˜ì§€ ì•ŠìŒ");
 				} else {
-					System.out.println("[debuger_delf] ÀÌ¹ÌÁö°¡ Æ÷ÇÔµÇ¾î ¿È");
+					System.out.println("[debuger_delf] ì´ë¯¸ì§€ê°€ í¬í•¨ë˜ì–´ ì˜´");
 				}
 			} /* ~ delf's debug code */
 			user.getGroup().addContents(contents);
 
-			ui.getMainScene().getHistoryList().add(contents);
-			ui.getMainScene().setAddContentsInHistoryFlag(true); // UI list Ãß°¡
-
+			// TODO[ë„ì—°]: íˆìŠ¤í† ë¦¬ ì—…ë°ì´íŠ¸ UIì²˜ë¦¬
+			System.out.println("-----<Endpoint> contentsValue ë‚´ìš©-----");
+			System.out.println(contents.getContentsValue());
+      ui.getMainScene().getHistoryList().add(contents);
+			ui.getMainScene().setAddContentsInHistoryFlag(true); // UI list ì¶”ê°€
 			break;
 
 		default:
@@ -192,6 +194,6 @@ public class Endpoint {
 
 	@OnClose
 	public void onClose() {
-		// ¼¼¼ÇÀÌ ²÷°åÀ» ¶§ ¾î¶»°Ô ÇÒÁö Ã³¸®
+		// ì„¸ì…˜ì´ ëŠê²¼ì„ ë•Œ ì–´ë–»ê²Œ í• ì§€ ì²˜ë¦¬
 	}
 }
