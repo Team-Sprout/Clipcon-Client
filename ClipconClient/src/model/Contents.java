@@ -1,13 +1,10 @@
 package model;
 
-import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,11 +37,10 @@ public class Contents {
 	
 	private StringProperty typeProperty;
 	//private StringProperty contentsProperty;
-	private LongProperty sizeProperty;
+	//private ObjectProperty<ImageView> contentsImageProperty;
+	private ObjectProperty contentsProperty;
 	private StringProperty uploaderProperty;
-	private ObjectProperty<ImageView> contentsImageProperty;
-	//private ObjectProperty contentsProperty;
-
+	
 	/**
 	 * @author delf 임시 생성자
 	 */
@@ -60,11 +56,9 @@ public class Contents {
 		
 		this.typeProperty = new SimpleStringProperty(contentsType);
 		//this.contentsProperty = new SimpleStringProperty(contentsValue);
-		this.sizeProperty = new SimpleLongProperty(contentsSize);
+		//ImageView imageView = new ImageView(contentsImage);
+		//this.contentsImageProperty = new SimpleObjectProperty<ImageView>(imageView);
+		this.contentsProperty = new SimpleObjectProperty();
 		this.uploaderProperty = new SimpleStringProperty(uploadUserName);
-		
-		ImageView imageView = new ImageView(contentsImage);
-		this.contentsImageProperty = new SimpleObjectProperty<ImageView>(imageView);
-		//contentsProperty = new SimpleObjectProperty();
 	}
 }

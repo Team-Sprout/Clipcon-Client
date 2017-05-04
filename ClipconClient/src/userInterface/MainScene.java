@@ -28,11 +28,16 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import lombok.Getter;
 import lombok.Setter;
 import model.Contents;
@@ -51,9 +56,8 @@ public class MainScene implements Initializable {
 	
 	@FXML private TableView<Contents> historyTable;
 	@FXML private TableColumn<Contents, String> typeColumn, uploaderColumn;
-	@FXML private TableColumn<Contents, ImageView> contentsColumn;
-	//@FXML private TableColumn<Contents, String> contentsColumn;
-	@FXML private TableColumn<Contents, Long> sizeColumn;
+	//@FXML private TableColumn<Contents, ImageView> contentsColumn;
+	@FXML private TableColumn contentsColumn;
 	
 	@FXML private Button exitBtn, groupKeyCopyBtn;
 	@FXML private Text groupKeyText;
@@ -168,21 +172,48 @@ public class MainScene implements Initializable {
 		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void addContentsInHistory() {
 		historyTable.setItems(historyList);
 		
 		Contents c = historyList.get(historyList.size() - 1);
 		//if(c.getContentsType().equals(Contents.TYPE_IMAGE)) {
-			contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsImageProperty());
+		//	contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsImageProperty());
 		//}
 		//else {
 			//contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsProperty());
 		//}
 		
-		typeColumn.setCellValueFactory(cellData -> cellData.getValue().getTypeProperty());
-		//sizeColumn.setCellValueFactory(cellData -> cellData.getValue().getSizeProperty());
-		uploaderColumn.setCellValueFactory(cellData -> cellData.getValue().getUploaderProperty());
+		// ImageView + String
+		contentsColumn.setCellValueFactory(new Callback<TableColumn<Contents, Object>, TableCell<Contents, Object>>() {
+			@Override
+			public TableCell<Contents, Object> call(TableColumn<Contents, Object> param) {
+				TableCell<Contents, Object> cell = new TableCell<Contents, Object>() {
+					ImageView imageview = new ImageView();
+					@Override
+					public void updateItem(Object item, boolean empty) {
+						if(item!=null){
+							HBox box= new HBox();
+							VBox vbox = new VBox();
+							
+							vbox.getChildren().add(new Label(((Contents)item).getContentsValue()));
+							
+							imageview.setFitHeight(40);
+							imageview.setFitHeight(40);
+							imageview.setImage(((Contents)item).getContentsImage());
+							
+							box.getChildren().addAll(imageview,vbox);
+							
+							setGraphic(box);
+						}
+					}
+				};
+				return cell;
+			}
+		});
 		
+		typeColumn.setCellValueFactory(cellData -> cellData.getValue().getTypeProperty());
+		uploaderColumn.setCellValueFactory(cellData -> cellData.getValue().getUploaderProperty());
 	}
 
 	public void showStartingView() {
