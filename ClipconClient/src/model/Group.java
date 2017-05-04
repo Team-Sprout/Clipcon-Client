@@ -17,6 +17,8 @@ public class Group {
 	@Getter
 	@Setter
 	private List<User> userList;
+	@Getter
+	@Setter
 	private History history = new History();
 
 	public Group(String primaryKey) {

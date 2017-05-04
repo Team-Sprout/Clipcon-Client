@@ -1,17 +1,27 @@
 package model;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
 import org.json.JSONArray;
+
+import javafx.scene.image.Image;
 
 public class MessageParser {
 
 	/**
 	 * @param message
-	 *            ¼­¹ö¿¡¼­ ¹ŞÀº Message°´Ã¼
-	 * @return message ·ÎºÎÅÍ º¯È¯µÈ Group°´Ã¼
+	 *            ì„œë²„ì—ì„œ ë°›ì€ Messageê°ì²´
+	 * @return message ë¡œë¶€í„° ë³€í™˜ëœ Groupê°ì²´
 	 */
 	public static User getUserAndGroupByMessage(Message message) {
 		User user = new User(message.get(Message.NAME));
@@ -38,8 +48,35 @@ public class MessageParser {
 		return user;
 	}
 
+	// Imageì„ì‹œ
 	public static Contents getContentsbyMessage(Message m) {
-		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"),
-				m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"));
+
+		Image img = null;
+
+		/*ë„ì—°ì´ ì½”ë“œ*/
+		// try {
+		// img = new Image(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1.png"));
+		// System.out.println("Image ê°ì²´ ìƒì„±");
+		// } catch (FileNotFoundException e) {
+		// e.printStackTrace();
+		// }
+
+		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"), m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), img);
+
 	}
+	
+	/** @author delf
+	 * client code */
+//	public static Image getImagebyMessage(Message message) {
+//		String imageString = message.get("imageString");
+//		byte[] imageBytes = Base64.getDecoder().decode(imageString);
+//		BufferedImage imag;
+//		try {
+//			imag = ImageIO.read(new ByteArrayInputStream(imageBytes));
+//			return imag;
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
 }

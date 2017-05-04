@@ -19,13 +19,13 @@ public class UploadData {
 	private String groupPK = null;
 	private int startIndex = 0;
 
-	/** »ı¼ºÀÚ userName°ú groupPK¸¦ ¼³Á¤ÇÑ´Ù. */
+	/** ìƒì„±ì userNameê³¼ groupPKë¥¼ ì„¤ì •í•œë‹¤. */
 	public UploadData(String userName, String groupPK) {
 		this.userName = userName;
 		this.groupPK = groupPK;
 	}
 
-	/** String Data¸¦ ¾÷·Îµå */
+	/** String Dataë¥¼ ì—…ë¡œë“œ */
 	public void uploadStringData(String stringData) {
 		try {
 			MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
@@ -45,7 +45,7 @@ public class UploadData {
 		}
 	}
 
-	/** Clipboard¿¡ ÀÖ´Â Captured Image Data¸¦ ¾÷·Îµå */
+	/** Clipboardì— ìˆëŠ” Captured Image Dataë¥¼ ì—…ë¡œë“œ */
 	public void uploadCapturedImageData(Image capturedImageData) {
 		try {
 			MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
@@ -66,55 +66,55 @@ public class UploadData {
 		}
 	}
 
-	/** ¿©·¯ File Data¸¦ ¾÷·Îµå
+	/** ì—¬ëŸ¬ File Dataë¥¼ ì—…ë¡œë“œ
 	 * 
-	 * @param dir ¾÷·ÎµåÇÒ ÆÄÀÏÀÇ À§Ä¡
-	 * @param dir ¾÷·ÎµåÇÒ ÆÄÀÏ¸í
+	 * @param dir ì—…ë¡œë“œí•  íŒŒì¼ì˜ ìœ„ì¹˜
+	 * @param dir ì—…ë¡œë“œí•  íŒŒì¼ëª…
 	 */
 	public void uploadMultipartData(ArrayList<String> fileFullPathList) {
 		try {
 			MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
 			setCommonParameter(multipart);
 			
-			// ¾÷·ÎµåÇÒ ÆÄÀÏ »ı¼º
+			// ì—…ë¡œë“œí•  íŒŒì¼ ìƒì„±
 			File firstUploadFile = new File(fileFullPathList.get(0));
 			
-			/* case: Àü¼ÛÇÒ ÆÄÀÏÀÌ 1°³ÀÎ °æ¿ì(Æú´õ°¡ ¾Æ´Ñ °æ¿ì) createFolder = FALSE */
+			/* case: ì „ì†¡í•  íŒŒì¼ì´ 1ê°œì¸ ê²½ìš°(í´ë”ê°€ ì•„ë‹Œ ê²½ìš°) createFolder = FALSE */
 			if (fileFullPathList.size() == 1 && firstUploadFile.isFile()) {
-				System.out.println("\nÀü¼ÛÇÒ ÆÄÀÏÀÌ ÇÏ³ª¿ä~~\n");
+				System.out.println("\nì „ì†¡í•  íŒŒì¼ì´ í•˜ë‚˜ìš”~~\n");
 				multipart.addFormField("createFolder", "FALSE");
 				multipart.addFilePart("multipartFileData", firstUploadFile, "/");
 			}
-			/* case: Àü¼ÛÇÒ ÆÄÀÏÀÌ 2°³ ÀÌ»ó, Æú´õ°¡ ÇÏ³ª ÀÌ»óÀÎ °æ¿ì createFolder = TRUE */
+			/* case: ì „ì†¡í•  íŒŒì¼ì´ 2ê°œ ì´ìƒ, í´ë”ê°€ í•˜ë‚˜ ì´ìƒì¸ ê²½ìš° createFolder = TRUE */
 			else{
-				System.out.println("\nÀü¼ÛÇÒ ÆÄÀÏÀÌ ¿©·¯°³¿ä~~\n");
+				System.out.println("\nì „ì†¡í•  íŒŒì¼ì´ ì—¬ëŸ¬ê°œìš”~~\n");
 				multipart.addFormField("createFolder", "TRUE");
-				// Iterator ÅëÇÑ ÀüÃ¼ Á¶È¸
+				// Iterator í†µí•œ ì „ì²´ ì¡°íšŒ
 				Iterator iterator = fileFullPathList.iterator();
 
-				// ¿©·¯ ÆÄÀÏÀ» ¼ø¼­´ë·Î Ã³¸®
+				// ì—¬ëŸ¬ íŒŒì¼ì„ ìˆœì„œëŒ€ë¡œ ì²˜ë¦¬
 				while (iterator.hasNext()) {
 					String fileFullPath = (String) iterator.next();
 					
-					// ¾÷·ÎµåÇÒ ÆÄÀÏ »ı¼º
+					// ì—…ë¡œë“œí•  íŒŒì¼ ìƒì„±
 					File uploadFile = new File(fileFullPath);
 
 					System.out.println("<<fileFullPathList>>: "+ fileFullPath);
 
 					/* case: File */
 					if(uploadFile.isFile()){
-						System.out.println("Àü¼ÛÇÒ ÆÄÀÏÀÌ FileÀÌ¿ä~~");
+						System.out.println("ì „ì†¡í•  íŒŒì¼ì´ Fileì´ìš”~~");
 						multipart.addFilePart("multipartFileData", uploadFile, "/");
 					}
 					/* case: Directory */
 					else if(uploadFile.isDirectory()){
-						System.out.println("Àü¼ÛÇÒ ÆÄÀÏÀÌ Directory¿ä~~");
+						System.out.println("ì „ì†¡í•  íŒŒì¼ì´ Directoryìš”~~");
 						
-						// »ó´ë°æ·Î¸íÀ» À§ÇÑ ÃÊ±â°ª(Ã³À½ root dirÀÇ ½ÃÀÛ À§Ä¡ ¼³Á¤)
+						// ìƒëŒ€ê²½ë¡œëª…ì„ ìœ„í•œ ì´ˆê¸°ê°’(ì²˜ìŒ root dirì˜ ì‹œì‘ ìœ„ì¹˜ ì„¤ì •)
 						startIndex = uploadFile.getPath().lastIndexOf(uploadFile.getName());
 						
 						multipart.addFormField("directoryData", uploadFile.getPath().substring(startIndex));
-						System.out.println("µğ·ºÅä¸® ÀÌ¸§ = " + uploadFile.getName() + ", »ó´ë °æ·Î: " + uploadFile.getPath().substring(startIndex));
+						System.out.println("ë””ë ‰í† ë¦¬ ì´ë¦„ = " + uploadFile.getName() + ", ìƒëŒ€ ê²½ë¡œ: " + uploadFile.getPath().substring(startIndex));
 						
 						subDirList(uploadFile, multipart);
 					}
@@ -132,26 +132,26 @@ public class UploadData {
 		}
 	}
 
-	/** File DataÀÇ ±¸Á¶¿¡ µû¶ó <»ó´ë°æ·Î¸í, ÆÄÀÏ¸í> ¼³Á¤ 
-	 * directoryÀÌ¸é addFormField·Î »ó´ë°æ·Î Á¤º¸ º¸³»±â 
-	 * fileÀÌ¸é addFilePart·Î ÆÄÀÏ°ú »ó´ë°æ·Î Á¤º¸ º¸³»±â*/
+	/** File Dataì˜ êµ¬ì¡°ì— ë”°ë¼ <ìƒëŒ€ê²½ë¡œëª…, íŒŒì¼ëª…> ì„¤ì • 
+	 * directoryì´ë©´ addFormFieldë¡œ ìƒëŒ€ê²½ë¡œ ì •ë³´ ë³´ë‚´ê¸° 
+	 * fileì´ë©´ addFilePartë¡œ íŒŒì¼ê³¼ ìƒëŒ€ê²½ë¡œ ì •ë³´ ë³´ë‚´ê¸°*/
 	public void subDirList(File uploadFile, MultipartUtility multipart) {
-		File[] fileList = uploadFile.listFiles(); //directory ¾ÈÀÇ file data list
+		File[] fileList = uploadFile.listFiles(); //directory ì•ˆì˜ file data list
 
 		for (int i = 0; i < fileList.length; i++) {
 			File file = fileList[i];
 			try {
-				/* case: ¾÷·ÎµåÇÒ ÆÄÀÏ ³»ºÎ¿¡ ¶Ç ´Ù¸¥ ÆÄÀÏÀÌ ÀÖ´Â °æ¿ì */
+				/* case: ì—…ë¡œë“œí•  íŒŒì¼ ë‚´ë¶€ì— ë˜ ë‹¤ë¥¸ íŒŒì¼ì´ ìˆëŠ” ê²½ìš° */
 				if (file.isFile()) {
 					multipart.addFilePart("multipartFileData", file, getFileRelativePath(file));
-					System.out.println("ÆÄÀÏ ÀÌ¸§ = " + file.getName() + ", »ó´ë °æ·Î: " + getFileRelativePath(file));
+					System.out.println("íŒŒì¼ ì´ë¦„ = " + file.getName() + ", ìƒëŒ€ ê²½ë¡œ: " + getFileRelativePath(file));
 				} 
-				/* case: ¾÷·ÎµåÇÒ ÆÄÀÏ ³»ºÎ¿¡ ¼­ºêµğ·ºÅä¸®°¡ Á¸ÀçÇÏ´Â °æ¿ì ´Ù½Ã Å½»ö */
+				/* case: ì—…ë¡œë“œí•  íŒŒì¼ ë‚´ë¶€ì— ì„œë¸Œë””ë ‰í† ë¦¬ê°€ ì¡´ì¬í•˜ëŠ” ê²½ìš° ë‹¤ì‹œ íƒìƒ‰ */
 				else if (file.isDirectory()) {
 					multipart.addFormField("directoryData", file.getPath().substring(startIndex));
 					// subDirList(file.getCanonicalPath().toString());
 					subDirList(file, multipart);
-					System.out.println("µğ·ºÅä¸® ÀÌ¸§ = " + file.getName() + ", »ó´ë °æ·Î: " + file.getPath().substring(startIndex));
+					System.out.println("ë””ë ‰í† ë¦¬ ì´ë¦„ = " + file.getName() + ", ìƒëŒ€ ê²½ë¡œ: " + file.getPath().substring(startIndex));
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -159,17 +159,17 @@ public class UploadData {
 		}
 	}
 	
-	/** relative path ¾ò¾î¿À±â */
+	/** relative path ì–»ì–´ì˜¤ê¸° */
 	public String getFileRelativePath(File file){
 		String filePath = file.getPath();
 		String fileName = file.getName();
 		int endIndex = filePath.lastIndexOf(fileName);
 		
-		// ÆÄÀÏ¸íÀ» Á¦¿ÜÇÑ »ó´ë°æ·Î Á¤º¸
+		// íŒŒì¼ëª…ì„ ì œì™¸í•œ ìƒëŒ€ê²½ë¡œ ì •ë³´
 		return filePath.substring(startIndex, endIndex-1); 
 	}
 	
-	/** ¸ğµç Data¿¡¼­ °øÅëÀ¸·Î ¼³Á¤ÇØ¾ßÇÏ´Â Parameter
+	/** ëª¨ë“  Dataì—ì„œ ê³µí†µìœ¼ë¡œ ì„¤ì •í•´ì•¼í•˜ëŠ” Parameter
 	 * userName, groupPK, uploadTime */
 	public void setCommonParameter(MultipartUtility multipart) {
 		multipart.addHeaderField("User-Agent", "Heeee");
@@ -178,7 +178,7 @@ public class UploadData {
 		multipart.addFormField("uploadTime", uploadTime());
 	}
 
-	/** @return YYYY-MM-DD HH:MM:SS Çü½ÄÀÇ ÇöÀç ½Ã°£ */
+	/** @return YYYY-MM-DD HH:MM:SS í˜•ì‹ì˜ í˜„ì¬ ì‹œê°„ */
 	public String uploadTime() {
 		Calendar cal = Calendar.getInstance();
 		String year = Integer.toString(cal.get(Calendar.YEAR));
