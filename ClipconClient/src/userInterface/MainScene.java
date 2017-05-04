@@ -55,9 +55,9 @@ public class MainScene implements Initializable {
 	@FXML private TableColumn<User, String> groupPartiNicknameColumn;
 	
 	@FXML private TableView<Contents> historyTable;
-	@FXML private TableColumn<Contents, String> typeColumn, uploaderColumn;
+	@FXML private TableColumn<Contents, String> typeColumn, uploaderColumn, contentsColumn;
 	//@FXML private TableColumn<Contents, ImageView> contentsColumn;
-	@FXML private TableColumn contentsColumn;
+	//@FXML private TableColumn contentsColumn;
 	
 	@FXML private Button exitBtn, groupKeyCopyBtn;
 	@FXML private Text groupKeyText;
@@ -179,39 +179,36 @@ public class MainScene implements Initializable {
 		Contents c = historyList.get(historyList.size() - 1);
 		//if(c.getContentsType().equals(Contents.TYPE_IMAGE)) {
 		//	contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsImageProperty());
-		//if(c.getContentsType().equals(Contents.TYPE_IMAGE)) \
-		//	contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsImageProperty());
-		//}
 		//else {
-			//contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsProperty());
+			contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsProperty());
 		//}
 		
-		contentsColumn.setCellValueFactory(new Callback<TableColumn<Contents, Object>, TableCell<Contents, Object>>() {
-			@Override
-			public TableCell<Contents, Object> call(TableColumn<Contents, Object> param) {
-				TableCell<Contents, Object> cell = new TableCell<Contents, Object>() {
-					ImageView imageview = new ImageView();
-					@Override
-					public void updateItem(Object item, boolean empty) {
-						if(item!=null){
-							HBox box= new HBox();
-							VBox vbox = new VBox();
-							
-							vbox.getChildren().add(new Label(((Contents)item).getContentsValue()));
-							
-							imageview.setFitHeight(40);
-							imageview.setFitHeight(40);
-							imageview.setImage(((Contents)item).getContentsImage());
-							
-							box.getChildren().addAll(imageview,vbox);
-							
-							setGraphic(box);
-						}
-					}
-				};
-				return cell;
-			}
-		});
+//		contentsColumn.setCellValueFactory(new Callback<TableColumn<Contents, Object>, TableCell<Contents, Object>>() {
+//			@Override
+//			public TableCell<Contents, Object> call(TableColumn<Contents, Object> param) {
+//				TableCell<Contents, Object> cell = new TableCell<Contents, Object>() {
+//					ImageView imageview = new ImageView();
+//					@Override
+//					public void updateItem(Object item, boolean empty) {
+//						if(item!=null){
+//							HBox box= new HBox();
+//							VBox vbox = new VBox();
+//							
+//							vbox.getChildren().add(new Label(((Contents)item).getContentsValue()));
+//							
+//							imageview.setFitHeight(40);
+//							imageview.setFitHeight(40);
+//							imageview.setImage(((Contents)item).getContentsImage());
+//							
+//							box.getChildren().addAll(imageview,vbox);
+//							
+//							setGraphic(box);
+//						}
+//					}
+//				};
+//				return cell;
+//			}
+//		});
 		
 		typeColumn.setCellValueFactory(cellData -> cellData.getValue().getTypeProperty());
 		uploaderColumn.setCellValueFactory(cellData -> cellData.getValue().getUploaderProperty());

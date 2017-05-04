@@ -36,9 +36,9 @@ public class Contents {
 	private Image contentsImage;
 	
 	private StringProperty typeProperty;
-	//private StringProperty contentsProperty;
+	private StringProperty contentsProperty;
 	//private ObjectProperty<ImageView> contentsImageProperty;
-	private ObjectProperty contentsProperty;
+	//private ObjectProperty contentsProperty;
 	private StringProperty uploaderProperty;
 	
 	/**
@@ -55,10 +55,10 @@ public class Contents {
 		this.contentsImage = contentsImage;
 		
 		this.typeProperty = new SimpleStringProperty(contentsType);
-		//this.contentsProperty = new SimpleStringProperty(contentsValue);
+		this.contentsProperty = new SimpleStringProperty(contentsValue);
 		//ImageView imageView = new ImageView(contentsImage);
 		//this.contentsImageProperty = new SimpleObjectProperty<ImageView>(imageView);
-		this.contentsProperty = new SimpleObjectProperty();
+		//this.contentsProperty = new SimpleObjectProperty();
 		this.uploaderProperty = new SimpleStringProperty(uploadUserName);
 	}
 }
