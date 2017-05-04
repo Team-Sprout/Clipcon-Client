@@ -45,15 +45,15 @@ public class MessageParser {
 	// Image임시
 	public static Contents getContentsbyMessage(Message m) {
 		Image img = null;
-		
-		try {
-			img = new Image(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1.png"));
-			System.out.println("Image 객체 생성");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} 
 
-		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"),
-				m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), img);
+		/*도연이 코드*/
+		// try {
+		// img = new Image(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1.png"));
+		// System.out.println("Image 객체 생성");
+		// } catch (FileNotFoundException e) {
+		// e.printStackTrace();
+		// }
+
+		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"), m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), img);
 	}
 }
