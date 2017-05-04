@@ -46,6 +46,7 @@ public class UploadData {
 
 	   /** Clipboard에 있는 Captured Image Data를 업로드 */
 	   public void uploadCapturedImageData(Image capturedImageData) {
+		   // XXX[희정,도연]: 왠진 몰라도 이미지 화질이 너무 안좋음.
 	      try {
 	         MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
 	         setCommonParameter(multipart);

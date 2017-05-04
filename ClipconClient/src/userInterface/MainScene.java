@@ -179,12 +179,13 @@ public class MainScene implements Initializable {
 		Contents c = historyList.get(historyList.size() - 1);
 		//if(c.getContentsType().equals(Contents.TYPE_IMAGE)) {
 		//	contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsImageProperty());
+		//if(c.getContentsType().equals(Contents.TYPE_IMAGE)) \
+		//	contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsImageProperty());
 		//}
 		//else {
 			//contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsProperty());
 		//}
 		
-		// ImageView + String
 		contentsColumn.setCellValueFactory(new Callback<TableColumn<Contents, Object>, TableCell<Contents, Object>>() {
 			@Override
 			public TableCell<Contents, Object> call(TableColumn<Contents, Object> param) {
