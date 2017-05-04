@@ -1,10 +1,16 @@
 package model;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.json.JSONArray;
 
@@ -56,4 +62,19 @@ public class MessageParser {
 
 		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"), m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), img);
 	}
+	
+	/** @author delf
+	 * client code */
+//	public static Image getImagebyMessage(Message message) {
+//		String imageString = message.get("imageString");
+//		byte[] imageBytes = Base64.getDecoder().decode(imageString);
+//		BufferedImage imag;
+//		try {
+//			imag = ImageIO.read(new ByteArrayInputStream(imageBytes));
+//			return imag;
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
 }
