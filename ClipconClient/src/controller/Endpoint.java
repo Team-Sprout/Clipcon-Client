@@ -66,8 +66,8 @@ public class Endpoint {
 			case Message.CONFIRM:
 				System.out.println("create group confirm");
 
-				ui.getStartingScene().setCreateGroupSuccessFlag(true); // MainView 蹂댁뿬以�
-				user = MessageParser.getUserAndGroupByMessage(message); // �꽌踰꾩뿉�꽌 primaryKey, name 諛쏆븘 Group 媛앹껜 �깮�꽦 �썑 user�뿉 set
+				ui.getStartingScene().setCreateGroupSuccessFlag(true); // MainView 보여줌
+				user = MessageParser.getUserAndGroupByMessage(message); // 서버에서 primaryKey, name 받아 Group 객체 생성 후 user에 set
 
 				while (true) {
 					if (ui.getMainScene() != null) {
@@ -75,8 +75,8 @@ public class Endpoint {
 					}
 				}
 
-				System.out.println("洹몃９�궎 : " + user.getGroup().getPrimaryKey());
-				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list 珥덇린�솕
+				System.out.println("域밸챶竊숋옙沅� : " + user.getGroup().getPrimaryKey());
+				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list 초기화
 
 				break;
 			case Message.REJECT:
@@ -92,8 +92,8 @@ public class Endpoint {
 			case Message.CONFIRM:
 				System.out.println("join group confirm");
 
-				ui.getGroupJoinScene().setJoinGroupSuccessFlag(true); // Group join close �븯怨� MainView 蹂댁뿬以�
-				user = MessageParser.getUserAndGroupByMessage(message); // �꽌踰꾩뿉�꽌 primaryKey, name 諛쏆븘 Group 媛앹껜 �깮�꽦 �썑 user�뿉 set
+				ui.getGroupJoinScene().setJoinGroupSuccessFlag(true); // Group join close 하고 MainView 보여줌
+				user = MessageParser.getUserAndGroupByMessage(message); // 서버에서 primaryKey, name 받아 Group 객체 생성 후 user에 set
 
 				while (true) {
 					if (ui.getMainScene() != null) {
@@ -101,8 +101,8 @@ public class Endpoint {
 					}
 				}
 
-				System.out.println("洹몃９�궎 : " + user.getGroup().getPrimaryKey());
-				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list 珥덇린�솕
+				System.out.println("域밸챶竊숋옙沅� : " + user.getGroup().getPrimaryKey());
+				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list 초기화
 
 				break;
 			case Message.REJECT:
@@ -122,11 +122,11 @@ public class Endpoint {
 				}
 			}
 
-			ui.getMainScene().setShowStartingViewFlag(true); // StartingView 蹂댁뿬以�
+			ui.getMainScene().setShowStartingViewFlag(true); // StartingView 보여줌
 
 			break;
 
-		case Message.NOTI_ADD_PARTICIPANT: // 洹몃９ �궡 �떎瑜� User �뱾�뼱�삱 �븣 留덈떎 Message 諛쏄퀬 UI 媛깆떊
+		case Message.NOTI_ADD_PARTICIPANT: // 그룹 내 다른 User 들어올 때 마다 Message 받고 UI 갱신
 
 			System.out.println("add participant noti");
 
@@ -134,7 +134,7 @@ public class Endpoint {
 
 			user.getGroup().getUserList().add(newParticipant);
 			ui.getMainScene().getGroupParticipantList().add(newParticipant);
-			ui.getMainScene().setAddGroupParticipantFlag(true); // UI list 異붽�
+			ui.getMainScene().setAddGroupParticipantFlag(true); // UI list 추가
 
 			break;
 
@@ -150,7 +150,7 @@ public class Endpoint {
 			}
 
 			user.getGroup().getUserList().remove(removeIndex);
-			ui.getMainScene().setInitGroupParticipantFlag(true); // UI list �젣嫄�
+			ui.getMainScene().setInitGroupParticipantFlag(true); // UI list 추가
 
 			break;
 
@@ -162,11 +162,11 @@ public class Endpoint {
 			
 			user.getGroup().addContents(contents);
 
-			// TODO[�룄�뿰]: �엳�뒪�넗由� �뾽�뜲�씠�듃 UI泥섎━
-			System.out.println("-----<Endpoint> contentsValue �궡�슜-----");
+			// TODO[도연]: 히스토리 업데이트 UI처리
+			System.out.println("-----<Endpoint> contentsValue 占쎄땀占쎌뒠-----");
 			System.out.println(contents.getContentsValue());
       ui.getMainScene().getHistoryList().add(contents);
-			ui.getMainScene().setAddContentsInHistoryFlag(true); // UI list 異붽�
+			ui.getMainScene().setAddContentsInHistoryFlag(true); // UI list 추가
 			break;
 
 		default:
@@ -185,6 +185,6 @@ public class Endpoint {
 
 	@OnClose
 	public void onClose() {
-		// �꽭�뀡�씠 �걡寃쇱쓣 �븣 �뼱�뼸寃� �븷吏� 泥섎━
+		// 세션이 끊겼을 때 어떻게 할지 처리
 	}
 }
