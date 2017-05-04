@@ -56,7 +56,7 @@ public class MessageParser {
 		/*도연이 코드*/
 		// try {
 		// img = new Image(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1.png"));
-		// System.out.println("Image 객체 생성");
+		// System.out.println("Image 媛앹껜 �깮�꽦");
 		// } catch (FileNotFoundException e) {
 		// e.printStackTrace();
 		// }
