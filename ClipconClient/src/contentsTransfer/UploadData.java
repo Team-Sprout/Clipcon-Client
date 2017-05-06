@@ -9,9 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class UploadData {
-	// public final static String SERVER_URL = "http://182.172.16.118:8080/websocketServerModule";
-	// public final static String SERVER_URL = "http://223.194.157.244:8080/websocketServerModule";
-	public final static String SERVER_URL = "http://223.194.152.19:8080/websocketServerModule";
+	public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
+	//public final static String SERVER_URL = "http://223.194.152.19:8080/websocketServerModule";
 	public final static String SERVER_SERVLET = "/UploadServlet";
 	private String charset = "UTF-8";
 

@@ -31,9 +31,8 @@ public class DownloadData {
 	// 다운로드 파일을 임시로 저장할 위치
 	private final String DOWNLOAD_LOCATION = "C:\\Users\\Administrator\\Desktop\\Clipcon";
 
-	// public final static String SERVER_URL = "http://182.172.16.118:8080/websocketServerModule";
-	// public final static String SERVER_URL = "http://223.194.157.244:8080/websocketServerModule";
-	public final static String SERVER_URL = "http://223.194.152.19:8080/websocketServerModule"; // delf's
+	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
+	//public final static String SERVER_URL = "http://223.194.152.19:8080/websocketServerModule"; // delf's
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 
 	private final String charset = "UTF-8";

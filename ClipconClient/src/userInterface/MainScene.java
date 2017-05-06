@@ -9,14 +9,19 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import javax.websocket.EncodeException;
+
+import org.controlsfx.control.PopOver;
 
 import contentsTransfer.ContentsUpload;
 import contentsTransfer.DownloadData;
 import controller.ClipboardController;
 import controller.Endpoint;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,6 +29,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -31,10 +37,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -55,9 +62,8 @@ public class MainScene implements Initializable {
 	@FXML private TableColumn<User, String> groupPartiNicknameColumn;
 	
 	@FXML private TableView<Contents> historyTable;
-	@FXML private TableColumn<Contents, String> typeColumn, uploaderColumn, contentsColumn;
-	//@FXML private TableColumn<Contents, ImageView> contentsColumn;
-	//@FXML private TableColumn contentsColumn;
+	@FXML private TableColumn<Contents, String> typeColumn, uploaderColumn;
+	@FXML private TableColumn<Contents, Object> contentsColumn;
 	
 	@FXML private Button exitBtn, groupKeyCopyBtn;
 	@FXML private Text groupKeyText;
@@ -74,6 +80,9 @@ public class MainScene implements Initializable {
 	private ContentsUpload contentsUpload;
 	
 	private ObservableList<Contents> historyList;
+	
+	private PopOver popOver = new PopOver();
+	private Label popOverContents = new Label();
 
 	// download test
 	private DownloadData downloader = new DownloadData("gmlwjd9405@naver.com", "doyyyy");
@@ -89,6 +98,17 @@ public class MainScene implements Initializable {
 
 		groupParticipantList = FXCollections.observableArrayList();
 		historyList = FXCollections.observableArrayList();
+		
+		historyTable.getStylesheets().add("style.css");
+		
+		//popOver.setTitle("Contents Vlaue");
+        popOver.setAutoHide(true);
+        popOver.setAutoFix(true);
+        popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
+        popOver.setHeaderAlwaysVisible(true);
+        popOver.setDetachable(true);
+        popOver.setDetached(true);
+        popOver.setCornerRadius(4);
 
 		// run scheduler for checking
 		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -151,6 +171,25 @@ public class MainScene implements Initializable {
 				ClipboardController.writeClipboard(new StringSelection(Endpoint.user.getGroup().getPrimaryKey()));
 			}
 		});
+		
+//		historyTable.setOnMouseClicked((MouseEvent event) -> {
+//	        if(event.getButton().equals(MouseButton.PRIMARY)){
+//	            popOverContents.setText("\n  " + historyTable.getSelectionModel().getSelectedItem().getContentsValue() +
+//	            		"\n\n  size : " + historyTable.getSelectionModel().getSelectedItem().getContentsSize() +
+//	            		"\n  added : " + historyTable.getSelectionModel().getSelectedItem().getUploadTime() + "  \n ");
+//	            popOver.setContentNode(popOverContents);
+//	            popOver.show(historyTable);
+//    	        //((Parent) popOver.getSkin().getNode()).getStylesheets().add(getClass().getResource("PopOver.css").toExternalForm());
+//	        }
+//	    });
+        
+        historyTable.setRowFactory((tableView) -> {
+            return new TooltipTableRow<Contents>((Contents contents) -> {
+            	return contents.getContentsValue() + "\n\nsize : " + contents.getContentsSize() + "\nadded : " + contents.getUploadTime();
+            });
+      });
+		
+
 	}
 
 	public void initGroupParticipantList() {
@@ -163,6 +202,21 @@ public class MainScene implements Initializable {
 
 		groupParticipantTable.setItems(groupParticipantList);
 		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
+		groupPartiNicknameColumn.setCellFactory(new Callback<TableColumn<User, String>, TableCell<User, String>>() {
+			@Override
+			public TableCell<User, String> call(TableColumn<User, String> column) {
+				TableCell<User, String> tc = new TableCell<User, String>() {
+					@Override
+                    public void updateItem(String item, boolean empty) {
+                        if (item != null){
+                            setText(item);
+                        }
+                    }
+				};
+				tc.setAlignment(Pos.CENTER);
+				return tc;
+			}
+		});
 	}
 
 	public void addGroupParticipantList() {
@@ -170,48 +224,67 @@ public class MainScene implements Initializable {
 		groupParticipantTable.setItems(groupParticipantList);
 		
 		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
+		groupPartiNicknameColumn.setCellFactory(new Callback<TableColumn<User, String>, TableCell<User, String>>() {
+			@Override
+			public TableCell<User, String> call(TableColumn<User, String> column) {
+				TableCell<User, String> tc = new TableCell<User, String>() {
+					@Override
+                    public void updateItem(String item, boolean empty) {
+                        if (item != null){
+                            setText(item);
+                        }
+                    }
+				};
+				tc.setAlignment(Pos.CENTER);
+				return tc;
+			}
+		});
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void addContentsInHistory() {
 		historyTable.setItems(historyList);
 		
-		Contents c = historyList.get(historyList.size() - 1);
-		//if(c.getContentsType().equals(Contents.TYPE_IMAGE)) {
-		//	contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsImageProperty());
-		//else {
-			contentsColumn.setCellValueFactory(cellData -> cellData.getValue().getContentsProperty());
-		//}
-		
-//		contentsColumn.setCellValueFactory(new Callback<TableColumn<Contents, Object>, TableCell<Contents, Object>>() {
-//			@Override
-//			public TableCell<Contents, Object> call(TableColumn<Contents, Object> param) {
-//				TableCell<Contents, Object> cell = new TableCell<Contents, Object>() {
-//					ImageView imageview = new ImageView();
-//					@Override
-//					public void updateItem(Object item, boolean empty) {
-//						if(item!=null){
-//							HBox box= new HBox();
-//							VBox vbox = new VBox();
-//							
-//							vbox.getChildren().add(new Label(((Contents)item).getContentsValue()));
-//							
-//							imageview.setFitHeight(40);
-//							imageview.setFitHeight(40);
-//							imageview.setImage(((Contents)item).getContentsImage());
-//							
-//							box.getChildren().addAll(imageview,vbox);
-//							
-//							setGraphic(box);
-//						}
-//					}
-//				};
-//				return cell;
-//			}
-//		});
+		contentsColumn.setCellValueFactory(new ContentsValueFactory());
+		contentsColumn.setCellFactory(new Callback<TableColumn<Contents, Object>, TableCell<Contents, Object>>() {
+			@Override
+			public TableCell<Contents, Object> call(TableColumn<Contents, Object> column) {
+				return new ContentsValueCell();
+			}
+		});
 		
 		typeColumn.setCellValueFactory(cellData -> cellData.getValue().getTypeProperty());
+		typeColumn.setCellFactory(new Callback<TableColumn<Contents, String>, TableCell<Contents, String>>() {
+			@Override
+			public TableCell<Contents, String> call(TableColumn<Contents, String> column) {
+				TableCell<Contents, String> tc = new TableCell<Contents, String>() {
+					@Override
+                    public void updateItem(String item, boolean empty) {
+                        if (item != null){
+                            setText(item);
+                        }
+                    }
+				};
+				tc.setAlignment(Pos.CENTER);
+				return tc;
+			}
+		});
+		
 		uploaderColumn.setCellValueFactory(cellData -> cellData.getValue().getUploaderProperty());
+		uploaderColumn.setCellFactory(new Callback<TableColumn<Contents, String>, TableCell<Contents, String>>() {
+			@Override
+			public TableCell<Contents, String> call(TableColumn<Contents, String> column) {
+				TableCell<Contents, String> tc = new TableCell<Contents, String>() {
+					@Override
+                    public void updateItem(String item, boolean empty) {
+                        if (item != null){
+                            setText(item);
+                        }
+                    }
+				};
+				tc.setAlignment(Pos.CENTER);
+				return tc;
+			}
+		});
 	}
 
 	public void showStartingView() {
@@ -295,6 +368,72 @@ public class MainScene implements Initializable {
 			downloader.requestDataDownload(downloadDataPK, myhistory);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public class TooltipTableRow<T> extends TableRow<T> {
+
+		private Function<T, String> toolTipStringFunction;
+
+		public TooltipTableRow(Function<T, String> toolTipStringFunction) {
+			this.toolTipStringFunction = toolTipStringFunction;
+		}
+
+		@Override
+		protected void updateItem(T item, boolean empty) {
+			super.updateItem(item, empty);
+			if (item == null) {
+				setTooltip(null);
+			} else {
+				Tooltip tooltip = new Tooltip(toolTipStringFunction.apply(item));
+				setTooltip(tooltip);
+			}
+		}
+	}
+	
+	public class ContentsValueFactory implements Callback<TableColumn.CellDataFeatures<Contents, Object>, ObservableValue<Object>> {
+	    @SuppressWarnings("unchecked")
+	    @Override
+	    public ObservableValue<Object> call(TableColumn.CellDataFeatures<Contents, Object> data) {
+	    	Object value = null;
+	    	if(data.getValue().getContentsType().equals(Contents.TYPE_IMAGE)) {
+	    		value = data.getValue().getContentsImage();
+	    	}
+	    	else {
+	    		if(data.getValue().getContentsValue().length() > 25) {
+	    			value = data.getValue().getContentsValue().substring(0, 25) + " ...";
+	    		}
+	    		else {
+	    			value = data.getValue().getContentsValue();
+	    		}
+	    	}
+	        return (value instanceof ObservableValue) ? (ObservableValue) value : new ReadOnlyObjectWrapper<>(value);
+	    }
+	}
+
+	public class ContentsValueCell extends TableCell<Contents, Object> {
+		@Override
+		protected void updateItem(Object item, boolean empty) {
+			super.updateItem(item, empty);
+			
+			this.setAlignment(Pos.CENTER);
+			
+			if (item != null) {
+				if (item instanceof String) {
+					setText((String) item);
+					setGraphic(null);
+				} else if (item instanceof Image) {
+					setText(null);
+					ImageView imageView = new ImageView((Image) item);
+					imageView.setFitWidth(50);
+					imageView.setPreserveRatio(true);
+					imageView.setSmooth(true);
+					setGraphic(imageView);
+				} else {
+					setText(null);
+					setGraphic(null);
+				}
+			}
 		}
 	}
 }
