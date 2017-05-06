@@ -54,7 +54,8 @@ public class DownloadData {
 	// private History myhistory; // The Group History to which I belong
 	private Map<String, String[]> requestAgainOfFileData = new HashMap<String, String[]>();
 
-	/** 생성자 userName과 groupPK를 설정한다. */
+	/** Constructor
+	 * Setting userName and groupPK */
 	public DownloadData(String userName, String groupPK) {
 		this.userName = userName;
 		this.groupPK = groupPK;
@@ -70,7 +71,7 @@ public class DownloadData {
 	 */
 	public void requestDataDownload(String downloadDataPK) throws MalformedURLException {
 		
-		//나의 히스토리 가져오기. 다른 방법 생각s.
+		// 내가 속한 Group의 History를 가져온다. 수정 필요.
 		History myhistory = Endpoint.user.getGroup().getHistory();
 		
 		// Create a temporary folder to save the imageFile, file
@@ -96,22 +97,22 @@ public class DownloadData {
 
 			// checks server's status code first
 			int status = httpConn.getResponseCode();
-			List<String> response = new ArrayList<String>(); // Server의 응답내용
+			List<String> response = new ArrayList<String>(); // Server's response contents
 
 			if (status == HttpURLConnection.HTTP_OK) {
 				switch (contentsType) {
 				case Contents.TYPE_STRING:
-					// response body에 넣은 String 객체를 받아온다.
+					// Get String Object in Response Body
 					String stringData = downloadStringData(httpConn.getInputStream());
-					System.out.println("stringData 결과: " + stringData);
+					System.out.println("stringData Result: " + stringData);
 					
 					StringSelection stringTransferable = new StringSelection(stringData);
 					ClipboardController.writeClipboard(stringTransferable);
 					
 				case Contents.TYPE_IMAGE:
-					// response body에 넣은 Image 객체를 받아온다.
+					// Get Image Object in Response Body
 					Image imageData = downloadCapturedImageData(httpConn.getInputStream());
-					System.out.println("ImageData 결과: " + imageData.toString());
+					System.out.println("ImageData Result: " + imageData.toString());
 					
 					ImageTransferable imageTransferable = new ImageTransferable(imageData);
 					ClipboardController.writeClipboard(imageTransferable);
@@ -120,9 +121,10 @@ public class DownloadData {
 					
 				case Contents.TYPE_FILE:
 					String fileOriginName = requestContents.getContentsValue();
-					/* Clipcon 폴더에 실제 File(파일명: 원본 파일명) 저장 후 File 객체를 받아온다. */
+					/* Save Real File(filename: fileOriginName) to Clipcon Folder
+					 * Get Image Object in Response Body */
 					File fileData = downloadMultipartData(httpConn.getInputStream(), fileOriginName);
-					System.out.println("fileOriginName 결과: " + fileData.getName());
+					System.out.println("fileOriginName Result: " + fileData.getName());
 					
 					ArrayList<File> fileList = new ArrayList<File>();
 					fileList.add(fileData);
@@ -139,7 +141,7 @@ public class DownloadData {
 					// response body에 넣은 String 객체를 받아온다.
 					
 					String multipleFileInfo = downloadStringData(httpConn.getInputStream());
-					System.out.println("multipleFileInfo 결과: " + multipleFileInfo);
+					System.out.println("multipleFileInfo Result: " + multipleFileInfo);
 					
 					requestAgainOfFileData = analyzeMultipartDataInfo(multipleFileInfo);
 
@@ -160,7 +162,7 @@ public class DownloadData {
 		}
 	}
 
-	/** String Data를 다운로드 */
+	/** Download String Data */
 	private String downloadStringData(InputStream inputStream) {
 		BufferedReader bufferedReader;
 		StringBuilder stringBuilder = null;
@@ -187,7 +189,8 @@ public class DownloadData {
 	}
 
 	/**
-	 * Captured Image Data를 다운로드 file 형태의 Image Data를 전송받아 Image 객체로 변경
+	 * Download Captured Image Data
+	 * Change to Image object from file form of Image data
 	 */
 	private Image downloadCapturedImageData(InputStream inputStream) {
 		byte[] imageInByte = null;
@@ -216,7 +219,8 @@ public class DownloadData {
 		return ImageData;
 	}
 
-	/** Multiple File Data를 임시폴더에 다운로드 후 File 객체 리턴 */
+	/** download Multiple File Data to Temporary folder
+	 * @return File object */
 	private File downloadMultipartData(InputStream inputStream, String fileName) throws FileNotFoundException {
 		// opens input stream from the HTTP connection
 		// InputStream inputStream = httpConn.getInputStream();
@@ -244,7 +248,8 @@ public class DownloadData {
 		return fileData;
 	}
 	
-	/** Multiple File Data의 정보를 분석하여 Dir 구조 생성 후 다시 server에 요청할 정보를 return */
+	/** Analyze Multiple File Data Structure and Make Directory structure to Client
+	 * @return information to ask the server again */
 	private Map<String, String[]> analyzeMultipartDataInfo(String jsonString){
 		Map<String, String[]> multipleFileInfo = new HashMap<String, String[]>(); 
 		Map<String, String[]> requestAgainOfFileData = new HashMap<String, String[]>();
@@ -253,7 +258,7 @@ public class DownloadData {
         Iterator<?> keyset = jsonObject.keys(); // HM
         String[] value = new String[2];
 
-		/* [희정] Json 구조 확인 후 수정 필요 */
+		/* [희정] Analyze Json string from server response*/
 		while (keyset.hasNext()) {
 			String key = (String) keyset.next();
 			System.out.print("\n Key: " + key);
@@ -270,20 +275,20 @@ public class DownloadData {
 
 			// case: directory
 			if (value[1].equals(Contents.TYPE_DIRECTORY)) {
-				// 적절하게 directory를 생성
+				// make directory according to structure
 				makeDirBasedJsonStruct(value[0]);
 			}
 			// case: file
 			else {
-				// 다시 server에 요청할 정보를 저장
-				System.out.println("다시 server에 요청할 File 정보 key num: " + key);
+				// save information to ask the server again
+				System.out.println("다시 server에 요청할 File 정보의 key num: " + key);
 				requestAgainOfFileData.put(key, value);
 			}
 		}
 		return requestAgainOfFileData;
 	}
 	
-	/** 구조에 맞게 Directory 생성 */
+	/** Make directory according to structure */
 	private void makeDirBasedJsonStruct(String dirName){
 		String dirFullName = DOWNLOAD_LOCATION + File.separator + dirName.replaceAll("\"", File.separator);
 		createFolder(dirFullName);
