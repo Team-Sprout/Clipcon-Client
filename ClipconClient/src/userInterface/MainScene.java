@@ -84,9 +84,6 @@ public class MainScene implements Initializable {
 	private PopOver popOver = new PopOver();
 	private Label popOverContents = new Label();
 
-	// download test
-	private DownloadData downloader = new DownloadData("gmlwjd9405@naver.com", "doyyyy");
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setMainScene(this);
@@ -147,21 +144,28 @@ public class MainScene implements Initializable {
 			@Override
 			public void handle(ActionEvent event) {
 				MainScene.event = event;
-
-				// test
-				//testDownload();
-
-				 //¼­¹ö¿¡ REQUEST_EXIT_GROUP Messgae º¸³¿
-				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
+				
+				// [í¬ì •] download test
+				DownloadData downloader = new DownloadData("test1", "abcABC");
+				String downloadDataPK = "4"; //ë‹¤ìš´ë¡œë“œí•  Contentsì˜ PK
 				try {
-					if (endpoint == null) {
-						System.out.println("debuger_delf: endpoint is null");
-					}
-					endpoint = Endpoint.getIntance();
-					endpoint.sendMessage(exitGroupMsg);
-				} catch (IOException | EncodeException e) {
+					downloader.requestDataDownload(downloadDataPK);
+				} catch (MalformedURLException e) { 
 					e.printStackTrace();
 				}
+
+				
+//				 //ì„œë²„ì— REQUEST_EXIT_GROUP Messgae ë³´ëƒ„
+//				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
+//				try {
+//					if (endpoint == null) {
+//						System.out.println("debuger_delf: endpoint is null");
+//					}
+//					endpoint = Endpoint.getIntance();
+//					endpoint.sendMessage(exitGroupMsg);
+//				} catch (IOException | EncodeException e) {
+//					e.printStackTrace();
+//				}
 			}
 		});
 
@@ -323,7 +327,7 @@ public class MainScene implements Initializable {
 
 	// download test
 	public void testDownload() {
-		/* test¸¦ À§ÇÑ setting (¿ø·¡´Â ¾Ë¸²À» ¹Ş¾ÒÀ» ¶§ ¼¼ÆÃ) */
+		/* testë¥¼ ìœ„í•œ setting (ì›ë˜ëŠ” ì•Œë¦¼ì„ ë°›ì•˜ì„ ë•Œ ì„¸íŒ…) */
 		Contents content1 = new Contents();
 		content1.setContentsPKName("1");
 		content1.setContentsSize(400);
@@ -355,13 +359,13 @@ public class MainScene implements Initializable {
 		content3.setUploadTime("");
 		content3.setUploadUserName("testHee");
 
-		// test) ³ªÀÇ History
+		// test) ë‚˜ì˜ History
 		History myhistory = new History();
 		myhistory.addContents(content1);
 		myhistory.addContents(content2);
 		myhistory.addContents(content3);
 
-		// ¿äÃ»ÇÒ µ¥ÀÌÅÍÀÇ °íÀ¯Å° °ª
+		// ìš”ì²­í•  ë°ì´í„°ì˜ ê³ ìœ í‚¤ ê°’
 		String downloadDataPK = "1";
 
 		try {
