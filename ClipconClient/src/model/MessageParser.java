@@ -16,8 +16,9 @@ public class MessageParser {
 	
 	/**
 	 * @param message
-	 *            �꽌踰꾩뿉�꽌 諛쏆� Message媛앹껜
-	 * @return message 濡쒕��꽣 蹂��솚�맂 Group媛앹껜
+	 *            서버에서 받은 Message객체
+	 * @return user 
+	 * 			  message 로부터 변환된 User객체
 	 */
 	public static User getUserAndGroupByMessage(Message message) {
 		User user = new User(message.get(Message.NAME));
@@ -44,21 +45,20 @@ public class MessageParser {
 		return user;
 	}
 
-	// Image�엫�떆
+	// Image임시
 	public static Contents getContentsbyMessage(Message m) {
 		/* [doy] debuger test code */
 		Image img = null;
-		
-		 try {
-		 img = new Image(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1.png"));
-		 System.out.println("Image 揶쏆빘猿� 占쎄문占쎄쉐");
-		 } catch (FileNotFoundException e) {
-		 e.printStackTrace();
-		 }
-		 
-		 cnt++;
-		 
-		 if(cnt % 2 == 0) {
+
+		try {
+			img = new Image(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1.png"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		cnt++;
+
+		if (cnt % 2 == 0) {
 			 return new Contents(Contents.TYPE_IMAGE, m.getLong("contentsSize"), m.get("contentsPKName"), m.get("uploadUserName"), m.get("uploadTime"), "imgae", img);
 		 }
 		 /* [doy] debuger test code */
