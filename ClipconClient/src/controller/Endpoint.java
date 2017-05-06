@@ -74,7 +74,7 @@ public class Endpoint {
 					}
 				}
 
-				System.out.println("域밸챶竊숋옙沅� : " + user.getGroup().getPrimaryKey());
+				System.out.println("그룹키 : " + user.getGroup().getPrimaryKey());
 				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list 초기화
 
 				break;
@@ -100,7 +100,7 @@ public class Endpoint {
 					}
 				}
 
-				System.out.println("域밸챶竊숋옙沅� : " + user.getGroup().getPrimaryKey());
+				System.out.println("그룹키: " + user.getGroup().getPrimaryKey());
 				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list 초기화
 
 				break;
@@ -162,9 +162,9 @@ public class Endpoint {
 			user.getGroup().addContents(contents);
 
 			// TODO[도연]: 히스토리 업데이트 UI처리
-			System.out.println("-----<Endpoint> contentsValue 占쎄땀占쎌뒠-----");
+			System.out.println("-----<Endpoint> contentsValue 내용-----");
 			System.out.println(contents.getContentsValue());
-      ui.getMainScene().getHistoryList().add(contents);
+			ui.getMainScene().getHistoryList().add(contents);
 			ui.getMainScene().setAddContentsInHistoryFlag(true); // UI list 추가
 			break;
 
