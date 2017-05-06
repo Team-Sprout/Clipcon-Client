@@ -26,8 +26,10 @@ import userInterface.UserInterface;
 
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
 public class Endpoint {
-	 private String uri = "ws://223.194.152.19:8080/websocketServerModule/ServerEndpoint";
-//	private String uri = "ws://delf.gonetis.com:8080/wezbsocketServerModule/ServerEndpoint";
+
+	private String uri = "ws://delf.gonetis.com:8080/websocketServerModule/ServerEndpoint";
+	//private String uri = "ws://223.194.152.19:8080/websocketServerModule/ServerEndpoint";
+
 	private Session session = null;
 	private static Endpoint uniqueEndpoint;
 	private static UserInterface ui;
@@ -78,6 +80,7 @@ public class Endpoint {
 				}
 
 				System.out.println("Group key : " + user.getGroup().getPrimaryKey());
+
 				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list 초기화
 				
 				// [희정] default setting for download test and update history UI
@@ -107,6 +110,7 @@ public class Endpoint {
 				}
 
 				System.out.println("Group key : " + user.getGroup().getPrimaryKey());
+
 				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list 초기화
 				
 				// [희정] default setting for download test and update history UI
@@ -172,6 +176,7 @@ public class Endpoint {
 
 			// TODO[도연]: 히스토리 업데이트 UI처리
 			System.out.println("-----<Endpoint> contentsValue Context-----");
+
 			System.out.println(contents.getContentsValue());
 			ui.getMainScene().getHistoryList().add(contents);
 			ui.getMainScene().setAddContentsInHistoryFlag(true); // UI list 추가

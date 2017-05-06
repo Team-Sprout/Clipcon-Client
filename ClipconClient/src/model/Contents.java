@@ -1,7 +1,5 @@
 package model;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
@@ -38,9 +36,6 @@ public class Contents {
 	private Image contentsImage;
 	
 	private StringProperty typeProperty;
-	private StringProperty contentsProperty;
-	//private ObjectProperty<ImageView> contentsImageProperty;
-	//private ObjectProperty contentsProperty;
 	private StringProperty uploaderProperty;
 	
 	/**
@@ -57,10 +52,6 @@ public class Contents {
 		this.contentsImage = contentsImage;
 		
 		this.typeProperty = new SimpleStringProperty(contentsType);
-		this.contentsProperty = new SimpleStringProperty(contentsValue);
-		//ImageView imageView = new ImageView(contentsImage);
-		//this.contentsImageProperty = new SimpleObjectProperty<ImageView>(imageView);
-		//this.contentsProperty = new SimpleObjectProperty();
 		this.uploaderProperty = new SimpleStringProperty(uploadUserName);
 	}
 }

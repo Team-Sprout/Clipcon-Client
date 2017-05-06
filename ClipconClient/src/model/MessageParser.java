@@ -1,27 +1,24 @@
 package model;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import org.json.JSONArray;
 
 import javafx.scene.image.Image;
 
 public class MessageParser {
-
+	
+	private static int cnt = 0;
+	
 	/**
 	 * @param message
 	 *            서버에서 받은 Message객체
-	 * @return message 로부터 변환된 Group객체
+	 * @return user 
+	 * 			  message 로부터 변환된 User객체
 	 */
 	public static User getUserAndGroupByMessage(Message message) {
 		User user = new User(message.get(Message.NAME));
@@ -50,17 +47,22 @@ public class MessageParser {
 
 	// Image임시
 	public static Contents getContentsbyMessage(Message m) {
-
+		/* [doy] debuger test code */
 		Image img = null;
 
-		/*도연이 코드*/
-		// try {
-		// img = new Image(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1.png"));
-		// System.out.println("Image 媛앹껜 �깮�꽦");
-		// } catch (FileNotFoundException e) {
-		// e.printStackTrace();
-		// }
+		try {
+			img = new Image(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1.png"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 
+		cnt++;
+
+		if (cnt % 2 == 0) {
+			 return new Contents(Contents.TYPE_IMAGE, m.getLong("contentsSize"), m.get("contentsPKName"), m.get("uploadUserName"), m.get("uploadTime"), "imgae", img);
+		 }
+		 /* [doy] debuger test code */
+		 
 		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"), m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), img);
 
 	}
