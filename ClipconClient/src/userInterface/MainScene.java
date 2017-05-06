@@ -75,9 +75,6 @@ public class MainScene implements Initializable {
 	
 	private ObservableList<Contents> historyList;
 
-	// download test
-	private DownloadData downloader = new DownloadData("gmlwjd9405@naver.com", "doyyyy");
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setMainScene(this);
@@ -127,21 +124,28 @@ public class MainScene implements Initializable {
 			@Override
 			public void handle(ActionEvent event) {
 				MainScene.event = event;
-
-				// test
-				//testDownload();
-
-				 //서버에 REQUEST_EXIT_GROUP Messgae 보냄
-				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
+				
+				// [희정] download test
+				DownloadData downloader = new DownloadData("test1", "abcABC");
+				String downloadDataPK = "4"; //다운로드할 Contents의 PK
 				try {
-					if (endpoint == null) {
-						System.out.println("debuger_delf: endpoint is null");
-					}
-					endpoint = Endpoint.getIntance();
-					endpoint.sendMessage(exitGroupMsg);
-				} catch (IOException | EncodeException e) {
+					downloader.requestDataDownload(downloadDataPK);
+				} catch (MalformedURLException e) { 
 					e.printStackTrace();
 				}
+
+				
+//				 //서버에 REQUEST_EXIT_GROUP Messgae 보냄
+//				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
+//				try {
+//					if (endpoint == null) {
+//						System.out.println("debuger_delf: endpoint is null");
+//					}
+//					endpoint = Endpoint.getIntance();
+//					endpoint.sendMessage(exitGroupMsg);
+//				} catch (IOException | EncodeException e) {
+//					e.printStackTrace();
+//				}
 			}
 		});
 
@@ -246,55 +250,5 @@ public class MainScene implements Initializable {
 				contentsUpload.upload();
 			}
 		});
-	}
-
-	// download test
-	public void testDownload() {
-		/* test를 위한 setting (원래는 알림을 받았을 때 세팅) */
-		Contents content1 = new Contents();
-		content1.setContentsPKName("1");
-		content1.setContentsSize(400);
-		content1.setContentsType(Contents.TYPE_STRING);
-		content1.setContentsValue("");
-		content1.setUploadTime("");
-		content1.setUploadUserName("testHee");
-
-		// Contents content1 = new Contents("1");
-		// content1.setContentsSize(10000);
-		// content1.setContentsType(Contents.TYPE_IMAGE);
-		// content1.setFileOriginName("");
-		// content1.setUploadTime("");
-		// content1.setUploadUserName("testHee");
-
-		Contents content2 = new Contents();
-		content2.setContentsPKName("2");
-		content2.setContentsSize(80451275);
-		content2.setContentsType(Contents.TYPE_FILE);
-		content2.setContentsValue("taeyeon.mp3");
-		content2.setUploadTime("");
-		content2.setUploadUserName("testHee");
-
-		Contents content3 = new Contents();
-		content3.setContentsPKName("3");
-		content3.setContentsSize(387);
-		content3.setContentsType(Contents.TYPE_FILE);
-		content3.setContentsValue("bbbb.jpeg");
-		content3.setUploadTime("");
-		content3.setUploadUserName("testHee");
-
-		// test) 나의 History
-		History myhistory = new History();
-		myhistory.addContents(content1);
-		myhistory.addContents(content2);
-		myhistory.addContents(content3);
-
-		// 요청할 데이터의 고유키 값
-		String downloadDataPK = "1";
-
-		try {
-			downloader.requestDataDownload(downloadDataPK, myhistory);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
 	}
 }
