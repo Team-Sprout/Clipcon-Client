@@ -18,7 +18,6 @@ public class UploadData {
 
 	private String userName = null;
 	private String groupPK = null;
-	private int startIndex = 0;
 
 	/** Constructor
 	 * setting userName and groupPK. */
@@ -32,8 +31,7 @@ public class UploadData {
 		try {
 			MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
 			setCommonParameter(multipart);
-
-			multipart.addFormField("createFolder", "FALSE");
+			
 			multipart.addFormField("stringData", stringData);
 			System.out.println("stringData: " + stringData);
 
@@ -53,7 +51,6 @@ public class UploadData {
 			MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
 			setCommonParameter(multipart);
 
-			multipart.addFormField("createFolder", "FALSE");
 			multipart.addImagePart("imageData", capturedImageData);
 			System.out.println("imageData: " + capturedImageData.toString());
 
@@ -80,46 +77,26 @@ public class UploadData {
 			// create uploading file
 			File firstUploadFile = new File(fileFullPathList.get(0));
 			
-			/* case: Single file data(not a folder), createFolder = FALSE */
+			/* case: Single file data(not a folder) */
 			if (fileFullPathList.size() == 1 && firstUploadFile.isFile()) {
 				System.out.println("\nSingle File Uploading~~\n");
-				multipart.addFormField("createFolder", "FALSE");
-				multipart.addFilePart("multipartFileData", firstUploadFile, "/");
+				multipart.addFilePart("fileData", firstUploadFile);
 			}
-			/* case: Multiple file data, One or more folders, createFolder = TRUE */
+			/* case: Multiple file data, One or more folders */
 			else{
-				System.out.println("\nMultiple File Uploading~~\n");
-				multipart.addFormField("createFolder", "TRUE");
+				System.out.println("\nMultiple File or Directory Uploading~~\n");
+				
+				// TODO [희정] Compress multiple file and directory
+				// 해당 파일들 or folder들을 압축한다.
+				// 압축한 .zip 파일의 full path를 받아온다.
+				
+				String zipFileFullPath = "";
+				
+				// create uploading file
+				File uploadZipFile = new File(zipFileFullPath);
 
-				Iterator iterator = fileFullPathList.iterator();
-
-				while (iterator.hasNext()) {
-					String fileFullPath = (String) iterator.next();
-					
-					// create uploading file
-					File uploadFile = new File(fileFullPath);
-
-					System.out.println("<<fileFullPathList>>: "+ fileFullPath);
-
-					/* case: File */
-					if(uploadFile.isFile()){
-						System.out.println("File Data Uploading~~");
-						multipart.addFilePart("multipartFileData", uploadFile, "/");
-					}
-					/* case: Directory */
-					else if(uploadFile.isDirectory()){
-						System.out.println("Directory Data Uploading~~");
-						
-						// Initial value for relative path (Set starting index of root directory)
-						startIndex = uploadFile.getPath().lastIndexOf(uploadFile.getName());
-						
-						multipart.addFormField("directoryData", uploadFile.getPath().substring(startIndex));
-						System.out.println("Directory name: " + uploadFile.getName() + ", Relative path: " + uploadFile.getPath().substring(startIndex));
-						
-						subDirList(uploadFile, multipart);
-					}
-					System.out.println();
-				}
+				System.out.println("<<zipFileFullPath>>: "+ zipFileFullPath);
+				multipart.addFilePart("multipartFileData", uploadZipFile);
 			}
 
 			List<String> response = multipart.finish();
@@ -132,43 +109,6 @@ public class UploadData {
 		}
 	}
 
-	/** Setting <Relative path, File name> depending on the structure of the File Data 
-	 * case directory: send relative path info using addFormField 
-	 * case File: send real file data and relative path info using addFilePart */
-	public void subDirList(File uploadFile, MultipartUtility multipart) {
-		File[] fileList = uploadFile.listFiles(); // file data list in directory
-
-		for (int i = 0; i < fileList.length; i++) {
-			File file = fileList[i];
-			try {
-				/* case: There is another file inside the file to upload */
-				if (file.isFile()) {
-					multipart.addFilePart("multipartFileData", file, getFileRelativePath(file));
-					System.out.println("File name: " + file.getName() + ", Relative path: " + getFileRelativePath(file));
-				} 
-				/* case: There is a subdirectory inside the file to upload, Rediscover */
-				else if (file.isDirectory()) {
-					multipart.addFormField("directoryData", file.getPath().substring(startIndex));
-					// subDirList(file.getCanonicalPath().toString());
-					subDirList(file, multipart);
-					System.out.println("Directory name: " + file.getName() + ", Relative path: " + file.getPath().substring(startIndex));
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	/** Get relative path info */
-	public String getFileRelativePath(File file){
-		String filePath = file.getPath();
-		String fileName = file.getName();
-		int endIndex = filePath.lastIndexOf(fileName);
-		
-		// relative path info except file name
-		return filePath.substring(startIndex, endIndex-1); 
-	}
-	
 	/** Parameter to be set in common for all data
 	 * userName, groupPK, uploadTime */
 	public void setCommonParameter(MultipartUtility multipart) {
@@ -178,6 +118,7 @@ public class UploadData {
 		multipart.addFormField("uploadTime", uploadTime());
 	}
 
+	// TODO [희정] deal with uploadTime at Server Side 
 	/** @return Current Time YYYY-MM-DD HH:MM:SS  */
 	public String uploadTime() {
 		Calendar cal = Calendar.getInstance();

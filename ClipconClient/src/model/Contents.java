@@ -19,7 +19,6 @@ public class Contents {
 	public final static String TYPE_IMAGE = "IMAGE";
 	public final static String TYPE_FILE = "FILE";
 	public final static String TYPE_MULTIPLE_FILE = "MULTIPLE_FILE";
-	public final static String TYPE_DIRECTORY = "DIRECTORY";
 
 	private String contentsType;
 	private long contentsSize;
@@ -29,7 +28,6 @@ public class Contents {
 
 	private String uploadUserName;
 	private String uploadTime;
-	// XXX[희정]: uploadTime을 클라이언트에서 관리하는 이유를 묻고 parser 수정
 
 	// String Type: String값, File Type: FileOriginName
 	private String contentsValue;

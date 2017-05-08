@@ -231,19 +231,9 @@ public class Endpoint {
 		content3.setContentsValue("IU-Palette.mp3"); //file name
 		content3.setContentsImage(null);
 
-		Contents content4 = new Contents();
-		content4.setContentsType(Contents.TYPE_MULTIPLE_FILE);
-		content4.setContentsSize(79895123);
-		content4.setContentsPKName("4");
-		content4.setUploadUserName("test4");
-		content4.setUploadTime("2017-05-04 PM 44:44:44");
-		content4.setContentsValue(null);
-		content4.setContentsImage(null);
-
 		// test) 내가 속한 group의 History에 setting
 		myGroup.addContents(content1);
 		myGroup.addContents(content2);
 		myGroup.addContents(content3);
-		myGroup.addContents(content4);
 	}
 }
