@@ -147,7 +147,7 @@ public class MainScene implements Initializable {
 				
 				// [희정] download test
 				DownloadData downloader = new DownloadData("test1", "abcABC");
-				String downloadDataPK = "4"; // 받기를 원하는 Contents의 PK
+				String downloadDataPK = "2"; // 받기를 원하는 Contents의 PK
 				try {
 					downloader.requestDataDownload(downloadDataPK);
 				} catch (MalformedURLException e) { 

@@ -59,7 +59,7 @@ public class MessageParser {
 		cnt++;
 
 		if (cnt % 2 == 0) {
-			 return new Contents(Contents.TYPE_IMAGE, m.getLong("contentsSize"), m.get("contentsPKName"), m.get("uploadUserName"), m.get("uploadTime"), "imgae", img);
+			 return new Contents(Contents.TYPE_IMAGE, m.getLong("contentsSize"), m.get("contentsPKName"), m.get("uploadUserName"), m.get("uploadTime"), "image", img);
 		 }
 		 /* [doy] debuger test code */
 		 

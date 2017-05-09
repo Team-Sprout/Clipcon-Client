@@ -38,8 +38,8 @@ public class DownloadData {
 	// 다운로드 파일을 임시로 저장할 위치
 	private final String DOWNLOAD_LOCATION = "C:\\Program Files\\Clipcon";
 
-	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
-	// public final static String SERVER_URL = "http://223.194.152.19:8080/websocketServerModule"; // delf's
+//	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
+	 public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule"; // delf's
 
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 
@@ -254,7 +254,7 @@ public class DownloadData {
 	 */
 	private void createDirectory(String directoryName) {
 		File receiveFolder = new File(directoryName);
-		System.out.println(", directoryName: " + directoryName);
+		System.out.println("directoryName: " + directoryName);
 
 		// 저장할 그룹 폴더가 존재하지 않으면
 		if (!receiveFolder.exists()) {

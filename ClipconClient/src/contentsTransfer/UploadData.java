@@ -10,8 +10,8 @@ import java.util.List;
 
 public class UploadData {
 
-	public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
-	//public final static String SERVER_URL = "http://223.194.152.19:8080/websocketServerModule";
+//	public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
+	public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule";
 
 	public final static String SERVER_SERVLET = "/UploadServlet";
 	private String charset = "UTF-8";
@@ -87,16 +87,32 @@ public class UploadData {
 				System.out.println("\nMultiple File or Directory Uploading~~\n");
 				
 				// TODO [희정] Compress multiple file and directory
-				// 해당 파일들 or folder들을 압축한다.
-				// 압축한 .zip 파일의 full path를 받아온다.
+				// 1. 해당 파일들 or folder들을 압축한다.
+				// 2. 압축한 .zip 파일의 full path를 받아온다.
 				
-				String zipFileFullPath = "";
+				/* 폴더 하나 압축 test */
+//				// create uploading file
+//				File uploadFile = new File(fileFullPathList.get(0));
+//				try {
+//				String zipFileFillPath = MultipleFileCompress.compress(uploadFile);
+//				System.out.println("<<zipFileFullPath>>: "+ zipFileFillPath);
+//				File uploadZipFile = new File(zipFileFillPath);
+//				
+//				multipart.addFilePart("multipartFileData", uploadZipFile);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
 				
-				// create uploading file
-				File uploadZipFile = new File(zipFileFullPath);
-
-				System.out.println("<<zipFileFullPath>>: "+ zipFileFullPath);
-				multipart.addFilePart("multipartFileData", uploadZipFile);
+				/* 다수의 File 압축 test */
+				try {
+					String zipFileFillPath = MultipleFileCompress.compress(fileFullPathList);
+					System.out.println("----------------------<<zipFileFullPath>>: "+ zipFileFillPath);
+					File uploadZipFile = new File(zipFileFillPath);
+					
+					multipart.addFilePart("multipartFileData", uploadZipFile);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 
 			List<String> response = multipart.finish();
@@ -115,36 +131,5 @@ public class UploadData {
 		multipart.addHeaderField("User-Agent", "Heeee");
 		multipart.addFormField("userName", userName);
 		multipart.addFormField("groupPK", groupPK);
-		multipart.addFormField("uploadTime", uploadTime());
-	}
-
-	// TODO [희정] deal with uploadTime at Server Side 
-	/** @return Current Time YYYY-MM-DD HH:MM:SS  */
-	public String uploadTime() {
-		Calendar cal = Calendar.getInstance();
-		String year = Integer.toString(cal.get(Calendar.YEAR));
-		String month = Integer.toString(cal.get(Calendar.MONTH) + 1);
-
-		String date = Integer.toString(cal.get(Calendar.DATE));
-		String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
-		if (Integer.parseInt(hour) < 10) {
-			hour = "0" + hour;
-		}
-		if (Integer.parseInt(hour) > 12) {
-			hour = "PM " + Integer.toString(Integer.parseInt(hour) - 12);
-		} else {
-			hour = "AM " + hour;
-		}
-
-		String minute = Integer.toString(cal.get(Calendar.MINUTE));
-		if (Integer.parseInt(minute) < 10) {
-			minute = "0" + minute;
-		}
-		String sec = Integer.toString(cal.get(Calendar.SECOND));
-		if (Integer.parseInt(sec) < 10) {
-			sec = "0" + sec;
-		}
-
-		return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + sec;
 	}
 }
