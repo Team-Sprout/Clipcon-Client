@@ -50,6 +50,10 @@ import lombok.Setter;
 import model.Contents;
 import model.History;
 import model.Message;
+import model.Notification;
+import model.Notification.Notifier;
+import model.NotificationBuilder;
+import model.NotifierBuilder;
 import model.User;
 
 @Getter
@@ -84,6 +88,9 @@ public class MainScene implements Initializable {
 	private PopOver popOver = new PopOver();
 	private Label popOverContents = new Label();
 
+	private Notification noti;
+	private Notification.Notifier notifier;
+	
 	// download test
 	private DownloadData downloader = new DownloadData("gmlwjd9405@naver.com", "doyyyy");
 
@@ -109,6 +116,9 @@ public class MainScene implements Initializable {
         popOver.setDetachable(true);
         popOver.setDetached(true);
         popOver.setCornerRadius(4);
+        
+        Notifier.INSTANCE.setAlwaysOnTop(false);
+		notifier = NotifierBuilder.create().popupLocation(Pos.BOTTOM_RIGHT).styleSheet("/resource/mynotification.css").build();
 
 		// run scheduler for checking
 		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -244,6 +254,8 @@ public class MainScene implements Initializable {
 	public void addContentsInHistory() {
 		historyTable.setItems(historyList);
 		
+		Contents content = historyList.get(historyList.size()-1);
+		
 		contentsColumn.setCellValueFactory(new ContentsValueFactory());
 		contentsColumn.setCellFactory(new Callback<TableColumn<Contents, Object>, TableCell<Contents, Object>>() {
 			@Override
@@ -285,6 +297,15 @@ public class MainScene implements Initializable {
 				return tc;
 			}
 		});
+		
+		String notiMsg = content.getContentsType() + " Content";
+		
+		noti = NotificationBuilder.create().title("Content Upload Notification").message(notiMsg).image(Notification.INFO_ICON).build();
+		
+		notifier.notify(noti);
+		notifier.setOnNotificationPressed(event -> System.out.println("Notification pressed:"));
+		// [TODO] noti evnet : download
+		
 	}
 
 	public void showStartingView() {
