@@ -83,6 +83,8 @@ public class MainScene implements Initializable {
 	
 	private PopOver popOver = new PopOver();
 	private Label popOverContents = new Label();
+	
+	private Thread clipboardMonitorThread;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -92,11 +94,16 @@ public class MainScene implements Initializable {
 
 		contentsUpload = new ContentsUpload();
 		startHookProcess();
+		clipboardMonitorThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				ClipboardController.clipboardMonitor();
+			}
+		});
+		clipboardMonitorThread.start();
 
 		groupParticipantList = FXCollections.observableArrayList();
 		historyList = FXCollections.observableArrayList();
-		
-		historyTable.getStylesheets().add("style.css");
 		
 		//popOver.setTitle("Contents Vlaue");
         popOver.setAutoHide(true);
