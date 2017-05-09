@@ -93,6 +93,8 @@ public class MainScene implements Initializable {
 	
 	// download test
 	private DownloadData downloader = new DownloadData("gmlwjd9405@naver.com", "doyyyy");
+	
+	private Thread clipboardMonitorThread;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -102,11 +104,16 @@ public class MainScene implements Initializable {
 
 		contentsUpload = new ContentsUpload();
 		startHookProcess();
+		clipboardMonitorThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				ClipboardController.clipboardMonitor();
+			}
+		});
+		clipboardMonitorThread.start();
 
 		groupParticipantList = FXCollections.observableArrayList();
 		historyList = FXCollections.observableArrayList();
-		
-		historyTable.getStylesheets().add("style.css");
 		
 		//popOver.setTitle("Contents Vlaue");
         popOver.setAutoHide(true);
@@ -157,21 +164,28 @@ public class MainScene implements Initializable {
 			@Override
 			public void handle(ActionEvent event) {
 				MainScene.event = event;
-
-				// test
-				//testDownload();
-
-				 //º≠πˆø° REQUEST_EXIT_GROUP Messgae ∫∏≥ø
-				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
+				
+				// [Ìù¨Ï†ï] download test
+				DownloadData downloader = new DownloadData("test1", "abcABC");
+				String downloadDataPK = "4"; // Î∞õÍ∏∞Î•º ÏõêÌïòÎäî ContentsÏùò PK
 				try {
-					if (endpoint == null) {
-						System.out.println("debuger_delf: endpoint is null");
-					}
-					endpoint = Endpoint.getIntance();
-					endpoint.sendMessage(exitGroupMsg);
-				} catch (IOException | EncodeException e) {
+					downloader.requestDataDownload(downloadDataPK);
+				} catch (MalformedURLException e) { 
 					e.printStackTrace();
 				}
+
+				
+//				 // Send REQUEST_EXIT_GROUP Message To Server
+//				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
+//				try {
+//					if (endpoint == null) {
+//						System.out.println("debuger_delf: endpoint is null");
+//					}
+//					endpoint = Endpoint.getIntance();
+//					endpoint.sendMessage(exitGroupMsg);
+//				} catch (IOException | EncodeException e) {
+//					e.printStackTrace();
+//				}
 			}
 		});
 
@@ -340,56 +354,6 @@ public class MainScene implements Initializable {
 				contentsUpload.upload();
 			}
 		});
-	}
-
-	// download test
-	public void testDownload() {
-		/* test∏¶ ¿ß«— setting (ø¯∑°¥¬ æÀ∏≤¿ª πﬁæ“¿ª ∂ß ºº∆√) */
-		Contents content1 = new Contents();
-		content1.setContentsPKName("1");
-		content1.setContentsSize(400);
-		content1.setContentsType(Contents.TYPE_STRING);
-		content1.setContentsValue("");
-		content1.setUploadTime("");
-		content1.setUploadUserName("testHee");
-
-		// Contents content1 = new Contents("1");
-		// content1.setContentsSize(10000);
-		// content1.setContentsType(Contents.TYPE_IMAGE);
-		// content1.setFileOriginName("");
-		// content1.setUploadTime("");
-		// content1.setUploadUserName("testHee");
-
-		Contents content2 = new Contents();
-		content2.setContentsPKName("2");
-		content2.setContentsSize(80451275);
-		content2.setContentsType(Contents.TYPE_FILE);
-		content2.setContentsValue("taeyeon.mp3");
-		content2.setUploadTime("");
-		content2.setUploadUserName("testHee");
-
-		Contents content3 = new Contents();
-		content3.setContentsPKName("3");
-		content3.setContentsSize(387);
-		content3.setContentsType(Contents.TYPE_FILE);
-		content3.setContentsValue("bbbb.jpeg");
-		content3.setUploadTime("");
-		content3.setUploadUserName("testHee");
-
-		// test) ≥™¿« History
-		History myhistory = new History();
-		myhistory.addContents(content1);
-		myhistory.addContents(content2);
-		myhistory.addContents(content3);
-
-		// ø‰√ª«“ µ•¿Ã≈Õ¿« ∞Ì¿Ø≈∞ ∞™
-		String downloadDataPK = "1";
-
-		try {
-			downloader.requestDataDownload(downloadDataPK, myhistory);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public class TooltipTableRow<T> extends TableRow<T> {

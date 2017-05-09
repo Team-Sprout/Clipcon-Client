@@ -17,22 +17,30 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import controller.ClipboardController;
+import controller.Endpoint;
 import model.Contents;
 import model.FileTransferable;
 import model.History;
 import model.ImageTransferable;
 
 public class DownloadData {
-	// ´Ù¿î·Îµå ÆÄÀÏÀ» ÀÓ½Ã·Î ÀúÀåÇÒ À§Ä¡
-	private final String DOWNLOAD_LOCATION = "C:\\Users\\Administrator\\Desktop\\Clipcon";
+	// ë‹¤ìš´ë¡œë“œ íŒŒì¼ì„ ì„ì‹œë¡œ ì €ì¥í•  ìœ„ì¹˜
+	private final String DOWNLOAD_LOCATION = "C:\\Program Files\\Clipcon";
 
 	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
 	//public final static String SERVER_URL = "http://223.194.152.19:8080/websocketServerModule"; // delf's
+
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 
 	private final String charset = "UTF-8";
@@ -44,32 +52,38 @@ public class DownloadData {
 	private Contents requestContents; // Contents Info to download
 	// private String downloadDataPK; // Contents' Primary Key to download
 	// private History myhistory; // The Group History to which I belong
+	private Map<String, String[]> requestAgainOfFileData = new HashMap<String, String[]>();
 
-	/** »ı¼ºÀÚ userName°ú groupPK¸¦ ¼³Á¤ÇÑ´Ù. */
+	/** Constructor
+	 * Setting userName and groupPK */
 	public DownloadData(String userName, String groupPK) {
 		this.userName = userName;
 		this.groupPK = groupPK;
 	}
 
 	/**
-	 * ´Ù¿î·ÎµåÇÏ±â ¿øÇÏ´Â Data¸¦ request º¹¼ö ¼±ÅÃÀº File DataÀÇ °æ¿ì¸¸ °¡´É(ÃßÈÄ °³¼±)
+	 * ë‹¤ìš´ë¡œë“œí•˜ê¸° ì›í•˜ëŠ” Dataë¥¼ request ë³µìˆ˜ ì„ íƒì€ File Dataì˜ ê²½ìš°ë§Œ ê°€ëŠ¥(ì¶”í›„ ê°œì„ )
 	 * 
 	 * @param downloadDataPK
-	 *            ´Ù¿î·ÎµåÇÒ DataÀÇ °íÀ¯Å°
+	 *            ë‹¤ìš´ë¡œë“œí•  Dataì˜ ê³ ìœ í‚¤
 	 * @param myhistory
-	 *            ³»°¡ ¼ÓÇÑ ±×·ìÀÇ History Á¤º¸
+	 *            ë‚´ê°€ ì†í•œ ê·¸ë£¹ì˜ History ì •ë³´
 	 */
-	public void requestDataDownload(String downloadDataPK, History myhistory) throws MalformedURLException {
+	public void requestDataDownload(String downloadDataPK) throws MalformedURLException {
+		
+		// ë‚´ê°€ ì†í•œ Groupì˜ Historyë¥¼ ê°€ì ¸ì˜¨ë‹¤. ìˆ˜ì • í•„ìš”.
+		History myhistory = Endpoint.user.getGroup().getHistory();
+		
 		// Create a temporary folder to save the imageFile, file
-		createFileReceiveFolder(DOWNLOAD_LOCATION);
+		createFolder(DOWNLOAD_LOCATION);
 		// Retrieving Contents from My History
 		requestContents = myhistory.getContentsByPK(downloadDataPK);
-
+		// Type of data to download
+		String contentsType = requestContents.getContentsType();
+		
 		// Parameter to be sent by the GET method
 		String parameters = "userName=" + userName + "&" + "groupPK=" + groupPK + "&" + "downloadDataPK="
 				+ downloadDataPK;
-		// Type of data to download
-		String contentsType = requestContents.getContentsType();
 
 		try {
 			URL url = new URL(SERVER_URL + SERVER_SERVLET + "?" + parameters);
@@ -83,40 +97,58 @@ public class DownloadData {
 
 			// checks server's status code first
 			int status = httpConn.getResponseCode();
-			List<String> response = new ArrayList<String>(); // ServerÀÇ ÀÀ´ä³»¿ë
+			List<String> response = new ArrayList<String>(); // Server's response contents
 
 			if (status == HttpURLConnection.HTTP_OK) {
 				switch (contentsType) {
-				case "STRING":
-					// response body¿¡ ³ÖÀº String °´Ã¼¸¦ ¹Ş¾Æ¿Â´Ù.
+				case Contents.TYPE_STRING:
+					// Get String Object in Response Body
 					String stringData = downloadStringData(httpConn.getInputStream());
-					System.out.println("stringData °á°ú: " + stringData);
+					System.out.println("stringData Result: " + stringData);
+					
 					StringSelection stringTransferable = new StringSelection(stringData);
 					ClipboardController.writeClipboard(stringTransferable);
-
-					break;
-				case "IMAGE":
-					// response body¿¡ ³ÖÀº Image °´Ã¼¸¦ ¹Ş¾Æ¿Â´Ù.
+					
+				case Contents.TYPE_IMAGE:
+					// Get Image Object in Response Body
 					Image imageData = downloadCapturedImageData(httpConn.getInputStream());
-					System.out.println("ImageData °á°ú: " + imageData.toString());
+					System.out.println("ImageData Result: " + imageData.toString());
+					
 					ImageTransferable imageTransferable = new ImageTransferable(imageData);
 					ClipboardController.writeClipboard(imageTransferable);
 
 					break;
-				case "FILE":
+					
+				case Contents.TYPE_FILE:
 					String fileOriginName = requestContents.getContentsValue();
-					/* Clipcon Æú´õ¿¡ ½ÇÁ¦ File(ÆÄÀÏ¸í: ¿øº» ÆÄÀÏ¸í) ÀúÀå ÈÄ File °´Ã¼¸¦ ¹Ş¾Æ¿Â´Ù. */
+					/* Save Real File(filename: fileOriginName) to Clipcon Folder
+					 * Get Image Object in Response Body */
 					File fileData = downloadMultipartData(httpConn.getInputStream(), fileOriginName);
-					System.out.println("fileOriginName °á°ú: " + fileData.getName());
+					System.out.println("fileOriginName Result: " + fileData.getName());
+					
 					ArrayList<File> fileList = new ArrayList<File>();
 					fileList.add(fileData);
 					FileTransferable fileTransferable = new FileTransferable(fileList);
 					ClipboardController.writeClipboard(fileTransferable);
 
 					break;
+					
+				case Contents.TYPE_MULTIPLE_FILE:
+					// 1. serverì—ì„œ Jsoní˜•íƒœë¡œ multipleFileInfoì— ëŒ€í•œ Stringì„ ë°›ì•„ì˜¨ë‹¤.
+					// 2. Jsoní˜•íƒœë¥¼ ë°›ì•„ êµ¬ì¡°ì— ë§ê²Œ dirë“¤ì„ ìƒì„±í•œë‹¤.
+					// 3. Jsonì—ì„œ fileì— í•´ë‹¹í•˜ëŠ” ê²ƒì„ GET requestë¡œ ë‹¤ì‹œ ìš”ì²­í•œë‹¤.
+					// (dirê°€ ì—†ìœ¼ë©´ ì—¬ëŸ¬ fileì„ ë°›ì•„ì˜¤ëŠ” ê²ƒìœ¼ë¡œ ì²˜ë¦¬í•œë‹¤.)
+					// response bodyì— ë„£ì€ String ê°ì²´ë¥¼ ë°›ì•„ì˜¨ë‹¤.
+					
+					String multipleFileInfo = downloadStringData(httpConn.getInputStream());
+					System.out.println("multipleFileInfo Result: " + multipleFileInfo);
+					
+					requestAgainOfFileData = analyzeMultipartDataInfo(multipleFileInfo);
+
+					break;
 
 				default:
-					System.out.println("¾î¶² Çü½Ä¿¡µµ ¼ÓÇÏÁö ¾ÊÀ½.");
+					System.out.println("ì–´ë–¤ í˜•ì‹ì—ë„ ì†í•˜ì§€ ì•ŠìŒ.");
 				}
 				System.out.println();
 
@@ -130,7 +162,7 @@ public class DownloadData {
 		}
 	}
 
-	/** String Data¸¦ ´Ù¿î·Îµå */
+	/** Download String Data */
 	private String downloadStringData(InputStream inputStream) {
 		BufferedReader bufferedReader;
 		StringBuilder stringBuilder = null;
@@ -157,7 +189,8 @@ public class DownloadData {
 	}
 
 	/**
-	 * Captured Image Data¸¦ ´Ù¿î·Îµå file ÇüÅÂÀÇ Image Data¸¦ Àü¼Û¹Ş¾Æ Image °´Ã¼·Î º¯°æ
+	 * Download Captured Image Data
+	 * Change to Image object from file form of Image data
 	 */
 	private Image downloadCapturedImageData(InputStream inputStream) {
 		byte[] imageInByte = null;
@@ -186,11 +219,12 @@ public class DownloadData {
 		return ImageData;
 	}
 
-	/** ¿©·¯ File Data¸¦ ÀÓ½ÃÆú´õ¿¡ ´Ù¿î·Îµå ÈÄ File °´Ã¼ ¸®ÅÏ */
+	/** download Multiple File Data to Temporary folder
+	 * @return File object */
 	private File downloadMultipartData(InputStream inputStream, String fileName) throws FileNotFoundException {
 		// opens input stream from the HTTP connection
 		// InputStream inputStream = httpConn.getInputStream();
-		String saveFileFullPath = DOWNLOAD_LOCATION + "\\" + fileName;
+		String saveFileFullPath = DOWNLOAD_LOCATION + File.separator + fileName;
 		File fileData;
 
 		try {
@@ -213,19 +247,67 @@ public class DownloadData {
 		fileData = new File(saveFileFullPath);
 		return fileData;
 	}
+	
+	/** Analyze Multiple File Data Structure and Make Directory structure to Client
+	 * @return information to ask the server again */
+	private Map<String, String[]> analyzeMultipartDataInfo(String jsonString){
+		Map<String, String[]> multipleFileInfo = new HashMap<String, String[]>(); 
+		Map<String, String[]> requestAgainOfFileData = new HashMap<String, String[]>();
 
-	/* ÇÁ·Î±×·¥ ½ÇÇàÇÒ ¶§·Î ¿Å°Ü¾ß ÇÔ. */
-	/** ´Ù¿î·ÎµåÇÑ ÆÄÀÏÀ» ÀúÀåÇÒ ÀÓ½Ã Æú´õ »ı¼º */
-	private void createFileReceiveFolder(String saveFilePath) {
-		// ´Ù¿î·ÎµåÇÑ ÆÄÀÏÀ» ÀúÀåÇÒ Æú´õ
-		File downFolder;
+        JSONObject jsonObject = new JSONObject(jsonString); // HashMap
+        Iterator<?> keyset = jsonObject.keys(); // HM
+        String[] value = new String[2];
 
-		downFolder = new File(saveFilePath);
+		/* [í¬ì •] Analyze Json string from server response*/
+		while (keyset.hasNext()) {
+			String key = (String) keyset.next();
+			System.out.print("\n Key: " + key);
 
-		// Æú´õ°¡ Á¸ÀçÇÏÁö ¾ÊÀ¸¸é
-		if (!downFolder.exists()) {
-			downFolder.mkdir(); // Æú´õ »ı¼º
-			System.out.println("------------------" + saveFilePath + " Æú´õ »ı¼º");
+			JSONArray jsonArray = jsonObject.getJSONArray(key);
+			System.out.println(", Value: " + jsonArray.toString());
+
+			for (int i = 0; i < jsonArray.length(); i++) {
+				value[i] = (String) jsonArray.get(i);
+			}
+			System.out.println("value[0]: " + value[0] + ", value[1]: " + value[1]);
+
+			multipleFileInfo.put(key, value);
+
+			// case: directory
+			if (value[1].equals(Contents.TYPE_DIRECTORY)) {
+				// make directory according to structure
+				makeDirBasedJsonStruct(value[0]);
+			}
+			// case: file
+			else {
+				// save information to ask the server again
+				System.out.println("ë‹¤ì‹œ serverì— ìš”ì²­í•  File ì •ë³´ì˜ key num: " + key);
+				requestAgainOfFileData.put(key, value);
+			}
+		}
+		return requestAgainOfFileData;
+	}
+	
+	/** Make directory according to structure */
+	private void makeDirBasedJsonStruct(String dirName){
+		String dirFullName = DOWNLOAD_LOCATION + File.separator + dirName.replaceAll("\"", File.separator);
+		createFolder(dirFullName);
+	}
+	
+	/* í”„ë¡œê·¸ë¨ ì‹¤í–‰í•  ë•Œë¡œ ì˜®ê²¨ì•¼ í•¨. */
+	/**
+	 * Folder ìƒì„± ë©”ì„œë“œ(downloadí•œ íŒŒì¼ì„ ì €ì¥í•  ì„ì‹œ í´ë”)
+	 * 
+	 * @param saveFilePath
+	 *            ì´ ì´ë¦„ìœ¼ë¡œ í´ë” ìƒì„±
+	 */
+	private void createFolder(String folderName) {
+		File directory = new File(folderName);
+
+		// ì €ì¥í•  ê·¸ë£¹ í´ë”ê°€ ì¡´ì¬í•˜ì§€ ì•Šìœ¼ë©´
+		if (!directory.exists()) {
+			directory.mkdir(); // í´ë” ìƒì„±
+			System.out.println("------------------------------------" + folderName + " í´ë” ìƒì„±");
 		}
 	}
 }

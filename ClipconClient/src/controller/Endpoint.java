@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -14,6 +15,8 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 
 import model.Contents;
+import model.Group;
+import model.History;
 import model.Message;
 import model.MessageDecoder;
 import model.MessageEncoder;
@@ -23,8 +26,10 @@ import userInterface.UserInterface;
 
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
 public class Endpoint {
+
 	private String uri = "ws://delf.gonetis.com:8080/websocketServerModule/ServerEndpoint";
 	//private String uri = "ws://223.194.152.19:8080/websocketServerModule/ServerEndpoint";
+
 	private Session session = null;
 	private static Endpoint uniqueEndpoint;
 	private static UserInterface ui;
@@ -74,8 +79,12 @@ public class Endpoint {
 					}
 				}
 
-				System.out.println("그룹키 : " + user.getGroup().getPrimaryKey());
+				System.out.println("Group key : " + user.getGroup().getPrimaryKey());
+
 				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list 초기화
+				
+				// [희정] default setting for download test and update history UI
+				setDefaultHistory(user.getGroup());
 
 				break;
 			case Message.REJECT:
@@ -100,8 +109,12 @@ public class Endpoint {
 					}
 				}
 
-				System.out.println("그룹키: " + user.getGroup().getPrimaryKey());
+				System.out.println("Group key : " + user.getGroup().getPrimaryKey());
+
 				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list 초기화
+				
+				// [희정] default setting for download test and update history UI
+				setDefaultHistory(user.getGroup());
 
 				break;
 			case Message.REJECT:
@@ -158,11 +171,12 @@ public class Endpoint {
 			System.out.println("update date noti");
 
 			Contents contents = MessageParser.getContentsbyMessage(message);
-			
+
 			user.getGroup().addContents(contents);
 
 			// TODO[도연]: 히스토리 업데이트 UI처리
-			System.out.println("-----<Endpoint> contentsValue 내용-----");
+			System.out.println("-----<Endpoint> contentsValue Context-----");
+
 			System.out.println(contents.getContentsValue());
 			ui.getMainScene().getHistoryList().add(contents);
 			ui.getMainScene().setAddContentsInHistoryFlag(true); // UI list 추가
@@ -185,5 +199,51 @@ public class Endpoint {
 	@OnClose
 	public void onClose() {
 		// 세션이 끊겼을 때 어떻게 할지 처리
+	}
+	
+	// [희정] default setting for download test
+	public void setDefaultHistory(Group myGroup) {
+		/* test를 위한 setting (원래는 알림을 받았을 때 세팅) */
+		Contents content1 = new Contents();
+		content1.setContentsType(Contents.TYPE_STRING);
+		content1.setContentsSize(94);
+		content1.setContentsPKName("1");
+		content1.setUploadUserName("test1");
+		content1.setUploadTime("2017-05-01 PM 11:11:11");
+		content1.setContentsValue("동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리 나라 만세\n"); //string value
+		content1.setContentsImage(null);
+
+		Contents content2 = new Contents();
+		content2.setContentsType(Contents.TYPE_IMAGE);
+		content2.setContentsSize(6042);
+		content2.setContentsPKName("2");
+		content2.setUploadUserName("test2");
+		content2.setUploadTime("2017-05-02 PM 22:22:22");
+		content2.setContentsValue(null);
+		content2.setContentsImage(null); //??
+
+		Contents content3 = new Contents();
+		content3.setContentsType(Contents.TYPE_FILE);
+		content3.setContentsSize(5424225);
+		content3.setContentsPKName("3");
+		content3.setUploadUserName("test3");
+		content3.setUploadTime("2017-05-03 PM 33:33:33");
+		content3.setContentsValue("IU-Palette.mp3"); //file name
+		content3.setContentsImage(null);
+
+		Contents content4 = new Contents();
+		content4.setContentsType(Contents.TYPE_MULTIPLE_FILE);
+		content4.setContentsSize(79895123);
+		content4.setContentsPKName("4");
+		content4.setUploadUserName("test4");
+		content4.setUploadTime("2017-05-04 PM 44:44:44");
+		content4.setContentsValue(null);
+		content4.setContentsImage(null);
+
+		// test) 내가 속한 group의 History에 setting
+		myGroup.addContents(content1);
+		myGroup.addContents(content2);
+		myGroup.addContents(content3);
+		myGroup.addContents(content4);
 	}
 }
