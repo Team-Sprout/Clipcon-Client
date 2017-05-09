@@ -38,8 +38,8 @@ public class DownloadData {
 	// 다운로드 파일을 임시로 저장할 위치
 	private final String DOWNLOAD_LOCATION = "C:\\Program Files\\Clipcon";
 
-	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
-	//public final static String SERVER_URL = "http://223.194.152.19:8080/websocketServerModule"; // delf's
+//	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
+	 public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule"; // delf's
 
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 
@@ -51,8 +51,6 @@ public class DownloadData {
 
 	private Contents requestContents; // Contents Info to download
 	// private String downloadDataPK; // Contents' Primary Key to download
-	// private History myhistory; // The Group History to which I belong
-	private Map<String, String[]> requestAgainOfFileData = new HashMap<String, String[]>();
 
 	/** Constructor
 	 * Setting userName and groupPK */
@@ -70,20 +68,19 @@ public class DownloadData {
 	 *            내가 속한 그룹의 History 정보
 	 */
 	public void requestDataDownload(String downloadDataPK) throws MalformedURLException {
-		
+
 		// 내가 속한 Group의 History를 가져온다. 수정 필요.
 		History myhistory = Endpoint.user.getGroup().getHistory();
-		
-		// Create a temporary folder to save the imageFile, file
-		createFolder(DOWNLOAD_LOCATION);
+
+		// Create a temporary directory to save the imageFile, file
+		createDirectory(DOWNLOAD_LOCATION);
 		// Retrieving Contents from My History
 		requestContents = myhistory.getContentsByPK(downloadDataPK);
 		// Type of data to download
 		String contentsType = requestContents.getContentsType();
-		
+
 		// Parameter to be sent by the GET method
-		String parameters = "userName=" + userName + "&" + "groupPK=" + groupPK + "&" + "downloadDataPK="
-				+ downloadDataPK;
+		String parameters = "userName=" + userName + "&" + "groupPK=" + groupPK + "&" + "downloadDataPK=" + downloadDataPK;
 
 		try {
 			URL url = new URL(SERVER_URL + SERVER_SERVLET + "?" + parameters);
@@ -97,7 +94,7 @@ public class DownloadData {
 
 			// checks server's status code first
 			int status = httpConn.getResponseCode();
-			List<String> response = new ArrayList<String>(); // Server's response contents
+			// List<String> response = new ArrayList<String>(); // Server's response contents
 
 			if (status == HttpURLConnection.HTTP_OK) {
 				switch (contentsType) {
@@ -105,46 +102,46 @@ public class DownloadData {
 					// Get String Object in Response Body
 					String stringData = downloadStringData(httpConn.getInputStream());
 					System.out.println("stringData Result: " + stringData);
-					
+
 					StringSelection stringTransferable = new StringSelection(stringData);
 					ClipboardController.writeClipboard(stringTransferable);
-					
+					break;
+
 				case Contents.TYPE_IMAGE:
 					// Get Image Object in Response Body
 					Image imageData = downloadCapturedImageData(httpConn.getInputStream());
 					System.out.println("ImageData Result: " + imageData.toString());
-					
+
 					ImageTransferable imageTransferable = new ImageTransferable(imageData);
 					ClipboardController.writeClipboard(imageTransferable);
-
 					break;
-					
+
 				case Contents.TYPE_FILE:
 					String fileOriginName = requestContents.getContentsValue();
-					/* Save Real File(filename: fileOriginName) to Clipcon Folder
-					 * Get Image Object in Response Body */
-					File fileData = downloadMultipartData(httpConn.getInputStream(), fileOriginName);
+					// Save Real File(filename: fileOriginName) to Clipcon Folder Get Image Object in Response Body
+					File fileData = downloadFileData(httpConn.getInputStream(), fileOriginName);
 					System.out.println("fileOriginName Result: " + fileData.getName());
 					
 					ArrayList<File> fileList = new ArrayList<File>();
 					fileList.add(fileData);
 					FileTransferable fileTransferable = new FileTransferable(fileList);
 					ClipboardController.writeClipboard(fileTransferable);
-
 					break;
 					
 				case Contents.TYPE_MULTIPLE_FILE:
-					// 1. server에서 Json형태로 multipleFileInfo에 대한 String을 받아온다.
-					// 2. Json형태를 받아 구조에 맞게 dir들을 생성한다.
-					// 3. Json에서 file에 해당하는 것을 GET request로 다시 요청한다.
-					// (dir가 없으면 여러 file을 받아오는 것으로 처리한다.)
-					// response body에 넣은 String 객체를 받아온다.
-					
-					String multipleFileInfo = downloadStringData(httpConn.getInputStream());
-					System.out.println("multipleFileInfo Result: " + multipleFileInfo);
-					
-					requestAgainOfFileData = analyzeMultipartDataInfo(multipleFileInfo);
+					String multipleFileOriginName = requestContents.getContentsValue();
+					/*
+					 * Save Real File(filename: fileOriginName) to Clipcon Folder Get Image Object in Response Body
+					 */
+					File multipleFile = downloadFileData(httpConn.getInputStream(), multipleFileOriginName);
+					System.out.println("multipleFileOriginName Result: " + multipleFile.getName());
 
+					// TODO [희정] multipleFile 압축풀고 root에 존재하는 List<String>들을 얻어와 fileList에 모두 add한다.
+
+					ArrayList<File> multipleFileList = new ArrayList<File>();
+					multipleFileList.add(multipleFile);
+					FileTransferable multipleFileTransferable = new FileTransferable(multipleFileList);
+					ClipboardController.writeClipboard(multipleFileTransferable);
 					break;
 
 				default:
@@ -219,9 +216,9 @@ public class DownloadData {
 		return ImageData;
 	}
 
-	/** download Multiple File Data to Temporary folder
+	/** download File Data to Temporary folder
 	 * @return File object */
-	private File downloadMultipartData(InputStream inputStream, String fileName) throws FileNotFoundException {
+	private File downloadFileData(InputStream inputStream, String fileName) throws FileNotFoundException {
 		// opens input stream from the HTTP connection
 		// InputStream inputStream = httpConn.getInputStream();
 		String saveFileFullPath = DOWNLOAD_LOCATION + File.separator + fileName;
@@ -247,67 +244,22 @@ public class DownloadData {
 		fileData = new File(saveFileFullPath);
 		return fileData;
 	}
-	
-	/** Analyze Multiple File Data Structure and Make Directory structure to Client
-	 * @return information to ask the server again */
-	private Map<String, String[]> analyzeMultipartDataInfo(String jsonString){
-		Map<String, String[]> multipleFileInfo = new HashMap<String, String[]>(); 
-		Map<String, String[]> requestAgainOfFileData = new HashMap<String, String[]>();
 
-        JSONObject jsonObject = new JSONObject(jsonString); // HashMap
-        Iterator<?> keyset = jsonObject.keys(); // HM
-        String[] value = new String[2];
-
-		/* [희정] Analyze Json string from server response*/
-		while (keyset.hasNext()) {
-			String key = (String) keyset.next();
-			System.out.print("\n Key: " + key);
-
-			JSONArray jsonArray = jsonObject.getJSONArray(key);
-			System.out.println(", Value: " + jsonArray.toString());
-
-			for (int i = 0; i < jsonArray.length(); i++) {
-				value[i] = (String) jsonArray.get(i);
-			}
-			System.out.println("value[0]: " + value[0] + ", value[1]: " + value[1]);
-
-			multipleFileInfo.put(key, value);
-
-			// case: directory
-			if (value[1].equals(Contents.TYPE_DIRECTORY)) {
-				// make directory according to structure
-				makeDirBasedJsonStruct(value[0]);
-			}
-			// case: file
-			else {
-				// save information to ask the server again
-				System.out.println("다시 server에 요청할 File 정보의 key num: " + key);
-				requestAgainOfFileData.put(key, value);
-			}
-		}
-		return requestAgainOfFileData;
-	}
-	
-	/** Make directory according to structure */
-	private void makeDirBasedJsonStruct(String dirName){
-		String dirFullName = DOWNLOAD_LOCATION + File.separator + dirName.replaceAll("\"", File.separator);
-		createFolder(dirFullName);
-	}
-	
 	/* 프로그램 실행할 때로 옮겨야 함. */
 	/**
 	 * Folder 생성 메서드(download한 파일을 저장할 임시 폴더)
 	 * 
-	 * @param saveFilePath
-	 *            이 이름으로 폴더 생성
+	 * @param directoryName
+	 *            이 이름으로 Directory 생성
 	 */
-	private void createFolder(String folderName) {
-		File directory = new File(folderName);
+	private void createDirectory(String directoryName) {
+		File receiveFolder = new File(directoryName);
+		System.out.println("directoryName: " + directoryName);
 
 		// 저장할 그룹 폴더가 존재하지 않으면
-		if (!directory.exists()) {
-			directory.mkdir(); // 폴더 생성
-			System.out.println("------------------------------------" + folderName + " 폴더 생성");
+		if (!receiveFolder.exists()) {
+			receiveFolder.mkdir(); // Create Directory
+			System.out.println("------------------------------------" + directoryName + " 폴더 생성");
 		}
 	}
 }

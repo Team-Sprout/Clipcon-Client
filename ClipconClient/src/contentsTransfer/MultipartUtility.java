@@ -96,19 +96,15 @@ public class MultipartUtility {
 
       writer.append("--" + boundary).append(LINE_FEED);
       writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + imageName + "\"").append(LINE_FEED);
-      //writer.append("Content-Type: image/jpeg").append(LINE_FEED);
       writer.append("Content-Type: image/png").append(LINE_FEED);
       writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
       writer.append(LINE_FEED);
       writer.flush();
 
-      // image data array Au¨ùU
-      //BufferedImage originalImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
-      
       BufferedImage originalImage = (BufferedImage) image;
 
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      ImageIO.write(originalImage, "jpeg", baos);
+      ImageIO.write(originalImage, "png", baos);
       baos.flush();
       byte[] imageInByte = baos.toByteArray();
       baos.close();
@@ -127,13 +123,12 @@ public class MultipartUtility {
     * @param uploadFile a File to be uploaded
     * @throws IOException
     */
-   public void addFilePart(String fieldName, File uploadFile, String relativePath) throws IOException {
+   public void addFilePart(String fieldName, File uploadFile) throws IOException {
       String fileName = uploadFile.getName();
       
       writer.append("--" + boundary).append(LINE_FEED);
       writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + fileName + "\"").append(LINE_FEED);
       writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName)).append(LINE_FEED);
-      writer.append("Content-RelativePath: " + relativePath).append(LINE_FEED);
       writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
       writer.append(LINE_FEED);
       writer.flush();

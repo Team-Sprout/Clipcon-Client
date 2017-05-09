@@ -27,8 +27,8 @@ import userInterface.UserInterface;
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
 public class Endpoint {
 
-	private String uri = "ws://delf.gonetis.com:8080/websocketServerModule/ServerEndpoint";
-	//private String uri = "ws://223.194.152.19:8080/websocketServerModule/ServerEndpoint";
+//	private String uri = "ws://delf.gonetis.com:8080/websocketServerModule/ServerEndpoint";
+	private String uri = "ws://223.194.158.100:8080/websocketServerModule/ServerEndpoint";
 
 	private Session session = null;
 	private static Endpoint uniqueEndpoint;
@@ -228,16 +228,16 @@ public class Endpoint {
 		content3.setContentsPKName("3");
 		content3.setUploadUserName("test3");
 		content3.setUploadTime("2017-05-03 PM 33:33:33");
-		content3.setContentsValue("IU-Palette.mp3"); //file name
+		content3.setContentsValue("IU-Palette.mp3"); // file name
 		content3.setContentsImage(null);
-
+		
 		Contents content4 = new Contents();
-		content4.setContentsType(Contents.TYPE_MULTIPLE_FILE);
-		content4.setContentsSize(79895123);
+		content4.setContentsType(Contents.TYPE_FILE);
+		content4.setContentsSize(85338989);
 		content4.setContentsPKName("4");
-		content4.setUploadUserName("test4");
+		content4.setUploadUserName("test3");
 		content4.setUploadTime("2017-05-04 PM 44:44:44");
-		content4.setContentsValue(null);
+		content4.setContentsValue("abcABC.zip"); // multiple file name
 		content4.setContentsImage(null);
 
 		// test) 내가 속한 group의 History에 setting
