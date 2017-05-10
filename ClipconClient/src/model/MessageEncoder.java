@@ -8,7 +8,7 @@ import javax.websocket.EndpointConfig;
 import org.json.JSONObject;
 
 /**
- * ¼­¹ö·Î º¸³¾ object(Message)¸¦ stringÀ¸·Î encoding. */
+ * ì„œë²„ë¡œ ë³´ë‚¼ object(Message)ë¥¼ stringìœ¼ë¡œ encoding. */
 public class MessageEncoder implements Encoder.Text<Message> {
 	private JSONObject tmp;
 
@@ -20,7 +20,7 @@ public class MessageEncoder implements Encoder.Text<Message> {
 	}
 
 	public String encode(Message message) throws EncodeException {
-		System.out.println("¼­¹ö·Î º¸³¾ string: " + message.getJson());
+		System.out.println("ì„œë²„ë¡œ ë³´ë‚¼ string: " + message.getJson());
 		return message.getJson().toString();
 	}
 }

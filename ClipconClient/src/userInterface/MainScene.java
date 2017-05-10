@@ -2,7 +2,6 @@ package userInterface;
 
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -10,8 +9,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-
-import javax.websocket.EncodeException;
 
 import org.controlsfx.control.PopOver;
 
@@ -48,8 +45,6 @@ import javafx.util.Callback;
 import lombok.Getter;
 import lombok.Setter;
 import model.Contents;
-import model.History;
-import model.Message;
 import model.Notification;
 import model.Notification.Notifier;
 import model.NotificationBuilder;
@@ -339,19 +334,24 @@ public class MainScene implements Initializable {
 
 	public void startHookProcess() {
 		hookManager.GlobalKeyboardHook hook = new hookManager.GlobalKeyboardHook();
-		int vitrualKey = KeyEvent.VK_H;
+		int uploadVitrualKey = KeyEvent.VK_H;
+		int downloadVitrualKey = KeyEvent.VK_J;
 		boolean CTRL_Key = true;
 		boolean ALT_Key = true;
 		boolean SHIFT_Key = false;
 		boolean WIN_Key = false;
 
-		hook.setHotKey(vitrualKey, ALT_Key, CTRL_Key, SHIFT_Key, WIN_Key);
+		hook.setHotKey(uploadVitrualKey, downloadVitrualKey, ALT_Key, CTRL_Key, SHIFT_Key, WIN_Key);
 		hook.startHook();
 		// waiting for the event
 		hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
-			public void onGlobalHotkeysPressed() {
+			public void onGlobalUploadHotkeysPressed() {
 				System.out.println("CTRL + ALT + H was pressed");
 				contentsUpload.upload();
+			}
+			public void onGlobalDownloadHotkeysPressed() {
+				System.out.println("CTRL + ALT + J was pressed");
+				// [TODO] 도연 : download
 			}
 		});
 	}

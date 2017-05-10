@@ -12,12 +12,12 @@ public class History {
 	
 	private Map<String, Contents> contentsMap = new HashMap<String, Contents>();
 	
-	/** »õ·Î¿î µ¥ÀÌÅÍ°¡ ¾÷·ÎµåµÇ¸é È÷½ºÅä¸®¿¡ add */
+	/** ìƒˆë¡œìš´ ë°ì´í„°ê°€ ì—…ë¡œë“œë˜ë©´ íˆìŠ¤í† ë¦¬ì— add */
 	public void addContents(Contents contents) {
 		contentsMap.put(contents.getContentsPKName(), contents);
 	}
 
-	/** Data¸¦ ±¸ºĞÇÏ´Â °íÀ¯Å°°ª°ú ÀÏÄ¡ÇÏ´Â Contents¸¦ return */
+	/** Dataë¥¼ êµ¬ë¶„í•˜ëŠ” ê³ ìœ í‚¤ê°’ê³¼ ì¼ì¹˜í•˜ëŠ” Contentsë¥¼ return */
 	public Contents getContentsByPK(String contentsPKName) {
 		return contentsMap.get(contentsPKName);
 	}

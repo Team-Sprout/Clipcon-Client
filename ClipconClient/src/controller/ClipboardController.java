@@ -30,14 +30,13 @@ import com.sun.jna.win32.W32APIOptions;
 import model.Contents;
 
 public class ClipboardController {
-	private static Clipboard systemClipboard; // ÀÚ½ÅÀÇ ½Ã½ºÅÛ Å¬¸³º¸µå
-	//private static Contents contents;
-	private static String type; // µ¥ÀÌÅÍ Å¸ÀÔ
+	private static Clipboard systemClipboard; // ìì‹ ì˜ ì‹œìŠ¤í…œ í´ë¦½ë³´ë“œ
+	private static String type; // ë°ì´í„° íƒ€ì…
 	
 	/**
-	 * ½Ã½ºÅÛ Å¬¸³º¸µå¿¡¼­ Transferable °´Ã¼¸¦ ÀĞ¾î¿Í µ¥ÀÌÅÍ Å¸ÀÔÀ» ¾Ë¾Æ³»°í Contents °´Ã¼·Î º¯È¯
+	 * ì‹œìŠ¤í…œ í´ë¦½ë³´ë“œì—ì„œ Transferable ê°ì²´ë¥¼ ì½ì–´ì™€ ë°ì´í„° íƒ€ì…ì„ ì•Œì•„ë‚´ê³  Contents ê°ì²´ë¡œ ë³€í™˜
 	 * 
-	 * @return settingObject ¼­¹ö¿¡ Àü¼ÛÇÒ Contents °´Ã¼
+	 * @return settingObject ì„œë²„ì— ì „ì†¡í•  Contents ê°ì²´
 	 */
 	public static Object readClipboard() {
 		Transferable t = getSystmeClipboardContets();
@@ -48,9 +47,9 @@ public class ClipboardController {
 	}
 	
 	/**
-	 * ½Ã½ºÅÛ Å¬¸³º¸µåÀÇ Transferable °´Ã¼ ¸®ÅÏ
+	 * ì‹œìŠ¤í…œ í´ë¦½ë³´ë“œì˜ Transferable ê°ì²´ ë¦¬í„´
 	 * 
-	 * @return ½Ã½ºÅÛ Å¬¸³º¸µå¿¡ Á¸ÀçÇÏ´Â Transferable °´Ã¼
+	 * @return ì‹œìŠ¤í…œ í´ë¦½ë³´ë“œì— ì¡´ì¬í•˜ëŠ” Transferable ê°ì²´
 	 */
 	public static Transferable getSystmeClipboardContets() {
 		systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -59,11 +58,11 @@ public class ClipboardController {
 	}
 	
 	/**
-	 * Å¬¸³º¸µåÀÇ Transferable °´Ã¼°¡ ¾î¶² Å¸ÀÔÀÎÁö setÇÏ°í ¸®ÅÏ
+	 * í´ë¦½ë³´ë“œì˜ Transferable ê°ì²´ê°€ ì–´ë–¤ íƒ€ì…ì¸ì§€ setí•˜ê³  ë¦¬í„´
 	 * 
-	 * @param t
-	 *            Å¬¸³º¸µåÀÇ Transferable °´Ã¼
-	 * @return t ÀÇ DataFlavorÀÇ Á¾·ù
+	 * @param t	 í´ë¦½ë³´ë“œì˜ Transferable ê°ì²´
+	 *            
+	 * @return t ì˜ DataFlavorì˜ ì¢…ë¥˜
 	 */
 	public static DataFlavor setDataFlavor(Transferable t) {
 		DataFlavor[] flavors = t.getTransferDataFlavors();
@@ -86,31 +85,32 @@ public class ClipboardController {
 	}
 	
 	/**
-	 * Å¬¸³º¸µåÀÇ Transferable °´Ã¼¸¦ Àü¼Û½ºÆ®¸µÀ¸·Î ¹Ù²Ş
+	 * í´ë¦½ë³´ë“œì˜ Transferable ê°ì²´ë¥¼ ì „ì†¡ìŠ¤íŠ¸ë§ìœ¼ë¡œ ë°”ê¿ˆ
 	 * 
 	 * @param contents
-	 *            Å¬¸³º¸µåÀÇ Transferable °´Ã¼
-	 * @return sendObject ½ÇÁ¦ Àü¼Û °´Ã¼(Contents Å¸ÀÔ) ¸®ÅÏ
+	 *            í´ë¦½ë³´ë“œì˜ Transferable ê°ì²´
+	 * @return sendObject
+	 * 			   ì‹¤ì œ ì „ì†¡ ê°ì²´(Contents íƒ€ì…) ë¦¬í„´
 	 */
 	private static Object extractDataFromTransferable(Transferable t) {
 		try {
 			Object extractData = null;
 
-			// Å¬¸³º¸µåÀÇ ³»¿ëÀ» ÃßÃâ
+			// í´ë¦½ë³´ë“œì˜ ë‚´ìš©ì„ ì¶”ì¶œ
 			if (type.equals(Contents.TYPE_STRING)) {
-				System.out.println("[ClipboardManager]Å¬¸³º¸µå ³»¿ë Å¸ÀÔ: ¹®ÀÚ¿­");
+				System.out.println("[ClipboardManager]í´ë¦½ë³´ë“œ ë‚´ìš© íƒ€ì…: ë¬¸ìì—´");
 				//contents = new StringContents((String) t.getTransferData(DataFlavor.stringFlavor));
 				//extractString = contents.toString();
 				extractData = (String) t.getTransferData(DataFlavor.stringFlavor);
 				
 			} else if (type.equals(Contents.TYPE_IMAGE)) {
-				System.out.println("[ClipboardManager]Å¬¸³º¸µå ³»¿ë Å¸ÀÔ: ÀÌ¹ÌÁö");
+				System.out.println("[ClipboardManager]í´ë¦½ë³´ë“œ ë‚´ìš© íƒ€ì…: ì´ë¯¸ì§€");
 				//contents = new ImageContents((Image) t.getTransferData(DataFlavor.imageFlavor));
 				//extractString = contents.toString();
 				extractData = (Image) t.getTransferData(DataFlavor.imageFlavor);
 				
 			} else if (type.equals(Contents.TYPE_FILE)) {
-				System.out.println("[ClipboardManager]Å¬¸³º¸µå ³»¿ë Å¸ÀÔ: ÆÄÀÏ");
+				System.out.println("[ClipboardManager]í´ë¦½ë³´ë“œ ë‚´ìš© íƒ€ì…: íŒŒì¼");
 				String [] filePath = getFilePathInSystemClipboard().split(", ");
 				
 				ArrayList<String> filePathList = new ArrayList<String>();
@@ -125,7 +125,7 @@ public class ClipboardController {
 //					contents = new FileContents(filePath[0]);
 //					extractString = contents.toString();
 //				} else {
-//					System.out.println("[ClipboardManager]Å¬¸³º¸µå ³»¿ë Å¸ÀÔ: ¿©·¯°³ÀÇ ÆÄÀÏ ¶Ç´Â µğ·ºÅÍ¸®");
+//					System.out.println("[ClipboardManager]í´ë¦½ë³´ë“œ ë‚´ìš© íƒ€ì…: ì—¬ëŸ¬ê°œì˜ íŒŒì¼ ë˜ëŠ” ë””ë ‰í„°ë¦¬");
 //					extractString = "";
 //
 //					Contents [] contentsList = new FileContents [filePath.length];
@@ -136,7 +136,7 @@ public class ClipboardController {
 //					}
 //				}
 			} else {
-				System.out.println("[ClipboardManager]Å¬¸³º¸µå ³»¿ë Å¸ÀÔ: ¹®ÀÚ¿­, ÀÌ¹ÌÁö, ÆÄÀÏ, µğ·ºÅÍ¸®°¡ ¾Æ´Ô");
+				System.out.println("[ClipboardManager]í´ë¦½ë³´ë“œ ë‚´ìš© íƒ€ì…: ë¬¸ìì—´, ì´ë¯¸ì§€, íŒŒì¼, ë””ë ‰í„°ë¦¬ê°€ ì•„ë‹˜");
 			}
 
 			return extractData;
@@ -149,12 +149,12 @@ public class ClipboardController {
 		return null;
 	}
 
-	/** @return Å¬¸³º¸µå¿¡ ÀÖ´Â ÆÄÀÏÀÇ °æ·Î¸í */
+	/** @return í´ë¦½ë³´ë“œì— ìˆëŠ” íŒŒì¼ì˜ ê²½ë¡œëª… */
 	private static String getFilePathInSystemClipboard() {
 		try {
-			Transferable contents = getSystmeClipboardContets(); // ½Ã½ºÅÛ Å¬¸³º¸µå¿¡¼­ ³»¿ëÀ» ÃßÃâ
+			Transferable contents = getSystmeClipboardContets(); // ì‹œìŠ¤í…œ í´ë¦½ë³´ë“œì—ì„œ ë‚´ìš©ì„ ì¶”ì¶œ
 			String fileTotalPath = contents.getTransferData(DataFlavor.javaFileListFlavor).toString();
-			return fileTotalPath.substring(1, fileTotalPath.length() - 1); // °æ·Î¸í¸¸ ¾ò¾î¿À±â À§ÇØ ¾ç ³¡ÀÇ []¸¦ Á¦°Å
+			return fileTotalPath.substring(1, fileTotalPath.length() - 1); // ê²½ë¡œëª…ë§Œ ì–»ì–´ì˜¤ê¸° ìœ„í•´ ì–‘ ëì˜ []ë¥¼ ì œê±°
 		} catch (HeadlessException e) {
 			e.printStackTrace();
 		} catch (UnsupportedFlavorException e) {
@@ -166,17 +166,17 @@ public class ClipboardController {
 	}
 	
 	/**
-	 * Àü¼Û¹ŞÀº Contents °´Ã¼¸¦ TransferableÇØ¼­ Å¬¸³º¸µå¿¡ »ğÀÔ(¹®ÀÚ¿­, ÀÌ¹ÌÁöÀÎ °æ¿ì)
+	 * ì „ì†¡ë°›ì€ Contents ê°ì²´ë¥¼ Transferableí•´ì„œ í´ë¦½ë³´ë“œì— ì‚½ì…(ë¬¸ìì—´, ì´ë¯¸ì§€ì¸ ê²½ìš°)
 	 *
 	 * @param data
-	 *            Àü¼Û¹ŞÀº µ¥ÀÌÅÍ
+	 *            ì „ì†¡ë°›ì€ ë°ì´í„°
 	 * @param dataType
-	 *            Àü¼Û¹ŞÀº µ¥ÀÌÅÍ Å¸ÀÔ
+	 *            ì „ì†¡ë°›ì€ ë°ì´í„° íƒ€ì…
 	 */
 	
 	public static void writeClipboard(Transferable transferable) {
 		systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		systemClipboard.setContents(transferable, null); // ½Ã½ºÅÛ Å¬¸³º¸µå¿¡ »ğÀÔ
+		systemClipboard.setContents(transferable, null); // ì‹œìŠ¤í…œ í´ë¦½ë³´ë“œì— ì‚½ì…
 	}
 	
 	

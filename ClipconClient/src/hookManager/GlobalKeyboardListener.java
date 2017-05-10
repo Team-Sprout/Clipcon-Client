@@ -3,5 +3,6 @@ package hookManager;
 import java.util.EventListener;
 
 public interface GlobalKeyboardListener extends EventListener {
-	void onGlobalHotkeysPressed();
+	void onGlobalUploadHotkeysPressed();
+	void onGlobalDownloadHotkeysPressed();
 }

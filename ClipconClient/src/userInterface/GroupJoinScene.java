@@ -46,7 +46,7 @@ public class GroupJoinScene implements Initializable{
 			public void handle(ActionEvent event) {
 				stage = (Stage) confirmBtn.getScene().getWindow();
 
-				// ¼­¹ö¿¡ REQUEST_JOIN_GROUP Messgae º¸³¿
+				// send REQUEST_JOIN_GROUP Messgae to server
 				if (groupKey.getText().length() != 0) {
 					Message signUpMsg = new Message().setType(Message.REQUEST_JOIN_GROUP);
 					signUpMsg.add(Message.GROUP_PK, groupKey.getText());
