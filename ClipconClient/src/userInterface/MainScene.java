@@ -12,6 +12,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import javax.websocket.EncodeException;
+
 import org.controlsfx.control.PopOver;
 
 import contentsTransfer.ContentsUpload;
@@ -41,12 +43,15 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import lombok.Getter;
 import lombok.Setter;
 import model.Contents;
+import model.Message;
 import model.Notification;
 import model.Notification.Notifier;
 import model.NotificationBuilder;
@@ -86,6 +91,7 @@ public class MainScene implements Initializable {
 
 	private ObservableList<User> groupParticipantList;
 	private ContentsUpload contentsUpload;
+	private DownloadData downloader;
 
 	private ObservableList<Contents> historyList;
 
@@ -97,8 +103,9 @@ public class MainScene implements Initializable {
 
 	private Thread clipboardMonitorThread;
 
-	// 다운로드 파일을 임시로 저장할 위치
-	public static final String CLIPCON_DIR_LOCATION = "C:\\Program Files\\Clipcon";
+	// directory location for uploading and downloading file
+	public static final String UPLOAD_TEMP_DIR_LOCATION = "C:\\Program Files\\ClipconUpload";
+	public static final String DOWNLOAD_TEMP_DIR_LOCATION = "C:\\Program Files\\ClipconDownload";
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -107,6 +114,7 @@ public class MainScene implements Initializable {
 		addGroupParticipantFlag = false;
 
 		contentsUpload = new ContentsUpload();
+		downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 		startHookProcess();
 		createDirectory();
 		clipboardMonitorThread = new Thread(new Runnable() {
@@ -170,26 +178,17 @@ public class MainScene implements Initializable {
 			public void handle(ActionEvent event) {
 				MainScene.event = event;
 
-				// [희정] download test
-				DownloadData downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
-				String downloadDataPK = "4"; // 받기를 원하는 Contents의 PK
+				// Send REQUEST_EXIT_GROUP Message To Server
+				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
 				try {
-					downloader.requestDataDownload(downloadDataPK);
-				} catch (MalformedURLException e) {
+					if (endpoint == null) {
+						System.out.println("debuger_delf: endpoint is null");
+					}
+					endpoint = Endpoint.getIntance();
+					endpoint.sendMessage(exitGroupMsg);
+				} catch (IOException | EncodeException e) {
 					e.printStackTrace();
 				}
-
-				// // Send REQUEST_EXIT_GROUP Message To Server
-				// Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
-				// try {
-				// if (endpoint == null) {
-				// System.out.println("debuger_delf: endpoint is null");
-				// }
-				// endpoint = Endpoint.getIntance();
-				// endpoint.sendMessage(exitGroupMsg);
-				// } catch (IOException | EncodeException e) {
-				// e.printStackTrace();
-				// }
 			}
 		});
 
@@ -200,16 +199,11 @@ public class MainScene implements Initializable {
 			}
 		});
 
-		// historyTable.setOnMouseClicked((MouseEvent event) -> {
-		// if(event.getButton().equals(MouseButton.PRIMARY)){
-		// popOverContents.setText("\n " + historyTable.getSelectionModel().getSelectedItem().getContentsValue() +
-		// "\n\n size : " + historyTable.getSelectionModel().getSelectedItem().getContentsSize() +
-		// "\n added : " + historyTable.getSelectionModel().getSelectedItem().getUploadTime() + " \n ");
-		// popOver.setContentNode(popOverContents);
-		// popOver.show(historyTable);
-		// //((Parent) popOver.getSkin().getNode()).getStylesheets().add(getClass().getResource("PopOver.css").toExternalForm());
-		// }
-		// });
+		historyTable.setOnMouseClicked((MouseEvent event) -> {
+			if (event.getButton().equals(MouseButton.PRIMARY)) {
+				getRecentlyContentsInClipboard(historyTable.getSelectionModel().getSelectedItem());
+			}
+		});
 
 		historyTable.setRowFactory((tableView) -> {
 			return new TooltipTableRow<Contents>((Contents contents) -> {
@@ -320,9 +314,18 @@ public class MainScene implements Initializable {
 		noti = NotificationBuilder.create().title("Content Upload Notification").message(notiMsg).image(Notification.INFO_ICON).build();
 
 		notifier.notify(noti);
-		notifier.setOnNotificationPressed(event -> System.out.println("Notification pressed:"));
-		// [TODO] noti evnet : download
+		notifier.onNotificationPressedProperty();
+		notifier.setOnNotificationPressed(event -> getRecentlyContentsInClipboard(content));
+	}
 
+	/** get Recently Contents In Clipboard */
+	public void getRecentlyContentsInClipboard(Contents content) {
+		String downloadDataPK = content.getContentsPKName(); // recently Contents PK
+		try {
+			downloader.requestDataDownload(downloadDataPK);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void showStartingView() {
@@ -353,13 +356,18 @@ public class MainScene implements Initializable {
 		hook.startHook();
 		// waiting for the event
 		hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
+			/* Upload HotKey */
 			public void onGlobalUploadHotkeysPressed() {
 				System.out.println("CTRL + ALT + H was pressed");
 				contentsUpload.upload();
 			}
+
+			/* Download HotKey */
 			public void onGlobalDownloadHotkeysPressed() {
 				System.out.println("CTRL + ALT + J was pressed");
-				// [TODO] 도연 : download
+
+				Contents content = historyList.get(historyList.size() - 1);
+				getRecentlyContentsInClipboard(content);
 			}
 		});
 	}
@@ -436,12 +444,16 @@ public class MainScene implements Initializable {
 	 *            이 이름으로 Directory 생성
 	 */
 	private void createDirectory() {
-		File receiveFolder = new File(MainScene.CLIPCON_DIR_LOCATION);
+		File dirForUpload = new File(MainScene.UPLOAD_TEMP_DIR_LOCATION);
+		File dirForDownload = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 
-		// 저장할 그룹 폴더가 존재하지 않으면
-		if (!receiveFolder.exists()) {
-			receiveFolder.mkdir(); // Create Directory
-			System.out.println("------------------------------------ Clipcon 폴더 생성");
+		if (!dirForUpload.exists()) {
+			dirForUpload.mkdir(); // Create Directory
+			System.out.println("------------------------------------ dirForUpload 폴더 생성");
+		}
+		if (!dirForDownload.exists()) {
+			dirForDownload.mkdir(); // Create Directory
+			System.out.println("------------------------------------ dirForDownload 폴더 생성");
 		}
 	}
 }
