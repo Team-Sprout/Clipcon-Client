@@ -36,13 +36,8 @@ import model.ImageTransferable;
 import userInterface.MainScene;
 
 public class DownloadData {
-
-	// 다운로드 파일을 임시로 저장할 위치
-	private final String DOWNLOAD_LOCATION = "C:\\Program Files\\Clipcon";
-
-//	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
-	 public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule"; // delf's
-
+	// public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
+	public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule"; // delf's
 
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 
@@ -53,7 +48,6 @@ public class DownloadData {
 	private String groupPK = null;
 
 	private Contents requestContents; // Contents Info to download
-	// private String downloadDataPK; // Contents' Primary Key to download
 
 	/** Constructor
 	 * Setting userName and groupPK */
@@ -71,8 +65,6 @@ public class DownloadData {
 	 *            내가 속한 그룹의 History 정보
 	 */
 	public void requestDataDownload(String downloadDataPK) throws MalformedURLException {
-
-		// 내가 속한 Group의 History를 가져온다. 수정 필요.
 		History myhistory = Endpoint.user.getGroup().getHistory();
 
 		// Retrieving Contents from My History
@@ -134,19 +126,18 @@ public class DownloadData {
 					// Save Real ZIP File(filename: fileOriginName) to Clipcon Folder
 					File multipleFile = downloadFileData(httpConn.getInputStream(), multipleFileOriginName);
 					System.out.println("multipleFileOriginName Result: " + multipleFile.getName());
-					
+
 					File outputUnZipFile = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 					ArrayList<File> multipleFileList = new ArrayList<File>();
 					File[] multipleFiles = null;
-					
+
 					try {
 						MultipleFileCompress.unzip(multipleFile, outputUnZipFile, false);
-						multipleFile.delete(); // Delete Real ZIP File 
+						multipleFile.delete(); // Delete Real ZIP File
 						multipleFiles = outputUnZipFile.listFiles();
 
 						for (int j = 0; j < multipleFiles.length; j++) {
 							multipleFileList.add(multipleFiles[j]);
-							System.out.println("*************" + multipleFiles[j].getName());
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -234,15 +225,11 @@ public class DownloadData {
 		// opens input stream from the HTTP connection
 		// InputStream inputStream = httpConn.getInputStream();
 		String saveFileFullPath = MainScene.DOWNLOAD_TEMP_DIR_LOCATION + File.separator + fileName;
-		File outputUnZipFile = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 		File fileData;
 
 		try {
 			// Before Download 이미 존재하는 하위 Files 삭제
-			if (outputUnZipFile.listFiles().length != 0) {
-				for (int i = 0; i < outputUnZipFile.listFiles().length; i++)
-					outputUnZipFile.listFiles()[i].delete();
-			}
+			deleteAllFiles(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 
 			// opens an output stream to save into file
 			FileOutputStream fileOutputStream = new FileOutputStream(saveFileFullPath);
@@ -262,5 +249,23 @@ public class DownloadData {
 
 		fileData = new File(saveFileFullPath);
 		return fileData;
+	}
+
+	/** delete all files in directory */
+	public void deleteAllFiles(String parentDirPath) {
+		// 폴더내 파일을 배열로 가져온다.
+		File file = new File(parentDirPath);
+		File[] tempFile = file.listFiles();
+
+		if (tempFile.length > 0) {
+			for (int i = 0; i < tempFile.length; i++) {
+				if (tempFile[i].isFile()) {
+					tempFile[i].delete();
+				} else { // 재귀함수
+					deleteAllFiles(tempFile[i].getPath());
+				}
+				tempFile[i].delete();
+			}
+		}
 	}
 }
