@@ -7,12 +7,19 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import userInterface.MainScene;
+
+//import com.sun.jna.platform.FileUtils;
+//import org.apache.commons.io.FileUtils;
 
 public class MultipleFileCompress {
 	private static final int COMPRESSION_LEVEL = 1;
 	private static final int BUFFER_SIZE = 4096;
-	private static final String ZIP_FILE_PATH = "C:\\Program Files\\TempCilpcon\\";
+	private static final String ZIP_FILE_PATH = MainScene.CLIPCON_DIR_LOCATION + File.separator;
+	private static final String ZIP_FILE_NAME = "Default.zip";
 	private static int lastIndex = 0;
 
 	/**
@@ -26,7 +33,7 @@ public class MultipleFileCompress {
 	@SuppressWarnings("finally")
 	public static String compress(ArrayList<String> fileFullPathList) throws Exception {
 		File[] files = new File[fileFullPathList.size()];
-		String outputFileFullPath = ZIP_FILE_PATH + "Default.zip";
+		String outputFileFullPath = ZIP_FILE_PATH + ZIP_FILE_NAME;
 
 		FileOutputStream fos = null;
 		BufferedOutputStream bos = null;
@@ -117,5 +124,82 @@ public class MultipleFileCompress {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Zip 파일의 압축을 푼다.
+	 *
+	 * @param zipFile - 압축 풀 Zip 파일
+	 * @param targetDir - 압축 푼 파일이 들어간 디렉토리
+	 * @param fileNameToLowerCase - 파일명을 소문자로 바꿀지 여부
+	 * @throws Exception
+	 */
+	public static void unzip(File zipFile, File targetDir, boolean fileNameToLowerCase) throws Exception {
+		FileInputStream fis = null;
+		ZipInputStream zis = null;
+		ZipEntry zentry = null;
+
+		try {
+			fis = new FileInputStream(zipFile); // FileInputStream
+			zis = new ZipInputStream(fis); // ZipInputStream
+
+			while ((zentry = zis.getNextEntry()) != null) {
+				String fileNameToUnzip = zentry.getName();
+				// fileName toLowerCase
+				if (fileNameToLowerCase) {
+					fileNameToUnzip = fileNameToUnzip.toLowerCase();
+				}
+
+				File targetFile = new File(targetDir, fileNameToUnzip);
+				File targetFileDir = null;
+
+				// case: Directory. make directory
+				if (zentry.isDirectory()) {
+					targetFileDir = new File(targetFile.getAbsolutePath());
+					targetFileDir.mkdir();
+					// FileUtils.forceMkdir(targetFile.getAbsolutePath());
+				}
+				// case: File. make parent directory
+				else {
+					targetFileDir = new File(targetFile.getParent());
+					targetFileDir.mkdir();
+					// FileUtils.makeDir(targetFile.getParent());
+					unzipEntry(zis, targetFile);
+				}
+			}
+		} finally {
+			if (zis != null) {
+				zis.close();
+			}
+			if (fis != null) {
+				fis.close();
+			}
+		}
+	}
+
+	/**
+	 * Zip 파일의 한 개 엔트리의 압축을 푼다.
+	 *
+	 * @param zis - Zip Input Stream
+	 * @param filePath - 압축 풀린 파일의 경로
+	 * @return
+	 * @throws Exception
+	 */
+	protected static File unzipEntry(ZipInputStream zis, File targetFile) throws Exception {
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(targetFile);
+
+			byte[] buffer = new byte[BUFFER_SIZE];
+			int len = 0;
+			while ((len = zis.read(buffer)) != -1) {
+				fos.write(buffer, 0, len);
+			}
+		} finally {
+			if (fos != null) {
+				fos.close();
+			}
+		}
+		return targetFile;
 	}
 }
