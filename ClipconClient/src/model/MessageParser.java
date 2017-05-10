@@ -2,8 +2,7 @@ package model;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -14,8 +13,6 @@ import org.json.JSONArray;
 import javafx.scene.image.Image;
 
 public class MessageParser {
-
-	private static int cnt = 0;
 
 	/**
 	 * @param message
@@ -47,28 +44,16 @@ public class MessageParser {
 		return user;
 	}
 
-	public void testDecodeMethod(String imageString) {
-		// create a buffered image
-
-		
-		BufferedImage image = null;
-		// byte[] imageByte;
-		
-		// BASE64Decoder decoder = new BASE64Decoder();
-		// imageByte = Base64.getDecoder().decodeBuffer(imageString);
-		
-		// ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
-		// image = ImageIO.read(bis);
-		// bis.close();
-		byte[] imageByte = Base64.decodeBase64(imageString);
-		ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
-
-	}
+	public static InputStream testDecodeMethod(String imageString) {
+	      BufferedImage image = null;
+	      byte[] imageByte = Base64.decodeBase64(imageString);
+	      ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
+	      return bis;
+	   }
 
 	// Image임시
 	public static Contents getContentsbyMessage(Message m) {
 		/* [doy] debuger test code */
-		Image img = null;
 //		try {
 //			img = new Image(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1.png"));
 //		} catch (FileNotFoundException e) {
@@ -82,10 +67,12 @@ public class MessageParser {
 //					m.get("uploadUserName"), m.get("uploadTime"), "image", img);
 //		}
 		/* [doy] debuger test code */
+		
+		String imageString = m.get("imageString");
+	    Image image = new Image(testDecodeMethod(imageString));
 
 		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"),
-				m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), img);
-
+				m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), image);
 	}
 
 	/**
