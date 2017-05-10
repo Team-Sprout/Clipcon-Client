@@ -12,8 +12,10 @@ import userInterface.MainScene;
 
 public class UploadData {
 
-	// public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
-	public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule";
+
+	public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
+//	public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule";
+
 
 	public final static String SERVER_SERVLET = "/UploadServlet";
 	private String charset = "UTF-8";

@@ -36,8 +36,13 @@ import model.ImageTransferable;
 import userInterface.MainScene;
 
 public class DownloadData {
-	// public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
-	public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule"; // delf's
+
+	// 다운로드 파일을 임시로 저장할 위치
+	private final String DOWNLOAD_LOCATION = "C:\\Program Files\\Clipcon";
+
+	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
+//	 public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule"; // delf's
+
 
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 

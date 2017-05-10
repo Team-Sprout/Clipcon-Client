@@ -23,13 +23,13 @@ public class Contents {
 	private String contentsType;
 	private long contentsSize;
 
-	// ±×·ì³»ÀÇ °¢ Data¸¦ ±¸ºĞÇÏ´Â °íÀ¯Å°°ª
+	// ê·¸ë£¹ë‚´ì˜ ê° Dataë¥¼ êµ¬ë¶„í•˜ëŠ” ê³ ìœ í‚¤ê°’
 	public String contentsPKName;
 
 	private String uploadUserName;
 	private String uploadTime;
 
-	// String Type: String°ª, File Type: FileOriginName
+	// String Type: Stringê°’, File Type: FileOriginName
 	private String contentsValue;
 	private Image contentsImage;
 	
@@ -37,7 +37,7 @@ public class Contents {
 	private StringProperty uploaderProperty;
 	
 	/**
-	 * @author delf ÀÓ½Ã »ı¼ºÀÚ
+	 * @author delf ï¿½Ó½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	public Contents(String contentsType, long contentsSize, String contentsPKName, String uploadUserName, String uploadTime, String contentsValue, Image contentsImage) {
 		// this(contentsType, contentsSize, contentsPKName, uploadUserName, uploadTime, null);

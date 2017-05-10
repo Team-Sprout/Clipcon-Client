@@ -48,7 +48,7 @@ public class StartingScene implements Initializable {
 			public void handle(ActionEvent event) {
 				StartingScene.event = event;
 
-				// ¼­¹ö¿¡ REQUEST_REQUEST_CREATE_GROUP Messgae º¸³¿
+				// send REQUEST_REQUEST_CREATE_GROUP Messgae to server
 				Message createGroupMsg = new Message().setType(Message.REQUEST_CREATE_GROUP);
 				try {
 					if (endpoint == null) {

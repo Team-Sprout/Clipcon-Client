@@ -23,13 +23,13 @@ public class MultipleFileCompress {
 	private static int lastIndex = 0;
 
 	/**
-	 * ÁöÁ¤µÈ Æú´õ¸¦ Zip ÆÄÀÏ·Î ¾ĞÃàÇÑ´Ù.
-	 * @param sourcePath - ¾ĞÃà ´ë»ó µğ·ºÅä¸®
-	 * @param output - ÀúÀå zip ÆÄÀÏ ÀÌ¸§
+	 * ì§€ì •ëœ í´ë”ë¥¼ Zip íŒŒì¼ë¡œ ì••ì¶•í•œë‹¤.
+	 * @param sourcePath - ì••ì¶• ëŒ€ìƒ ë””ë ‰í† ë¦¬
+	 * @param output - ì €ì¥ zip íŒŒì¼ ì´ë¦„
 	 * @throws Exception
-	 * @return outputFileName - ¾ĞÃà ÆÄÀÏÀÌ ÀÖ´Â ÀüÃ¼ °æ·Î
+	 * @return outputFileName - ì••ì¶• íŒŒì¼ì´ ìˆëŠ” ì „ì²´ ê²½ë¡œ
 	 */
-	/* °°Àº °æ·Î¿¡ ÀÖ´Â º¹¼ö°³ÀÇ ÆÄÀÏÀ» ¾ĞÃà */
+	/* ê°™ì€ ê²½ë¡œì— ìˆëŠ” ë³µìˆ˜ê°œì˜ íŒŒì¼ì„ ì••ì¶• */
 	@SuppressWarnings("finally")
 	public static String compress(ArrayList<String> fileFullPathList) throws Exception {
 		File[] files = new File[fileFullPathList.size()];
@@ -42,22 +42,22 @@ public class MultipleFileCompress {
 		fos = new FileOutputStream(outputFileFullPath); // FileOutputStream
 		bos = new BufferedOutputStream(fos); // BufferedStream
 		zos = new ZipOutputStream(bos); // ZipOutputStream
-		zos.setLevel(COMPRESSION_LEVEL); // ¾ĞÃà ·¹º§ - ÃÖ´ë ¾ĞÃà·üÀº 9, µğÆúÆ® 8
+		zos.setLevel(COMPRESSION_LEVEL); // ì••ì¶• ë ˆë²¨ - ìµœëŒ€ ì••ì¶•ë¥ ì€ 9, ë””í´íŠ¸ 8
 
 		System.out.println(fileFullPathList.size());
 
 		try {
 			for (int i = 0; i < fileFullPathList.size(); i++) {
 				files[i] = new File(fileFullPathList.get(i));
-				System.out.println("----------------------»ı¼ºÇÑ fileÀÇ path: " + files[i].getPath());
+				System.out.println("----------------------ìƒì„±í•œ fileì˜ path: " + files[i].getPath());
 
 				lastIndex = files[i].getPath().lastIndexOf(File.separator);
 
-				// ¾ĞÃà ´ë»óÀÌ µğ·ºÅä¸®³ª ÆÄÀÏÀÌ ¾Æ´Ï¸é ¸®ÅÏÇÑ´Ù.
+				// ì••ì¶• ëŒ€ìƒì´ ë””ë ‰í† ë¦¬ë‚˜ íŒŒì¼ì´ ì•„ë‹ˆë©´ ë¦¬í„´í•œë‹¤.
 				if (!files[i].isFile() && !files[i].isDirectory()) {
-					throw new Exception("¾ĞÃà ´ë»óÀÇ ÆÄÀÏÀ» Ã£À» ¼ö°¡ ¾ø½À´Ï´Ù.");
+					throw new Exception("ì••ì¶• ëŒ€ìƒì˜ íŒŒì¼ì„ ì°¾ì„ ìˆ˜ê°€ ì—†ìŠµë‹ˆë‹¤.");
 				}
-				zipEntry(files[i], files[i].getPath(), zos); // Zip ÆÄÀÏ »ı¼º
+				zipEntry(files[i], files[i].getPath(), zos); // Zip íŒŒì¼ ìƒì„±
 			}
 		} finally {
 			if (zos != null) {
@@ -76,27 +76,27 @@ public class MultipleFileCompress {
 	}
 
 	/**
-	 * ¾ĞÃà
+	 * ì••ì¶•
 	 * @param sourceFile
 	 * @param sourcePath
 	 * @param zos
 	 * @throws Exception
 	 */
 	private static void zipEntry(File file, String filePath, ZipOutputStream zos) throws Exception {
-		// sourceFileÀÌ µğ·ºÅä¸®ÀÎ °æ¿ì ÇÏÀ§ ÆÄÀÏ ¸®½ºÆ® °¡Á®¿Í Àç±ÍÈ£Ãâ
+		// sourceFileì´ ë””ë ‰í† ë¦¬ì¸ ê²½ìš° í•˜ìœ„ íŒŒì¼ ë¦¬ìŠ¤íŠ¸ ê°€ì ¸ì™€ ì¬ê·€í˜¸ì¶œ
 		if (file.isDirectory()) {
-			// .metadata µğ·ºÅä¸®
+			// .metadata ë””ë ‰í† ë¦¬
 			if (file.getName().equalsIgnoreCase(".metadata")) {
 				return;
 			}
-			File[] fileArray = file.listFiles(); // sourceFile ÀÇ ÇÏÀ§ ÆÄÀÏ ¸®½º
+			File[] fileArray = file.listFiles(); // sourceFile ì˜ í•˜ìœ„ íŒŒì¼ ë¦¬ìŠ¤íŠ¸
 
 			for (int i = 0; i < fileArray.length; i++) {
-				zipEntry(fileArray[i], fileArray[i].getPath(), zos); // Àç±Í È£Ãâ
+				zipEntry(fileArray[i], fileArray[i].getPath(), zos); // ì¬ê·€ í˜¸ì¶œ
 			}
 		}
 
-		// sourceFileÀÌ µğ·ºÅä¸®°¡ ¾Æ´Ñ °æ¿ì
+		/// sourceFileì´ ë””ë ‰í† ë¦¬ê°€ ì•„ë‹Œ ê²½ìš°
 		else {
 			BufferedInputStream bis = null;
 

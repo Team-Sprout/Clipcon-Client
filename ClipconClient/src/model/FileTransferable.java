@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import lombok.AllArgsConstructor;
 
-/** Å¬¸³º¸µå¿¡ µé¾î°¥ ¼ö ÀÖ´Â File °´Ã¼ */
+/** í´ë¦½ë³´ë“œì— ë“¤ì–´ê°ˆ ìˆ˜ ìˆëŠ” File ê°ì²´ */
 
 @AllArgsConstructor
 public class FileTransferable implements Transferable {

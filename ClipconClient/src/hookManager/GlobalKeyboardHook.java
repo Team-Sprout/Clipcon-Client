@@ -6,8 +6,9 @@ import java.util.ArrayList;
 public class GlobalKeyboardHook {
 	// ----------- Java Native methods -------------
 	  
-		// ¼³Á¤ÇÑ ´ÜÃàÅ°°¡ ´­·È´ÂÁö È®ÀÎ, ´­·ÈÀ¸¸é return true 
-	    public native boolean checkHotKey();
+		// ì„¤ì •í•œ ë‹¨ì¶•í‚¤ê°€ ëˆŒë ¸ëŠ”ì§€ í™•ì¸, ëˆŒë ¸ìœ¼ë©´ return true 
+	    public native boolean checkUploadHotKey();
+	    public native boolean checkDownloadHotKey();
 	  
 	    /**
 	    * Sets the hot key.
@@ -19,27 +20,29 @@ public class GlobalKeyboardHook {
 	    * Keyboard shortcuts that involve the WINDOWS key are reserved for use by the operating system.
 	    * @return If the function succeeds, the return value is TRUE.
 	    */
-	    public native boolean setHotKey(int virtualKey, boolean alt, boolean control, boolean shift, boolean win);
+	    public native void setHotKey(int virtualKey, int virtualKey2, boolean alt, boolean control, boolean shift, boolean win);
 	  
 	    /**
 	    * Resets the installed hotkeys.
 	    */  
-	    // ´ÜÃàÅ° ¸®¼Â  
+	    // ë‹¨ì¶•í‚¤ ë¦¬ì…‹  
 	    public native void resetHotKey();
 	  
-	    // dll ÆÄÀÏ ¼³Á¤
+	    // dll íŒŒì¼ ì„¤ì •
 	    private static final String KEYBOARD_HOOOK_DLL_NAME = "KeyHooking";
 	  
-	    private boolean stopFlag;
+	    private boolean uploadHookStopFlag;
+	    private boolean downloadHookStopFlag;
 	  
 	    // -------- Java listeners --------
 	    private ArrayList<GlobalKeyboardListener> listeners = new ArrayList<GlobalKeyboardListener>();
 	  
-	    // »ı¼ºÀÚ 
+	    // ìƒì„±ì 
 	    public GlobalKeyboardHook() {
 	        System.loadLibrary(KEYBOARD_HOOOK_DLL_NAME);
-	        System.out.println(KEYBOARD_HOOOK_DLL_NAME + ".dll ÆÄÀÏ ·Îµå ¿Ï·á ");
-	        stopFlag = false;
+	        System.out.println(KEYBOARD_HOOOK_DLL_NAME + ".dll íŒŒì¼ ë¡œë“œ ì™„ë£Œ");
+	        uploadHookStopFlag = false;
+	        downloadHookStopFlag = false;
 	    }
 	  
 	    public void addGlobalKeyboardListener(GlobalKeyboardListener listener) {
@@ -51,11 +54,11 @@ public class GlobalKeyboardHook {
 	    }
 	  
 	    
-	    // ÈÄÅ· ½ÃÀÛ, DLLStateThread ½ÇÇà ¹× DLL »óÅÂ Ã¼Å© ?
+	    // í›„í‚¹ ì‹œì‘, DLLStateThread ì‹¤í–‰ ë° DLL ìƒíƒœ ì²´í¬
 	    public void startHook() {
-	        stopFlag = false;
-	        DLLStateThread currentWorker = new DLLStateThread();
-	        Thread statusThread = new Thread(currentWorker);
+	    	uploadHookStopFlag = false;
+	    	downloadHookStopFlag = false;
+	        Thread statusThread = new Thread(new DLLStateThread());
 	        statusThread.start();
 	    }
 	  
@@ -63,37 +66,52 @@ public class GlobalKeyboardHook {
 	    * Finish the current KeyboardThreadWorker instance.
 	    */
 	    public void stopHook() {
-	        stopFlag = true;
+	    	uploadHookStopFlag = true;
+	    	downloadHookStopFlag = true;
 	    }
 	  
 	    /**
 	    * Sends the event notification to all listeners.
 	    */
-	    private void fireHotkeysEvent() {
+	    private void fireUploadHotkeysEvent() {
 	        for (GlobalKeyboardListener listener : listeners) {
-	            listener.onGlobalHotkeysPressed();
+	            listener.onGlobalUploadHotkeysPressed();
+	        }
+	    }
+	    
+	    private void fireDownloaHotkeysEvent() {
+	        for (GlobalKeyboardListener listener : listeners) {
+	            listener.onGlobalDownloadHotkeysPressed();
 	        }
 	    }
 	  
 	    
-	    // DLL »óÅÂ Ã¼Å©ºÎºĞ
+	    // DLL ìƒíƒœ ì²´í¬ë¶€ë¶„
 	    private class DLLStateThread implements Runnable {
 	      
 	        public void run() {
 	            while(true) {
-	                boolean hotKeyPressed = checkHotKey();
-	                if (hotKeyPressed) {
+	                boolean uploadHotKeyPressed = checkUploadHotKey();
+	                boolean downloadHotKeyPressed = checkDownloadHotKey();
+	                if (uploadHotKeyPressed) {
 	                    // hot key was pressed, send the event to all listeners
-	                    fireHotkeysEvent();
+	                	fireUploadHotkeysEvent();
+	                }
+	                if (downloadHotKeyPressed) {
+	                    // hot key was pressed, send the event to all listeners
+	                	fireDownloaHotkeysEvent();
 	                }
 	                try {
 	                    Thread.sleep(100); //every 100 ms check the DLL status.
 	                    // work unless stopFlag == false
-	                    if (stopFlag) {
+	                    if (uploadHookStopFlag) {
 	                        resetHotKey();
 	                        break;
 	                    }
-	                    
+	                    if (downloadHookStopFlag) {
+	                        resetHotKey();
+	                        break;
+	                    }
 	                } catch (InterruptedException e) {
 	                    e.printStackTrace();
 	                }
