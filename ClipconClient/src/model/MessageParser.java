@@ -69,18 +69,18 @@ public class MessageParser {
 	public static Contents getContentsbyMessage(Message m) {
 		/* [doy] debuger test code */
 		Image img = null;
-		try {
-			img = new Image(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1.png"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
-		cnt++;
-
-		if (cnt % 2 == 0) {
-			return new Contents(Contents.TYPE_IMAGE, m.getLong("contentsSize"), m.get("contentsPKName"),
-					m.get("uploadUserName"), m.get("uploadTime"), "image", img);
-		}
+//		try {
+//			img = new Image(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1.png"));
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//
+//		cnt++;
+//
+//		if (cnt % 2 == 0) {
+//			return new Contents(Contents.TYPE_IMAGE, m.getLong("contentsSize"), m.get("contentsPKName"),
+//					m.get("uploadUserName"), m.get("uploadTime"), "image", img);
+//		}
 		/* [doy] debuger test code */
 
 		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"),

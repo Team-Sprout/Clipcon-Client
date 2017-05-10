@@ -18,18 +18,18 @@ import userInterface.MainScene;
 public class MultipleFileCompress {
 	private static final int COMPRESSION_LEVEL = 1;
 	private static final int BUFFER_SIZE = 4096;
-	private static final String ZIP_FILE_PATH = MainScene.CLIPCON_DIR_LOCATION + File.separator;
+	private static final String ZIP_FILE_PATH = MainScene.UPLOAD_TEMP_DIR_LOCATION + File.separator;
 	private static final String ZIP_FILE_NAME = "Default.zip";
 	private static int lastIndex = 0;
 
 	/**
-	 * 지정된 폴더를 Zip 파일로 압축한다.
-	 * @param sourcePath - 압축 대상 디렉토리
-	 * @param output - 저장 zip 파일 이름
+	 * 吏��젙�맂 �뤃�뜑瑜� Zip �뙆�씪濡� �븬異뺥븳�떎.
+	 * @param sourcePath - �븬異� ���긽 �뵒�젆�넗由�
+	 * @param output - ���옣 zip �뙆�씪 �씠由�
 	 * @throws Exception
-	 * @return outputFileName - 압축 파일이 있는 전체 경로
+	 * @return outputFileName - �븬異� �뙆�씪�씠 �엳�뒗 �쟾泥� 寃쎈줈
 	 */
-	/* 같은 경로에 있는 복수개의 파일을 압축 */
+	/* 媛숈� 寃쎈줈�뿉 �엳�뒗 蹂듭닔媛쒖쓽 �뙆�씪�쓣 �븬異� */
 	@SuppressWarnings("finally")
 	public static String compress(ArrayList<String> fileFullPathList) throws Exception {
 		File[] files = new File[fileFullPathList.size()];
@@ -42,22 +42,22 @@ public class MultipleFileCompress {
 		fos = new FileOutputStream(outputFileFullPath); // FileOutputStream
 		bos = new BufferedOutputStream(fos); // BufferedStream
 		zos = new ZipOutputStream(bos); // ZipOutputStream
-		zos.setLevel(COMPRESSION_LEVEL); // 압축 레벨 - 최대 압축률은 9, 디폴트 8
+		zos.setLevel(COMPRESSION_LEVEL); // �븬異� �젅踰� - 理쒕� �븬異뺣쪧�� 9, �뵒�뤃�듃 8
 
 		System.out.println(fileFullPathList.size());
 
 		try {
 			for (int i = 0; i < fileFullPathList.size(); i++) {
 				files[i] = new File(fileFullPathList.get(i));
-				System.out.println("----------------------생성한 file의 path: " + files[i].getPath());
+				System.out.println("----------------------�깮�꽦�븳 file�쓽 path: " + files[i].getPath());
 
 				lastIndex = files[i].getPath().lastIndexOf(File.separator);
 
-				// 압축 대상이 디렉토리나 파일이 아니면 리턴한다.
+				// �븬異� ���긽�씠 �뵒�젆�넗由щ굹 �뙆�씪�씠 �븘�땲硫� 由ы꽩�븳�떎.
 				if (!files[i].isFile() && !files[i].isDirectory()) {
-					throw new Exception("압축 대상의 파일을 찾을 수가 없습니다.");
+					throw new Exception("�븬異� ���긽�쓽 �뙆�씪�쓣 李얠쓣 �닔媛� �뾾�뒿�땲�떎.");
 				}
-				zipEntry(files[i], files[i].getPath(), zos); // Zip 파일 생성
+				zipEntry(files[i], files[i].getPath(), zos); // Zip �뙆�씪 �깮�꽦
 			}
 		} finally {
 			if (zos != null) {
@@ -76,27 +76,27 @@ public class MultipleFileCompress {
 	}
 
 	/**
-	 * 압축
+	 * �븬異�
 	 * @param sourceFile
 	 * @param sourcePath
 	 * @param zos
 	 * @throws Exception
 	 */
 	private static void zipEntry(File file, String filePath, ZipOutputStream zos) throws Exception {
-		// sourceFile이 디렉토리인 경우 하위 파일 리스트 가져와 재귀호출
+		// sourceFile�씠 �뵒�젆�넗由ъ씤 寃쎌슦 �븯�쐞 �뙆�씪 由ъ뒪�듃 媛��졇�� �옱洹��샇異�
 		if (file.isDirectory()) {
-			// .metadata 디렉토리
+			// .metadata �뵒�젆�넗由�
 			if (file.getName().equalsIgnoreCase(".metadata")) {
 				return;
 			}
-			File[] fileArray = file.listFiles(); // sourceFile 의 하위 파일 리스트
+			File[] fileArray = file.listFiles(); // sourceFile �쓽 �븯�쐞 �뙆�씪 由ъ뒪�듃
 
 			for (int i = 0; i < fileArray.length; i++) {
-				zipEntry(fileArray[i], fileArray[i].getPath(), zos); // 재귀 호출
+				zipEntry(fileArray[i], fileArray[i].getPath(), zos); // �옱洹� �샇異�
 			}
 		}
 
-		/// sourceFile이 디렉토리가 아닌 경우
+		/// sourceFile�씠 �뵒�젆�넗由ш� �븘�땶 寃쎌슦
 		else {
 			BufferedInputStream bis = null;
 
@@ -127,11 +127,11 @@ public class MultipleFileCompress {
 	}
 
 	/**
-	 * Zip ������ ������ Ǭ��.
+	 * Zip 파일의 압축을 푼다.
 	 *
-	 * @param zipFile - ���� Ǯ Zip ����
-	 * @param targetDir - ���� Ǭ ������ �� ���丮
-	 * @param fileNameToLowerCase - ���ϸ��� �ҹ��ڷ� �ٲ��� ����
+	 * @param zipFile - 압축 풀 Zip 파일
+	 * @param targetDir - 압축 푼 파일이 들어간 디렉토리
+	 * @param fileNameToLowerCase - 파일명을 소문자로 바꿀지 여부
 	 * @throws Exception
 	 */
 	public static void unzip(File zipFile, File targetDir, boolean fileNameToLowerCase) throws Exception {
@@ -178,10 +178,10 @@ public class MultipleFileCompress {
 	}
 
 	/**
-	 * Zip ������ �� �� ��Ʈ���� ������ Ǭ��.
+	 * Zip 파일의 한 개 엔트리의 압축을 푼다.
 	 *
 	 * @param zis - Zip Input Stream
-	 * @param filePath - ���� Ǯ�� ������ ���
+	 * @param filePath - 압축 풀린 파일의 경로
 	 * @return
 	 * @throws Exception
 	 */

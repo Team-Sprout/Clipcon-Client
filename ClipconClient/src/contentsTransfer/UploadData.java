@@ -13,8 +13,8 @@ import userInterface.MainScene;
 public class UploadData {
 
 
-	public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
-//	public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule";
+//	public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
+	public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule";
 
 
 	public final static String SERVER_SERVLET = "/UploadServlet";
@@ -90,18 +90,18 @@ public class UploadData {
 			else {
 				System.out.println("\nMultiple File or Directory Uploading~~\n");
 				try {
-					File clipconDir = new File(MainScene.CLIPCON_DIR_LOCATION);
+					File clipconDir = new File(MainScene.UPLOAD_TEMP_DIR_LOCATION);
+					String zipFileFillPath = MultipleFileCompress.compress(fileFullPathList);
+					System.out.println("----------------------<<zipFileFullPath>>: " + zipFileFillPath);
+					File uploadZipFile = new File(zipFileFillPath);
+					
+					multipart.addFilePart("multipartFileData", uploadZipFile);
+					
 					// After Upload 이미 존재하는 하위 Files 삭제
 					if (clipconDir.listFiles().length != 0) {
 						for (int i = 0; i < clipconDir.listFiles().length; i++)
 							clipconDir.listFiles()[i].delete();
 					}
-					
-					String zipFileFillPath = MultipleFileCompress.compress(fileFullPathList);
-					System.out.println("----------------------<<zipFileFullPath>>: " + zipFileFillPath);
-					File uploadZipFile = new File(zipFileFillPath);
-
-					multipart.addFilePart("multipartFileData", uploadZipFile);
 					
 				} catch (Exception e) {
 					e.printStackTrace();

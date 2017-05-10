@@ -40,8 +40,8 @@ public class DownloadData {
 	// 다운로드 파일을 임시로 저장할 위치
 	private final String DOWNLOAD_LOCATION = "C:\\Program Files\\Clipcon";
 
-	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
-//	 public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule"; // delf's
+//	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
+	 public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule"; // delf's
 
 
 	public final static String SERVER_SERVLET = "/DownloadServlet";
@@ -135,7 +135,7 @@ public class DownloadData {
 					File multipleFile = downloadFileData(httpConn.getInputStream(), multipleFileOriginName);
 					System.out.println("multipleFileOriginName Result: " + multipleFile.getName());
 					
-					File outputUnZipFile = new File(MainScene.CLIPCON_DIR_LOCATION);
+					File outputUnZipFile = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 					ArrayList<File> multipleFileList = new ArrayList<File>();
 					File[] multipleFiles = null;
 					
@@ -146,6 +146,7 @@ public class DownloadData {
 
 						for (int j = 0; j < multipleFiles.length; j++) {
 							multipleFileList.add(multipleFiles[j]);
+							System.out.println("*************" + multipleFiles[j].getName());
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -232,8 +233,8 @@ public class DownloadData {
 	private File downloadFileData(InputStream inputStream, String fileName) throws FileNotFoundException {
 		// opens input stream from the HTTP connection
 		// InputStream inputStream = httpConn.getInputStream();
-		String saveFileFullPath = MainScene.CLIPCON_DIR_LOCATION + File.separator + fileName;
-		File outputUnZipFile = new File(MainScene.CLIPCON_DIR_LOCATION);
+		String saveFileFullPath = MainScene.DOWNLOAD_TEMP_DIR_LOCATION + File.separator + fileName;
+		File outputUnZipFile = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 		File fileData;
 
 		try {
