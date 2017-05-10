@@ -46,7 +46,7 @@ public class Endpoint {
 		}
 
 		return uniqueEndpoint;
-	}
+	} 
 
 	public Endpoint() throws DeploymentException, IOException, URISyntaxException {
 		URI uRI = new URI(uri);
@@ -186,7 +186,6 @@ public class Endpoint {
 			System.out.println("default");
 			break;
 		}
-
 	}
 
 	public void sendMessage(Message message) throws IOException, EncodeException {
@@ -232,12 +231,12 @@ public class Endpoint {
 		content3.setContentsImage(null);
 		
 		Contents content4 = new Contents();
-		content4.setContentsType(Contents.TYPE_FILE);
-		content4.setContentsSize(85338989);
+		content4.setContentsType(Contents.TYPE_MULTIPLE_FILE);
+		content4.setContentsSize(79954298);
 		content4.setContentsPKName("4");
 		content4.setUploadUserName("test3");
 		content4.setUploadTime("2017-05-04 PM 44:44:44");
-		content4.setContentsValue("abcABC.zip"); // multiple file name
+		content4.setContentsValue("Default.zip"); // multiple file name
 		content4.setContentsImage(null);
 
 		// test) 내가 속한 group의 History에 setting

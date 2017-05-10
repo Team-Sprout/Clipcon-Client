@@ -2,6 +2,8 @@ package userInterface;
 
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -57,15 +59,22 @@ public class MainScene implements Initializable {
 
 	private UserInterface ui = UserInterface.getIntance();
 
-	@FXML private TableView<User> groupParticipantTable;
-	@FXML private TableColumn<User, String> groupPartiNicknameColumn;
-	
-	@FXML private TableView<Contents> historyTable;
-	@FXML private TableColumn<Contents, String> typeColumn, uploaderColumn;
-	@FXML private TableColumn<Contents, Object> contentsColumn;
-	
-	@FXML private Button exitBtn, groupKeyCopyBtn;
-	@FXML private Text groupKeyText;
+	@FXML
+	private TableView<User> groupParticipantTable;
+	@FXML
+	private TableColumn<User, String> groupPartiNicknameColumn;
+
+	@FXML
+	private TableView<Contents> historyTable;
+	@FXML
+	private TableColumn<Contents, String> typeColumn, uploaderColumn;
+	@FXML
+	private TableColumn<Contents, Object> contentsColumn;
+
+	@FXML
+	private Button exitBtn, groupKeyCopyBtn;
+	@FXML
+	private Text groupKeyText;
 
 	private static ActionEvent event;
 	private Endpoint endpoint = Endpoint.getIntance();
@@ -77,19 +86,19 @@ public class MainScene implements Initializable {
 
 	private ObservableList<User> groupParticipantList;
 	private ContentsUpload contentsUpload;
-	
+
 	private ObservableList<Contents> historyList;
-	
+
 	private PopOver popOver = new PopOver();
 	private Label popOverContents = new Label();
 
 	private Notification noti;
 	private Notification.Notifier notifier;
-	
-	// download test
-	private DownloadData downloader = new DownloadData("gmlwjd9405@naver.com", "doyyyy");
-	
+
 	private Thread clipboardMonitorThread;
+
+	// 다운로드 파일을 임시로 저장할 위치
+	public static final String CLIPCON_DIR_LOCATION = "C:\\Program Files\\Clipcon";
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -99,6 +108,7 @@ public class MainScene implements Initializable {
 
 		contentsUpload = new ContentsUpload();
 		startHookProcess();
+		createDirectory();
 		clipboardMonitorThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -109,17 +119,17 @@ public class MainScene implements Initializable {
 
 		groupParticipantList = FXCollections.observableArrayList();
 		historyList = FXCollections.observableArrayList();
-		
-		//popOver.setTitle("Contents Vlaue");
-        popOver.setAutoHide(true);
-        popOver.setAutoFix(true);
-        popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
-        popOver.setHeaderAlwaysVisible(true);
-        popOver.setDetachable(true);
-        popOver.setDetached(true);
-        popOver.setCornerRadius(4);
-        
-        Notifier.INSTANCE.setAlwaysOnTop(false);
+
+		// popOver.setTitle("Contents Vlaue");
+		popOver.setAutoHide(true);
+		popOver.setAutoFix(true);
+		popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
+		popOver.setHeaderAlwaysVisible(true);
+		popOver.setDetachable(true);
+		popOver.setDetached(true);
+		popOver.setCornerRadius(4);
+
+		Notifier.INSTANCE.setAlwaysOnTop(false);
 		notifier = NotifierBuilder.create().popupLocation(Pos.BOTTOM_RIGHT).styleSheet("/resource/mynotification.css").build();
 
 		// run scheduler for checking
@@ -159,28 +169,27 @@ public class MainScene implements Initializable {
 			@Override
 			public void handle(ActionEvent event) {
 				MainScene.event = event;
-				
+
 				// [희정] download test
-				DownloadData downloader = new DownloadData("test1", "abcABC");
-				String downloadDataPK = "2"; // 받기를 원하는 Contents의 PK
+				DownloadData downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
+				String downloadDataPK = "4"; // 받기를 원하는 Contents의 PK
 				try {
 					downloader.requestDataDownload(downloadDataPK);
-				} catch (MalformedURLException e) { 
+				} catch (MalformedURLException e) {
 					e.printStackTrace();
 				}
 
-				
-//				 // Send REQUEST_EXIT_GROUP Message To Server
-//				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
-//				try {
-//					if (endpoint == null) {
-//						System.out.println("debuger_delf: endpoint is null");
-//					}
-//					endpoint = Endpoint.getIntance();
-//					endpoint.sendMessage(exitGroupMsg);
-//				} catch (IOException | EncodeException e) {
-//					e.printStackTrace();
-//				}
+				// // Send REQUEST_EXIT_GROUP Message To Server
+				// Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
+				// try {
+				// if (endpoint == null) {
+				// System.out.println("debuger_delf: endpoint is null");
+				// }
+				// endpoint = Endpoint.getIntance();
+				// endpoint.sendMessage(exitGroupMsg);
+				// } catch (IOException | EncodeException e) {
+				// e.printStackTrace();
+				// }
 			}
 		});
 
@@ -190,24 +199,23 @@ public class MainScene implements Initializable {
 				ClipboardController.writeClipboard(new StringSelection(Endpoint.user.getGroup().getPrimaryKey()));
 			}
 		});
-		
-//		historyTable.setOnMouseClicked((MouseEvent event) -> {
-//	        if(event.getButton().equals(MouseButton.PRIMARY)){
-//	            popOverContents.setText("\n  " + historyTable.getSelectionModel().getSelectedItem().getContentsValue() +
-//	            		"\n\n  size : " + historyTable.getSelectionModel().getSelectedItem().getContentsSize() +
-//	            		"\n  added : " + historyTable.getSelectionModel().getSelectedItem().getUploadTime() + "  \n ");
-//	            popOver.setContentNode(popOverContents);
-//	            popOver.show(historyTable);
-//    	        //((Parent) popOver.getSkin().getNode()).getStylesheets().add(getClass().getResource("PopOver.css").toExternalForm());
-//	        }
-//	    });
-        
-        historyTable.setRowFactory((tableView) -> {
-            return new TooltipTableRow<Contents>((Contents contents) -> {
-            	return contents.getContentsValue() + "\n\nsize : " + contents.getContentsSize() + "\nadded : " + contents.getUploadTime();
-            });
-      });
-		
+
+		// historyTable.setOnMouseClicked((MouseEvent event) -> {
+		// if(event.getButton().equals(MouseButton.PRIMARY)){
+		// popOverContents.setText("\n " + historyTable.getSelectionModel().getSelectedItem().getContentsValue() +
+		// "\n\n size : " + historyTable.getSelectionModel().getSelectedItem().getContentsSize() +
+		// "\n added : " + historyTable.getSelectionModel().getSelectedItem().getUploadTime() + " \n ");
+		// popOver.setContentNode(popOverContents);
+		// popOver.show(historyTable);
+		// //((Parent) popOver.getSkin().getNode()).getStylesheets().add(getClass().getResource("PopOver.css").toExternalForm());
+		// }
+		// });
+
+		historyTable.setRowFactory((tableView) -> {
+			return new TooltipTableRow<Contents>((Contents contents) -> {
+				return contents.getContentsValue() + "\n\nsize : " + contents.getContentsSize() + "\nadded : " + contents.getUploadTime();
+			});
+		});
 
 	}
 
@@ -226,11 +234,11 @@ public class MainScene implements Initializable {
 			public TableCell<User, String> call(TableColumn<User, String> column) {
 				TableCell<User, String> tc = new TableCell<User, String>() {
 					@Override
-                    public void updateItem(String item, boolean empty) {
-                        if (item != null){
-                            setText(item);
-                        }
-                    }
+					public void updateItem(String item, boolean empty) {
+						if (item != null) {
+							setText(item);
+						}
+					}
 				};
 				tc.setAlignment(Pos.CENTER);
 				return tc;
@@ -241,30 +249,30 @@ public class MainScene implements Initializable {
 	public void addGroupParticipantList() {
 
 		groupParticipantTable.setItems(groupParticipantList);
-		
+
 		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
 		groupPartiNicknameColumn.setCellFactory(new Callback<TableColumn<User, String>, TableCell<User, String>>() {
 			@Override
 			public TableCell<User, String> call(TableColumn<User, String> column) {
 				TableCell<User, String> tc = new TableCell<User, String>() {
 					@Override
-                    public void updateItem(String item, boolean empty) {
-                        if (item != null){
-                            setText(item);
-                        }
-                    }
+					public void updateItem(String item, boolean empty) {
+						if (item != null) {
+							setText(item);
+						}
+					}
 				};
 				tc.setAlignment(Pos.CENTER);
 				return tc;
 			}
 		});
 	}
-	
+
 	public void addContentsInHistory() {
 		historyTable.setItems(historyList);
-		
-		Contents content = historyList.get(historyList.size()-1);
-		
+
+		Contents content = historyList.get(historyList.size() - 1);
+
 		contentsColumn.setCellValueFactory(new ContentsValueFactory());
 		contentsColumn.setCellFactory(new Callback<TableColumn<Contents, Object>, TableCell<Contents, Object>>() {
 			@Override
@@ -272,49 +280,49 @@ public class MainScene implements Initializable {
 				return new ContentsValueCell();
 			}
 		});
-		
+
 		typeColumn.setCellValueFactory(cellData -> cellData.getValue().getTypeProperty());
 		typeColumn.setCellFactory(new Callback<TableColumn<Contents, String>, TableCell<Contents, String>>() {
 			@Override
 			public TableCell<Contents, String> call(TableColumn<Contents, String> column) {
 				TableCell<Contents, String> tc = new TableCell<Contents, String>() {
 					@Override
-                    public void updateItem(String item, boolean empty) {
-                        if (item != null){
-                            setText(item);
-                        }
-                    }
+					public void updateItem(String item, boolean empty) {
+						if (item != null) {
+							setText(item);
+						}
+					}
 				};
 				tc.setAlignment(Pos.CENTER);
 				return tc;
 			}
 		});
-		
+
 		uploaderColumn.setCellValueFactory(cellData -> cellData.getValue().getUploaderProperty());
 		uploaderColumn.setCellFactory(new Callback<TableColumn<Contents, String>, TableCell<Contents, String>>() {
 			@Override
 			public TableCell<Contents, String> call(TableColumn<Contents, String> column) {
 				TableCell<Contents, String> tc = new TableCell<Contents, String>() {
 					@Override
-                    public void updateItem(String item, boolean empty) {
-                        if (item != null){
-                            setText(item);
-                        }
-                    }
+					public void updateItem(String item, boolean empty) {
+						if (item != null) {
+							setText(item);
+						}
+					}
 				};
 				tc.setAlignment(Pos.CENTER);
 				return tc;
 			}
 		});
-		
+
 		String notiMsg = content.getContentsType() + " Content";
-		
+
 		noti = NotificationBuilder.create().title("Content Upload Notification").message(notiMsg).image(Notification.INFO_ICON).build();
-		
+
 		notifier.notify(noti);
 		notifier.setOnNotificationPressed(event -> System.out.println("Notification pressed:"));
 		// [TODO] noti evnet : download
-		
+
 	}
 
 	public void showStartingView() {
@@ -375,34 +383,32 @@ public class MainScene implements Initializable {
 			}
 		}
 	}
-	
+
 	public class ContentsValueFactory implements Callback<TableColumn.CellDataFeatures<Contents, Object>, ObservableValue<Object>> {
-	    @SuppressWarnings("unchecked")
-	    @Override
-	    public ObservableValue<Object> call(TableColumn.CellDataFeatures<Contents, Object> data) {
-	    	Object value = null;
-	    	if(data.getValue().getContentsType().equals(Contents.TYPE_IMAGE)) {
-	    		value = data.getValue().getContentsImage();
-	    	}
-	    	else {
-	    		if(data.getValue().getContentsValue().length() > 25) {
-	    			value = data.getValue().getContentsValue().substring(0, 25) + " ...";
-	    		}
-	    		else {
-	    			value = data.getValue().getContentsValue();
-	    		}
-	    	}
-	        return (value instanceof ObservableValue) ? (ObservableValue) value : new ReadOnlyObjectWrapper<>(value);
-	    }
+		@SuppressWarnings("unchecked")
+		@Override
+		public ObservableValue<Object> call(TableColumn.CellDataFeatures<Contents, Object> data) {
+			Object value = null;
+			if (data.getValue().getContentsType().equals(Contents.TYPE_IMAGE)) {
+				value = data.getValue().getContentsImage();
+			} else {
+				if (data.getValue().getContentsValue().length() > 25) {
+					value = data.getValue().getContentsValue().substring(0, 25) + " ...";
+				} else {
+					value = data.getValue().getContentsValue();
+				}
+			}
+			return (value instanceof ObservableValue) ? (ObservableValue) value : new ReadOnlyObjectWrapper<>(value);
+		}
 	}
 
 	public class ContentsValueCell extends TableCell<Contents, Object> {
 		@Override
 		protected void updateItem(Object item, boolean empty) {
 			super.updateItem(item, empty);
-			
+
 			this.setAlignment(Pos.CENTER);
-			
+
 			if (item != null) {
 				if (item instanceof String) {
 					setText((String) item);
@@ -419,6 +425,23 @@ public class MainScene implements Initializable {
 					setGraphic(null);
 				}
 			}
+		}
+	}
+
+	/**
+	 * Folder 생성 메서드(download한 파일을 저장할 임시 폴더)
+	 * Create a temporary directory to save the imageFile, file
+	 * 
+	 * @param directoryName
+	 *            이 이름으로 Directory 생성
+	 */
+	private void createDirectory() {
+		File receiveFolder = new File(MainScene.CLIPCON_DIR_LOCATION);
+
+		// 저장할 그룹 폴더가 존재하지 않으면
+		if (!receiveFolder.exists()) {
+			receiveFolder.mkdir(); // Create Directory
+			System.out.println("------------------------------------ Clipcon 폴더 생성");
 		}
 	}
 }

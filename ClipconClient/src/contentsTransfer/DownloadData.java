@@ -33,13 +33,16 @@ import model.Contents;
 import model.FileTransferable;
 import model.History;
 import model.ImageTransferable;
+import userInterface.MainScene;
 
 public class DownloadData {
+
 	// 다운로드 파일을 임시로 저장할 위치
 	private final String DOWNLOAD_LOCATION = "C:\\Program Files\\Clipcon";
 
 	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
 //	 public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule"; // delf's
+
 
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 
@@ -72,8 +75,6 @@ public class DownloadData {
 		// 내가 속한 Group의 History를 가져온다. 수정 필요.
 		History myhistory = Endpoint.user.getGroup().getHistory();
 
-		// Create a temporary directory to save the imageFile, file
-		createDirectory(DOWNLOAD_LOCATION);
 		// Retrieving Contents from My History
 		requestContents = myhistory.getContentsByPK(downloadDataPK);
 		// Type of data to download
@@ -94,7 +95,6 @@ public class DownloadData {
 
 			// checks server's status code first
 			int status = httpConn.getResponseCode();
-			// List<String> response = new ArrayList<String>(); // Server's response contents
 
 			if (status == HttpURLConnection.HTTP_OK) {
 				switch (contentsType) {
@@ -121,27 +121,38 @@ public class DownloadData {
 					// Save Real File(filename: fileOriginName) to Clipcon Folder Get Image Object in Response Body
 					File fileData = downloadFileData(httpConn.getInputStream(), fileOriginName);
 					System.out.println("fileOriginName Result: " + fileData.getName());
-					
+
 					ArrayList<File> fileList = new ArrayList<File>();
 					fileList.add(fileData);
+
 					FileTransferable fileTransferable = new FileTransferable(fileList);
 					ClipboardController.writeClipboard(fileTransferable);
 					break;
-					
+
 				case Contents.TYPE_MULTIPLE_FILE:
 					String multipleFileOriginName = requestContents.getContentsValue();
-					/*
-					 * Save Real File(filename: fileOriginName) to Clipcon Folder Get Image Object in Response Body
-					 */
+					// Save Real ZIP File(filename: fileOriginName) to Clipcon Folder
 					File multipleFile = downloadFileData(httpConn.getInputStream(), multipleFileOriginName);
 					System.out.println("multipleFileOriginName Result: " + multipleFile.getName());
-
-					// TODO [희정] multipleFile 압축풀고 root에 존재하는 List<String>들을 얻어와 fileList에 모두 add한다.
-
+					
+					File outputUnZipFile = new File(MainScene.CLIPCON_DIR_LOCATION);
 					ArrayList<File> multipleFileList = new ArrayList<File>();
-					multipleFileList.add(multipleFile);
+					File[] multipleFiles = null;
+					
+					try {
+						MultipleFileCompress.unzip(multipleFile, outputUnZipFile, false);
+						multipleFile.delete(); // Delete Real ZIP File 
+						multipleFiles = outputUnZipFile.listFiles();
+
+						for (int j = 0; j < multipleFiles.length; j++) {
+							multipleFileList.add(multipleFiles[j]);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					FileTransferable multipleFileTransferable = new FileTransferable(multipleFileList);
 					ClipboardController.writeClipboard(multipleFileTransferable);
+
 					break;
 
 				default:
@@ -221,10 +232,17 @@ public class DownloadData {
 	private File downloadFileData(InputStream inputStream, String fileName) throws FileNotFoundException {
 		// opens input stream from the HTTP connection
 		// InputStream inputStream = httpConn.getInputStream();
-		String saveFileFullPath = DOWNLOAD_LOCATION + File.separator + fileName;
+		String saveFileFullPath = MainScene.CLIPCON_DIR_LOCATION + File.separator + fileName;
+		File outputUnZipFile = new File(MainScene.CLIPCON_DIR_LOCATION);
 		File fileData;
 
 		try {
+			// Before Download 이미 존재하는 하위 Files 삭제
+			if (outputUnZipFile.listFiles().length != 0) {
+				for (int i = 0; i < outputUnZipFile.listFiles().length; i++)
+					outputUnZipFile.listFiles()[i].delete();
+			}
+
 			// opens an output stream to save into file
 			FileOutputStream fileOutputStream = new FileOutputStream(saveFileFullPath);
 
@@ -243,23 +261,5 @@ public class DownloadData {
 
 		fileData = new File(saveFileFullPath);
 		return fileData;
-	}
-
-	/* 프로그램 실행할 때로 옮겨야 함. */
-	/**
-	 * Folder 생성 메서드(download한 파일을 저장할 임시 폴더)
-	 * 
-	 * @param directoryName
-	 *            이 이름으로 Directory 생성
-	 */
-	private void createDirectory(String directoryName) {
-		File receiveFolder = new File(directoryName);
-		System.out.println("directoryName: " + directoryName);
-
-		// 저장할 그룹 폴더가 존재하지 않으면
-		if (!receiveFolder.exists()) {
-			receiveFolder.mkdir(); // Create Directory
-			System.out.println("------------------------------------" + directoryName + " 폴더 생성");
-		}
 	}
 }

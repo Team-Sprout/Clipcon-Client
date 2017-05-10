@@ -8,10 +8,14 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
+import userInterface.MainScene;
+
 public class UploadData {
+
 
 	public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
 //	public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule";
+
 
 	public final static String SERVER_SERVLET = "/UploadServlet";
 	private String charset = "UTF-8";
@@ -31,7 +35,7 @@ public class UploadData {
 		try {
 			MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
 			setCommonParameter(multipart);
-			
+
 			multipart.addFormField("stringData", stringData);
 			System.out.println("stringData: " + stringData);
 
@@ -73,43 +77,32 @@ public class UploadData {
 		try {
 			MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
 			setCommonParameter(multipart);
-			
+
 			// create uploading file
 			File firstUploadFile = new File(fileFullPathList.get(0));
-			
+
 			/* case: Single file data(not a folder) */
 			if (fileFullPathList.size() == 1 && firstUploadFile.isFile()) {
 				System.out.println("\nSingle File Uploading~~\n");
 				multipart.addFilePart("fileData", firstUploadFile);
 			}
 			/* case: Multiple file data, One or more folders */
-			else{
+			else {
 				System.out.println("\nMultiple File or Directory Uploading~~\n");
-				
-				// TODO [희정] Compress multiple file and directory
-				// 1. 해당 파일들 or folder들을 압축한다.
-				// 2. 압축한 .zip 파일의 full path를 받아온다.
-				
-				/* 폴더 하나 압축 test */
-//				// create uploading file
-//				File uploadFile = new File(fileFullPathList.get(0));
-//				try {
-//				String zipFileFillPath = MultipleFileCompress.compress(uploadFile);
-//				System.out.println("<<zipFileFullPath>>: "+ zipFileFillPath);
-//				File uploadZipFile = new File(zipFileFillPath);
-//				
-//				multipart.addFilePart("multipartFileData", uploadZipFile);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-				
-				/* 다수의 File 압축 test */
 				try {
-					String zipFileFillPath = MultipleFileCompress.compress(fileFullPathList);
-					System.out.println("----------------------<<zipFileFullPath>>: "+ zipFileFillPath);
-					File uploadZipFile = new File(zipFileFillPath);
+					File clipconDir = new File(MainScene.CLIPCON_DIR_LOCATION);
+					// After Upload 이미 존재하는 하위 Files 삭제
+					if (clipconDir.listFiles().length != 0) {
+						for (int i = 0; i < clipconDir.listFiles().length; i++)
+							clipconDir.listFiles()[i].delete();
+					}
 					
+					String zipFileFillPath = MultipleFileCompress.compress(fileFullPathList);
+					System.out.println("----------------------<<zipFileFullPath>>: " + zipFileFillPath);
+					File uploadZipFile = new File(zipFileFillPath);
+
 					multipart.addFilePart("multipartFileData", uploadZipFile);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
