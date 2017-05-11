@@ -145,6 +145,8 @@ public class MultipleFileCompress {
 
 			while ((zentry = zis.getNextEntry()) != null) {
 				String fileNameToUnzip = zentry.getName();
+				System.out.println("====fileNameToUnzip: " + fileNameToUnzip);
+				
 				// fileName toLowerCase
 				if (fileNameToLowerCase) {
 					fileNameToUnzip = fileNameToUnzip.toLowerCase();
@@ -156,12 +158,14 @@ public class MultipleFileCompress {
 				// case: Directory. make directory
 				if (zentry.isDirectory()) {
 					targetFileDir = new File(targetFile.getAbsolutePath());
+					System.out.println("====targetFileDir(DIR): " + targetFile.getAbsolutePath());
 					targetFileDir.mkdir();
 					// FileUtils.forceMkdir(targetFile.getAbsolutePath());
 				}
 				// case: File. make parent directory
-				else {
+				else{
 					targetFileDir = new File(targetFile.getParent());
+					System.out.println("====targetFileDir(FILE): " + targetFile.getParent());
 					targetFileDir.mkdir();
 					// FileUtils.makeDir(targetFile.getParent());
 					unzipEntry(zis, targetFile);

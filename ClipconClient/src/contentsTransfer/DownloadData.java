@@ -122,6 +122,7 @@ public class DownloadData {
 					System.out.println("multipleFileOriginName Result: " + multipleFile.getName());
 
 					File outputUnZipFile = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
+					System.out.println("outputUnZipFile Result: " + multipleFile.getName());
 					ArrayList<File> multipleFileList = new ArrayList<File>();
 					File[] multipleFiles = null;
 
