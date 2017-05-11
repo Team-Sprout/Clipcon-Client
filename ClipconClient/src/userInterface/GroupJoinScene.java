@@ -17,6 +17,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,45 +43,58 @@ public class GroupJoinScene implements Initializable{
 		ui.setGroupJoinScene(this);
 		joinGroupSuccessFlag = false;
 		
+		groupKey.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				if(event.getCode().equals(KeyCode.ENTER)) {
+					sendGroupJoinMessage();
+				}
+			}
+		});
+		
 		confirmBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				stage = (Stage) confirmBtn.getScene().getWindow();
-
-				// send REQUEST_JOIN_GROUP Messgae to server
-				if (groupKey.getText().length() != 0) {
-					Message signUpMsg = new Message().setType(Message.REQUEST_JOIN_GROUP);
-					signUpMsg.add(Message.GROUP_PK, groupKey.getText());
-					try {
-						endpoint.sendMessage(signUpMsg);
-					} catch (IOException | EncodeException e) {
-						e.printStackTrace();
-					}
-				}
-
-				// run scheduler for checking
-				final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-				scheduler.scheduleAtFixedRate(new Runnable() {
-					@Override
-					public void run() {
-						Platform.runLater(new Runnable() {
-							@Override
-							public void run() {
-								// if flag turn on then client login game
-								if (joinGroupSuccessFlag) {
-									joinGroupSuccessFlag = false;
-									closeSignUpView();
-									ui.getStartingScene().showMainView();
-									return;
-								}
-							}
-						});
-
-					}
-				}, 50, 50, TimeUnit.MILLISECONDS);
+				sendGroupJoinMessage();
 			}
 		});
+	}
+	
+	// send REQUEST_JOIN_GROUP Messgae to server
+	public void sendGroupJoinMessage() {
+		if (groupKey.getText().length() != 0) {
+			stage = (Stage) confirmBtn.getScene().getWindow();
+			
+			Message signUpMsg = new Message().setType(Message.REQUEST_JOIN_GROUP);
+			signUpMsg.add(Message.GROUP_PK, groupKey.getText());
+			try {
+				endpoint.sendMessage(signUpMsg);
+			} catch (IOException | EncodeException e) {
+				e.printStackTrace();
+			}
+			
+			// run scheduler for checking
+			final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+			scheduler.scheduleAtFixedRate(new Runnable() {
+				@Override
+				public void run() {
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							// if flag turn on then client login game
+							if (joinGroupSuccessFlag) {
+								joinGroupSuccessFlag = false;
+								closeSignUpView();
+								ui.getStartingScene().showMainView();
+								return;
+							}
+						}
+					});
+
+				}
+			}, 50, 50, TimeUnit.MILLISECONDS);
+		}
 	}
 
 	public void closeSignUpView() {
