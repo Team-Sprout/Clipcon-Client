@@ -125,11 +125,11 @@ public class MultipartUtility {
     * @throws IOException
     */
    public void addFilePart(String fieldName, File uploadFile) throws IOException {
-      String fileName = URLEncoder.encode(uploadFile.getName(), charset);
+      String fileName = uploadFile.getName();
       
       writer.append("--" + boundary).append(LINE_FEED);
       writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + fileName + "\"").append(LINE_FEED);
-      writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName) + "; " + "charset=" + charset).append(LINE_FEED);
+      writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName)).append(LINE_FEED);
       writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
       writer.append(LINE_FEED);
       writer.flush();
