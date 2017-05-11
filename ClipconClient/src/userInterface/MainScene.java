@@ -43,7 +43,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -199,20 +198,26 @@ public class MainScene implements Initializable {
 			}
 		});
 
-		historyTable.setOnMouseClicked((MouseEvent event) -> {
-			if (event.getButton().equals(MouseButton.PRIMARY)) {
-				getRecentlyContentsInClipboard(historyTable.getSelectionModel().getSelectedItem());
+		// Double click event about table column
+		historyTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (event.getClickCount() > 1) {
+					getRecentlyContentsInClipboard(historyTable.getSelectionModel().getSelectedItem());
+				}
 			}
 		});
 
+		// Tooltip about table row on mouse hover
 		historyTable.setRowFactory((tableView) -> {
 			return new TooltipTableRow<Contents>((Contents contents) -> {
-				return contents.getContentsValue() + "\n\nsize : " + contents.getContentsSize() + "\nadded : " + contents.getUploadTime();
+				return contents.getContentsValue() + "\n\nsize : " + contents.getContentsSize() + " byte\nadded : " + contents.getUploadTime();
 			});
 		});
 
 	}
 
+	/** Initialize group list */
 	public void initGroupParticipantList() {
 
 		groupKeyText.setText(Endpoint.user.getGroup().getPrimaryKey());
@@ -221,29 +226,16 @@ public class MainScene implements Initializable {
 			groupParticipantList.add(Endpoint.user.getGroup().getUserList().get(i));
 		}
 
-		groupParticipantTable.setItems(groupParticipantList);
-		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
-		groupPartiNicknameColumn.setCellFactory(new Callback<TableColumn<User, String>, TableCell<User, String>>() {
-			@Override
-			public TableCell<User, String> call(TableColumn<User, String> column) {
-				TableCell<User, String> tc = new TableCell<User, String>() {
-					@Override
-					public void updateItem(String item, boolean empty) {
-						if (item != null) {
-							setText(item);
-						}
-					}
-				};
-				tc.setAlignment(Pos.CENTER);
-				return tc;
-			}
-		});
+		addGroupParticipantList();
+		
 	}
 
+	/** Add participant in group list */
 	public void addGroupParticipantList() {
 
 		groupParticipantTable.setItems(groupParticipantList);
 
+		// Nickname column setting
 		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
 		groupPartiNicknameColumn.setCellFactory(new Callback<TableColumn<User, String>, TableCell<User, String>>() {
 			@Override
@@ -262,11 +254,14 @@ public class MainScene implements Initializable {
 		});
 	}
 
+	/** Add content in history list */
 	public void addContentsInHistory() {
+		
 		historyTable.setItems(historyList);
 
 		Contents content = historyList.get(historyList.size() - 1);
 
+		// Contents column setting
 		contentsColumn.setCellValueFactory(new ContentsValueFactory());
 		contentsColumn.setCellFactory(new Callback<TableColumn<Contents, Object>, TableCell<Contents, Object>>() {
 			@Override
@@ -275,6 +270,7 @@ public class MainScene implements Initializable {
 			}
 		});
 
+		// Type column setting
 		typeColumn.setCellValueFactory(cellData -> cellData.getValue().getTypeProperty());
 		typeColumn.setCellFactory(new Callback<TableColumn<Contents, String>, TableCell<Contents, String>>() {
 			@Override
@@ -292,6 +288,7 @@ public class MainScene implements Initializable {
 			}
 		});
 
+		// Uploader column setting
 		uploaderColumn.setCellValueFactory(cellData -> cellData.getValue().getUploaderProperty());
 		uploaderColumn.setCellFactory(new Callback<TableColumn<Contents, String>, TableCell<Contents, String>>() {
 			@Override
@@ -308,10 +305,24 @@ public class MainScene implements Initializable {
 				return tc;
 			}
 		});
+		
+		// Upload notification setting
+		String notiMsg = null;
 
-		String notiMsg = content.getContentsType() + " Content";
-
-		noti = NotificationBuilder.create().title("Content Upload Notification").message(notiMsg).image(Notification.INFO_ICON).build();
+		if(content.getContentsType().equals(Contents.TYPE_IMAGE)) {
+			notiMsg = content.getContentsType() + " Content Upload";
+			Image resizeImg = content.getContentsImage();
+			noti = NotificationBuilder.create().title("Content Upload Notification").resizeImage(resizeImg).message(notiMsg).image(Notification.INFO_ICON).build();
+		}
+		else {
+			if(content.getContentsValue().length() > 10) {
+				notiMsg = content.getContentsType() + " Content Upload" + " : " + content.getContentsValue().substring(0, 10);
+			}
+			else {
+				notiMsg = content.getContentsType() + " Content Upload" + " : " + content.getContentsValue();
+			}
+			noti = NotificationBuilder.create().title("Content Upload Notification").message(notiMsg).image(Notification.INFO_ICON).build();
+		}
 
 		notifier.notify(noti);
 		notifier.onNotificationPressedProperty();
@@ -328,6 +339,7 @@ public class MainScene implements Initializable {
 		}
 	}
 
+	/** Show starting view */
 	public void showStartingView() {
 		try {
 			Parent goBack = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
@@ -343,6 +355,7 @@ public class MainScene implements Initializable {
 		}
 	}
 
+	/** Start key Hooking */
 	public void startHookProcess() {
 		hookManager.GlobalKeyboardHook hook = new hookManager.GlobalKeyboardHook();
 		int uploadVitrualKey = KeyEvent.VK_H;
@@ -372,6 +385,7 @@ public class MainScene implements Initializable {
 		});
 	}
 
+	/** Define toolTip class */
 	public class TooltipTableRow<T> extends TableRow<T> {
 
 		private Function<T, String> toolTipStringFunction;
@@ -392,6 +406,7 @@ public class MainScene implements Initializable {
 		}
 	}
 
+	/** Define content column value class */
 	public class ContentsValueFactory implements Callback<TableColumn.CellDataFeatures<Contents, Object>, ObservableValue<Object>> {
 		@SuppressWarnings("unchecked")
 		@Override
@@ -410,6 +425,7 @@ public class MainScene implements Initializable {
 		}
 	}
 
+	/** Define content column cell class */
 	public class ContentsValueCell extends TableCell<Contents, Object> {
 		@Override
 		protected void updateItem(Object item, boolean empty) {

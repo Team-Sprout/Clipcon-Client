@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,11 +125,11 @@ public class MultipartUtility {
     * @throws IOException
     */
    public void addFilePart(String fieldName, File uploadFile) throws IOException {
-      String fileName = uploadFile.getName();
+      String fileName = URLEncoder.encode(uploadFile.getName(), charset);
       
       writer.append("--" + boundary).append(LINE_FEED);
       writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + fileName + "\"").append(LINE_FEED);
-      writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName)).append(LINE_FEED);
+      writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName) + "; " + "charset=" + charset).append(LINE_FEED);
       writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
       writer.append(LINE_FEED);
       writer.flush();

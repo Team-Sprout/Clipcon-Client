@@ -4,8 +4,6 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 
 import userInterface.MainScene;
@@ -14,7 +12,7 @@ public class UploadData {
 
 
 //	public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
-	public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule";
+	public final static String SERVER_URL = "http://223.194.156.160:8080/websocketServerModule";
 
 
 	public final static String SERVER_SERVLET = "/UploadServlet";
