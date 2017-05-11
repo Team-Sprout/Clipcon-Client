@@ -17,15 +17,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import controller.ClipboardController;
 import controller.Endpoint;
@@ -36,8 +29,13 @@ import model.ImageTransferable;
 import userInterface.MainScene;
 
 public class DownloadData {
-	// public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
-	public final static String SERVER_URL = "http://223.194.158.100:8080/websocketServerModule"; // delf's
+
+
+	// 다운로드 파일을 임시로 저장할 위치
+	private final String DOWNLOAD_LOCATION = "C:\\Program Files\\Clipcon";
+
+//	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
+	public final static String SERVER_URL = "http://223.194.156.160:8080/websocketServerModule"; // delf's
 
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 

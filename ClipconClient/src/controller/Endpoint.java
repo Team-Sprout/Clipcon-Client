@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -16,7 +15,6 @@ import javax.websocket.Session;
 
 import model.Contents;
 import model.Group;
-import model.History;
 import model.Message;
 import model.MessageDecoder;
 import model.MessageEncoder;
@@ -28,7 +26,7 @@ import userInterface.UserInterface;
 public class Endpoint {
 
 //	private String uri = "ws://delf.gonetis.com:8080/websocketServerModule/ServerEndpoint";
-	private String uri = "ws://223.194.158.100:8080/websocketServerModule/ServerEndpoint";
+	private String uri = "ws://223.194.156.160:8080/websocketServerModule/ServerEndpoint";
 
 	private Session session = null;
 	private static Endpoint uniqueEndpoint;

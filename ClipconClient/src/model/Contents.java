@@ -36,17 +36,18 @@ public class Contents {
 	private StringProperty typeProperty;
 	private StringProperty uploaderProperty;
 	
-	/**
-	 * @author delf �ӽ� ������
-	 */
 	public Contents(String contentsType, long contentsSize, String contentsPKName, String uploadUserName, String uploadTime, String contentsValue, Image contentsImage) {
-		// this(contentsType, contentsSize, contentsPKName, uploadUserName, uploadTime, null);
 		this.contentsType = contentsType;
 		this.contentsSize = contentsSize;
 		this.contentsPKName = contentsPKName;
 		this.uploadUserName = uploadUserName;
 		this.uploadTime = uploadTime;
-		this.contentsValue = contentsValue;
+		if(contentsType.equals(Contents.TYPE_IMAGE)) {
+			this.contentsValue = "Image";
+		}
+		else {
+			this.contentsValue = contentsValue;
+		}
 		this.contentsImage = contentsImage;
 		
 		this.typeProperty = new SimpleStringProperty(contentsType);

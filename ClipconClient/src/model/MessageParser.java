@@ -1,6 +1,5 @@
 package model;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -12,12 +11,21 @@ import org.json.JSONArray;
 
 import javafx.scene.image.Image;
 
+/**
+ * @author Administrator
+ *
+ */
+/**
+ * @author Administrator
+ *
+ */
 public class MessageParser {
 
 	/**
 	 * @param message
-	 *            서버에서 받은 Message객체
-	 * @return user message 로부터 변환된 User객체
+	 * 			서버에서 받은 Message객체
+	 * @return user 
+	 * 			message 로부터 변환된 User객체
 	 */
 	public static User getUserAndGroupByMessage(Message message) {
 		User user = new User(message.get(Message.NAME));
@@ -44,50 +52,36 @@ public class MessageParser {
 		return user;
 	}
 
-	public static InputStream testDecodeMethod(String imageString) {
-	      BufferedImage image = null;
-	      byte[] imageByte = Base64.decodeBase64(imageString);
-	      ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
-	      return bis;
-	   }
-
-	// Image임시
+	/**
+	 * @param m
+	 * 			서버에서 받은 Message객체
+	 * @return Contents 
+	 * 			message 로부터 변환된 Contents객체
+	 */
 	public static Contents getContentsbyMessage(Message m) {
-		/* [doy] debuger test code */
-//		try {
-//			img = new Image(new FileInputStream("C:\\Users\\Administrator\\Desktop\\1.png"));
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		}
-//
-//		cnt++;
-//
-//		if (cnt % 2 == 0) {
-//			return new Contents(Contents.TYPE_IMAGE, m.getLong("contentsSize"), m.get("contentsPKName"),
-//					m.get("uploadUserName"), m.get("uploadTime"), "image", img);
-//		}
-		/* [doy] debuger test code */
+
+		Image image = null;
 		
-		String imageString = m.get("imageString");
-	    Image image = new Image(testDecodeMethod(imageString));
+		if (m.get("contentsType").equals(Contents.TYPE_IMAGE)) {
+			String imageString = m.get("imageString");
+			image = new Image(testDecodeMethod(imageString));
+		}
 
 		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"),
 				m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), image);
 	}
-
+	
+	
+	
 	/**
-	 * @author delf client code
+	 * @param imageString
+	 * 			서버에서 받은 Image를 변환한 String
+	 * @return InputStream
+	 * 			Javafx Image 객체를 생성하기 위한 InputStream
 	 */
-	// public static Image getImagebyMessage(Message message) {
-	// String imageString = message.get("imageString");
-	// byte[] imageBytes = Base64.getDecoder().decode(imageString);
-	// BufferedImage imag;
-	// try {
-	// imag = ImageIO.read(new ByteArrayInputStream(imageBytes));
-	// return imag;
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// return null;
-	// }
-	// }
+	public static InputStream testDecodeMethod(String imageString) {
+		byte[] imageByte = Base64.decodeBase64(imageString);
+		ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
+		return bis;
+	}
 }
