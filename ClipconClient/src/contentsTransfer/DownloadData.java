@@ -30,8 +30,8 @@ import userInterface.MainScene;
 
 public class DownloadData {
 
-//	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
-	public final static String SERVER_URL = "http://223.194.156.160:8080/websocketServerModule"; // delf's
+	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
+//	public final static String SERVER_URL = "http://114.203.39.200:8080/websocketServerModule"; // delf's
 
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 

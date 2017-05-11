@@ -75,7 +75,7 @@ public class NotificationBuilder<B extends NotificationBuilder<B>> {
                                             ((ObjectProperty<Image>) properties.get("image")).get());
         }
         else {
-            throw new IllegalArgumentException("Wrong or missing parameters.");
+        	NOTIFICATION = new Notification();
         }               
         
         return NOTIFICATION;

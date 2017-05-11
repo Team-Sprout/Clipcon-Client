@@ -28,6 +28,7 @@ import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
 import model.Contents;
+import userInterface.MainScene;
 
 public class ClipboardController {
 	private static Clipboard systemClipboard; // 자신의 시스템 클립보드
@@ -186,7 +187,7 @@ public class ClipboardController {
 		private HWND nextViewer;
 		
 		private static int count = 0;
-
+		
 		public void setNextViewer(HWND nextViewer) {
 			this.nextViewer = nextViewer;
 		}
@@ -208,6 +209,7 @@ public class ClipboardController {
 				if (count > 1) {
 					try {
 						System.out.println("clipboard change!!!! " + count);
+						MainScene.clipboadChangeFlag = true;
 					} catch (IllegalStateException e) {
 					}
 				}
