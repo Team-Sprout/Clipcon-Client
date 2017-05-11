@@ -1,5 +1,7 @@
 package model;
 
+import java.text.DecimalFormat;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
@@ -22,6 +24,7 @@ public class Contents {
 
 	private String contentsType;
 	private long contentsSize;
+	private String contentsConvertedSize;
 
 	// 그룹내의 각 Data를 구분하는 고유키값
 	public String contentsPKName;
@@ -39,6 +42,7 @@ public class Contents {
 	public Contents(String contentsType, long contentsSize, String contentsPKName, String uploadUserName, String uploadTime, String contentsValue, Image contentsImage) {
 		this.contentsType = contentsType;
 		this.contentsSize = contentsSize;
+		this.contentsConvertedSize = converteContetnsSize(contentsSize);
 		this.contentsPKName = contentsPKName;
 		this.uploadUserName = uploadUserName;
 		this.uploadTime = uploadTime;
@@ -52,5 +56,31 @@ public class Contents {
 		
 		this.typeProperty = new SimpleStringProperty(contentsType);
 		this.uploaderProperty = new SimpleStringProperty(uploadUserName);
+	}
+	
+	public String converteContetnsSize(long size) {
+		String contentsConvertedSize;
+		
+		double b = size;
+	    double k = size/1024.0;
+	    double m = ((size/1024.0)/1024.0);
+	    double g = (((size/1024.0)/1024.0)/1024.0);
+	    double t = ((((size/1024.0)/1024.0)/1024.0)/1024.0);
+
+	    DecimalFormat dec = new DecimalFormat("0.00");
+
+	    if ( t>1 ) {
+	    	contentsConvertedSize = dec.format(t).concat(" TB");
+	    } else if ( g>1 ) {
+	    	contentsConvertedSize = dec.format(g).concat(" GB");
+	    } else if ( m>1 ) {
+	    	contentsConvertedSize = dec.format(m).concat(" MB");
+	    } else if ( k>1 ) {
+	    	contentsConvertedSize = dec.format(k).concat(" KB");
+	    } else {
+	    	contentsConvertedSize = dec.format(b).concat(" Bytes");
+	    }
+			
+		return contentsConvertedSize;
 	}
 }

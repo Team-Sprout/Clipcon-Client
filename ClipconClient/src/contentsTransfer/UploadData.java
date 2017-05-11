@@ -76,6 +76,8 @@ public class UploadData {
 
 			// create uploading file
 			File firstUploadFile = new File(fileFullPathList.get(0));
+			
+			System.out.println("uploadMultipartData file name :" + firstUploadFile.getName());
 
 			/* case: Single file data(not a folder) */
 			if (fileFullPathList.size() == 1 && firstUploadFile.isFile()) {

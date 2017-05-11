@@ -203,7 +203,8 @@ public class MainScene implements Initializable {
 			@Override
 			public void handle(MouseEvent event) {
 				if (event.getClickCount() > 1) {
-					getRecentlyContentsInClipboard(historyTable.getSelectionModel().getSelectedItem());
+					if(historyTable.getSelectionModel().getSelectedItem() != null)
+						getRecentlyContentsInClipboard(historyTable.getSelectionModel().getSelectedItem());
 				}
 			}
 		});
@@ -211,7 +212,14 @@ public class MainScene implements Initializable {
 		// Tooltip about table row on mouse hover
 		historyTable.setRowFactory((tableView) -> {
 			return new TooltipTableRow<Contents>((Contents contents) -> {
-				return contents.getContentsValue() + "\n\nsize : " + contents.getContentsSize() + " byte\nadded : " + contents.getUploadTime();
+				String tooltipMsg = null;
+				
+				if(contents.getContentsType().equals(Contents.TYPE_STRING))
+					tooltipMsg = contents.getContentsValue() + "\n\nadded : " + contents.getUploadTime();
+				else 
+					tooltipMsg = contents.getContentsValue() + "\n\nsize : " + contents.getContentsConvertedSize() + "\nadded : " + contents.getUploadTime();
+				
+				return tooltipMsg;
 			});
 		});
 
