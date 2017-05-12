@@ -14,6 +14,7 @@ import java.util.function.Function;
 
 import javax.websocket.EncodeException;
 
+import application.Main;
 import contentsTransfer.ContentsUpload;
 import contentsTransfer.DownloadData;
 import controller.ClipboardController;
@@ -50,7 +51,6 @@ import lombok.Setter;
 import model.Contents;
 import model.Message;
 import model.Notification;
-import model.Notification.Notifier;
 import model.NotificationBuilder;
 import model.NotifierBuilder;
 import model.User;
@@ -93,13 +93,16 @@ public class MainScene implements Initializable {
 
 	private ObservableList<Contents> historyList;
 
-	// private PopOver popOver = new PopOver();
 	private Label popOverContents = new Label();
 
-	private Notification clipboanoti;
-	private Notification uploadnoti;
-	private Notification.Notifier clipboardNotifier;
-	private Notification.Notifier uploadNotifier;
+	/*
+	 * private Notification clipboanoti; private Notification uploadnoti;
+	 * private Notification.Notifier clipboardNotifier; private
+	 * Notification.Notifier uploadNotifier;
+	 */
+
+	private Notification.ClipboadNotifier clipboardNotifier;
+	private Notification.UploadNotifier uploadNotifier;
 
 	private Thread clipboardMonitorThread;
 
@@ -129,21 +132,13 @@ public class MainScene implements Initializable {
 		});
 		clipboardMonitorThread.start();
 
+		clipboardNotifier = NotifierBuilder.clipboardNotiBuild();
+		clipboardNotifier.setNotificationOwner(Main.getPrimaryStage());
+		uploadNotifier = NotifierBuilder.uploadNotibuild();
+		uploadNotifier.setNotificationOwner(Main.getPrimaryStage());
+
 		groupParticipantList = FXCollections.observableArrayList();
 		historyList = FXCollections.observableArrayList();
-
-		// popOver.setTitle("Contents Vlaue");
-		// popOver.setAutoHide(true);
-		// popOver.setAutoFix(true);
-		// popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
-		// popOver.setHeaderAlwaysVisible(true);
-		// popOver.setDetachable(true);
-		// popOver.setDetached(true);
-		// popOver.setCornerRadius(4);
-
-		Notifier.INSTANCE.setAlwaysOnTop(false);
-		clipboardNotifier = NotifierBuilder.create().popupLocation(Pos.BOTTOM_RIGHT).styleSheet("/resource/myclipboardnoti.css").build();
-		uploadNotifier = NotifierBuilder.create().popupLocation(Pos.BOTTOM_RIGHT).styleSheet("/resource/myuploadnoti.css").build();
 
 		// run scheduler for checking
 		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -227,7 +222,8 @@ public class MainScene implements Initializable {
 				if (contents.getContentsType().equals(Contents.TYPE_STRING))
 					tooltipMsg = contents.getContentsValue() + "\n\nadded : " + contents.getUploadTime();
 				else
-					tooltipMsg = contents.getContentsValue() + "\n\nsize : " + contents.getContentsConvertedSize() + "\nadded : " + contents.getUploadTime();
+					tooltipMsg = contents.getContentsValue() + "\n\nsize : " + contents.getContentsConvertedSize()
+							+ "\nadded : " + contents.getUploadTime();
 
 				return tooltipMsg;
 			});
@@ -273,12 +269,12 @@ public class MainScene implements Initializable {
 	}
 
 	public void showClipboardChangeNoti() {
-		clipboanoti = NotificationBuilder.create().build();
+		Notification clipboanoti = NotificationBuilder.create().build();
 
-		Notifier.setWidth(64);
-		Notifier.setHeight(64);
-		Notifier.setOffsetX(10);
-		Notifier.setOffsetY(50);
+		if (clipboardNotifier.getIsShowing()) {
+			clipboardNotifier.hidePopUp();
+		}
+		
 		clipboardNotifier.notify(clipboanoti);
 		clipboardNotifier.onNotificationPressedProperty();
 		clipboardNotifier.setOnNotificationPressed(event -> contentsUpload.upload());
@@ -337,25 +333,27 @@ public class MainScene implements Initializable {
 		});
 
 		// Upload notification setting
+
+		Notification uploadnoti;
+
 		String notiMsg = null;
 
 		if (content.getContentsType().equals(Contents.TYPE_IMAGE)) {
 			notiMsg = content.getContentsType() + " Content Upload";
 			Image resizeImg = content.getContentsImage();
-			uploadnoti = NotificationBuilder.create().title("Content Upload Notification").resizeImage(resizeImg).message(notiMsg).image(Notification.INFO_ICON).build();
+			uploadnoti = NotificationBuilder.create().title("Content Upload Notification").resizeImage(resizeImg)
+					.message(notiMsg).image(Notification.INFO_ICON).build();
 		} else {
 			if (content.getContentsValue().length() > 10) {
-				notiMsg = content.getContentsType() + " Content Upload" + " : " + content.getContentsValue().substring(0, 10);
+				notiMsg = content.getContentsType() + " Content Upload" + " : "
+						+ content.getContentsValue().substring(0, 10);
 			} else {
 				notiMsg = content.getContentsType() + " Content Upload" + " : " + content.getContentsValue();
 			}
-			uploadnoti = NotificationBuilder.create().title("Content Upload Notification").message(notiMsg).image(Notification.INFO_ICON).build();
+			uploadnoti = NotificationBuilder.create().title("Content Upload Notification").message(notiMsg)
+					.image(Notification.INFO_ICON).build();
 		}
 
-		Notifier.setWidth(300);
-		Notifier.setHeight(80);
-		Notifier.setOffsetX(0);
-		Notifier.setOffsetY(25);
 		uploadNotifier.notify(uploadnoti);
 		uploadNotifier.onNotificationPressedProperty();
 		uploadNotifier.setOnNotificationPressed(event -> getRecentlyContentsInClipboard(content));
@@ -363,7 +361,8 @@ public class MainScene implements Initializable {
 
 	/** get Recently Contents In Clipboard */
 	public void getRecentlyContentsInClipboard(Contents content) {
-		String downloadDataPK = content.getContentsPKName(); // recently Contents PK
+		String downloadDataPK = content.getContentsPKName(); // recently
+																// Contents PK
 		try {
 			downloader.requestDataDownload(downloadDataPK);
 		} catch (MalformedURLException e) {
@@ -439,7 +438,8 @@ public class MainScene implements Initializable {
 	}
 
 	/** Define content column value class */
-	public class ContentsValueFactory implements Callback<TableColumn.CellDataFeatures<Contents, Object>, ObservableValue<Object>> {
+	public class ContentsValueFactory
+			implements Callback<TableColumn.CellDataFeatures<Contents, Object>, ObservableValue<Object>> {
 		@SuppressWarnings("unchecked")
 		@Override
 		public ObservableValue<Object> call(TableColumn.CellDataFeatures<Contents, Object> data) {
@@ -485,9 +485,8 @@ public class MainScene implements Initializable {
 	}
 
 	/**
-	 * Create a temporary directory 
-	 * 	to save the imageFile, file when downloading from server
-	 * 	to save Zip file when uploading multiple file
+	 * Create a temporary directory to save the imageFile, file when downloading
+	 * from server to save Zip file when uploading multiple file
 	 * 
 	 * @param directoryName
 	 *            The name of the directory you want to create
