@@ -10,10 +10,10 @@ import userInterface.MainScene;
 
 public class UploadData {
 
-	public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
-//	public final static String SERVER_URL = "http://114.203.39.200:8080/websocketServerModule";
-
+	// public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
+	public final static String SERVER_URL = "http://223.194.156.160:8080/websocketServerModule";
 	public final static String SERVER_SERVLET = "/UploadServlet";
+	
 	private String charset = "UTF-8";
 
 	private String userName = null;
@@ -76,7 +76,7 @@ public class UploadData {
 
 			// create uploading file
 			File firstUploadFile = new File(fileFullPathList.get(0));
-			
+
 			System.out.println("uploadMultipartData file name :" + firstUploadFile.getName());
 
 			/* case: Single file data(not a folder) */
@@ -95,7 +95,7 @@ public class UploadData {
 
 					multipart.addFilePart("multipartFileData", uploadZipFile);
 
-					// After Upload 이미 존재하는 ZIP file 삭제
+					// Delete child files that already exist after uploading
 					if (uploadRootDir.listFiles().length != 0) {
 						for (int i = 0; i < uploadRootDir.listFiles().length; i++)
 							uploadRootDir.listFiles()[i].delete();

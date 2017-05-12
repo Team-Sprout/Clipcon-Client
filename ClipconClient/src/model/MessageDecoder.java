@@ -1,13 +1,13 @@
 package model;
 
-
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
 import org.json.JSONObject;
+
 /**
- * 서버에서 받은 string을 object(Message)로 decoding. */
+ * Decode string received from server as object (Message) */
 public class MessageDecoder implements Decoder.Text<Message> {
 	JSONObject tmp;
 
@@ -17,9 +17,9 @@ public class MessageDecoder implements Decoder.Text<Message> {
 	public void init(EndpointConfig arg0) {
 		tmp = new JSONObject();
 	}
-	
+
 	public Message decode(String incommingMessage) throws DecodeException {
-		System.out.println("서버에서 받은 메시지: " + incommingMessage);
+		System.out.println("Messages from the server: " + incommingMessage);
 		Message message = new Message().setJson(incommingMessage);
 		System.out.println(message.getType());
 		return message;

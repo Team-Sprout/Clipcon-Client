@@ -1,4 +1,5 @@
 package model;
+
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 
 import lombok.AllArgsConstructor;
 
-/** 클립보드에 들어갈 수 있는 File 객체 */
+/** An File object that can be inserted into the clipboard */
 
 @AllArgsConstructor
 public class FileTransferable implements Transferable {

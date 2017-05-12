@@ -23,9 +23,9 @@ public class MessageParser {
 
 	/**
 	 * @param message
-	 * 			서버에서 받은 Message객체
+	 * 			Message object received from server
 	 * @return user 
-	 * 			message 로부터 변환된 User객체
+	 * 			User object converted from message
 	 */
 	public static User getUserAndGroupByMessage(Message message) {
 		User user = new User(message.get(Message.NAME));
@@ -54,30 +54,27 @@ public class MessageParser {
 
 	/**
 	 * @param m
-	 * 			서버에서 받은 Message객체
+	 * 			Message object received from server
 	 * @return Contents 
-	 * 			message 로부터 변환된 Contents객체
+	 * 			Contents object converted from message
 	 */
 	public static Contents getContentsbyMessage(Message m) {
 
 		Image image = null;
-		
+
 		if (m.get("contentsType").equals(Contents.TYPE_IMAGE)) {
 			String imageString = m.get("imageString");
 			image = new Image(testDecodeMethod(imageString));
 		}
 
-		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"),
-				m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), image);
+		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"), m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), image);
 	}
-	
-	
-	
+
 	/**
 	 * @param imageString
-	 * 			서버에서 받은 Image를 변환한 String
+	 * 			The String that transformed the Image received from the server
 	 * @return InputStream
-	 * 			Javafx Image 객체를 생성하기 위한 InputStream
+	 * 			An InputStream for creating Javafx Image objects
 	 */
 	public static InputStream testDecodeMethod(String imageString) {
 		byte[] imageByte = Base64.decodeBase64(imageString);
