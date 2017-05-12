@@ -26,61 +26,62 @@ public class Contents {
 	private long contentsSize;
 	private String contentsConvertedSize;
 
-	// 그룹내의 각 Data를 구분하는 고유키값
+	// A unique key value that distinguishes each data in the group
 	public String contentsPKName;
 
 	private String uploadUserName;
 	private String uploadTime;
 
-	// String Type: String값, File Type: FileOriginName
+	// String Type: String object value, File Type: FileOriginName
 	private String contentsValue;
 	private Image contentsImage;
-	
+
 	private StringProperty typeProperty;
 	private StringProperty uploaderProperty;
-	
+
+	/** Constructor */
 	public Contents(String contentsType, long contentsSize, String contentsPKName, String uploadUserName, String uploadTime, String contentsValue, Image contentsImage) {
 		this.contentsType = contentsType;
 		this.contentsSize = contentsSize;
-		this.contentsConvertedSize = converteContetnsSize(contentsSize);
+		this.contentsConvertedSize = convertContentsSize(contentsSize);
 		this.contentsPKName = contentsPKName;
 		this.uploadUserName = uploadUserName;
 		this.uploadTime = uploadTime;
-		if(contentsType.equals(Contents.TYPE_IMAGE)) {
+		if (contentsType.equals(Contents.TYPE_IMAGE)) {
 			this.contentsValue = "Image";
-		}
-		else {
+		} else {
 			this.contentsValue = contentsValue;
 		}
 		this.contentsImage = contentsImage;
-		
+
 		this.typeProperty = new SimpleStringProperty(contentsType);
 		this.uploaderProperty = new SimpleStringProperty(uploadUserName);
 	}
-	
-	public String converteContetnsSize(long size) {
+
+	/** convert contents size format */
+	public String convertContentsSize(long size) {
 		String contentsConvertedSize;
-		
+
 		double b = size;
-	    double k = size/1024.0;
-	    double m = ((size/1024.0)/1024.0);
-	    double g = (((size/1024.0)/1024.0)/1024.0);
-	    double t = ((((size/1024.0)/1024.0)/1024.0)/1024.0);
+		double k = size / 1024.0;
+		double m = ((size / 1024.0) / 1024.0);
+		double g = (((size / 1024.0) / 1024.0) / 1024.0);
+		double t = ((((size / 1024.0) / 1024.0) / 1024.0) / 1024.0);
 
-	    DecimalFormat dec = new DecimalFormat("0.00");
+		DecimalFormat dec = new DecimalFormat("0.00");
 
-	    if ( t>1 ) {
-	    	contentsConvertedSize = dec.format(t).concat(" TB");
-	    } else if ( g>1 ) {
-	    	contentsConvertedSize = dec.format(g).concat(" GB");
-	    } else if ( m>1 ) {
-	    	contentsConvertedSize = dec.format(m).concat(" MB");
-	    } else if ( k>1 ) {
-	    	contentsConvertedSize = dec.format(k).concat(" KB");
-	    } else {
-	    	contentsConvertedSize = dec.format(b).concat(" Bytes");
-	    }
-			
+		if (t > 1) {
+			contentsConvertedSize = dec.format(t).concat(" TB");
+		} else if (g > 1) {
+			contentsConvertedSize = dec.format(g).concat(" GB");
+		} else if (m > 1) {
+			contentsConvertedSize = dec.format(m).concat(" MB");
+		} else if (k > 1) {
+			contentsConvertedSize = dec.format(k).concat(" KB");
+		} else {
+			contentsConvertedSize = dec.format(b).concat(" Bytes");
+		}
+
 		return contentsConvertedSize;
 	}
 }

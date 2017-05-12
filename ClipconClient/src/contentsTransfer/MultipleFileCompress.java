@@ -23,13 +23,13 @@ public class MultipleFileCompress {
 	private static int lastIndex = 0;
 
 	/**
-	 * 吏��젙�맂 �뤃�뜑瑜� Zip �뙆�씪濡� �븬異뺥븳�떎.
-	 * @param sourcePath - �븬異� ���긽 �뵒�젆�넗由�
-	 * @param output - ���옣 zip �뙆�씪 �씠由�
+	 * Compress the specified folder into a Zip file.
+	 * @param sourcePath - Target directory to compress
+	 * @param output - Name of zip file to save
 	 * @throws Exception
-	 * @return outputFileName - �븬異� �뙆�씪�씠 �엳�뒗 �쟾泥� 寃쎈줈
+	 * @return outputFileName - Full path with compressed files
 	 */
-	/* 媛숈� 寃쎈줈�뿉 �엳�뒗 蹂듭닔媛쒖쓽 �뙆�씪�쓣 �븬異� */
+	/* Compress multiple files in the same path */
 	@SuppressWarnings("finally")
 	public static String compress(ArrayList<String> fileFullPathList) throws Exception {
 		File[] files = new File[fileFullPathList.size()];
@@ -42,22 +42,22 @@ public class MultipleFileCompress {
 		fos = new FileOutputStream(outputFileFullPath); // FileOutputStream
 		bos = new BufferedOutputStream(fos); // BufferedStream
 		zos = new ZipOutputStream(bos); // ZipOutputStream
-		zos.setLevel(COMPRESSION_LEVEL); // �븬異� �젅踰� - 理쒕� �븬異뺣쪧�� 9, �뵒�뤃�듃 8
+		zos.setLevel(COMPRESSION_LEVEL); // Compression level - maximum compression ratio is 9, default 8
 
 		System.out.println(fileFullPathList.size());
 
 		try {
 			for (int i = 0; i < fileFullPathList.size(); i++) {
 				files[i] = new File(fileFullPathList.get(i));
-				System.out.println("----------------------�깮�꽦�븳 file�쓽 path: " + files[i].getPath());
+				System.out.println("---------------------------- created file path: " + files[i].getPath());
 
 				lastIndex = files[i].getPath().lastIndexOf(File.separator);
 
-				// �븬異� ���긽�씠 �뵒�젆�넗由щ굹 �뙆�씪�씠 �븘�땲硫� 由ы꽩�븳�떎.
+				// Returns if the target of compression is not a directory or file.
 				if (!files[i].isFile() && !files[i].isDirectory()) {
-					throw new Exception("�븬異� ���긽�쓽 �뙆�씪�쓣 李얠쓣 �닔媛� �뾾�뒿�땲�떎.");
+					throw new Exception("I can not find the file to compress.");
 				}
-				zipEntry(files[i], files[i].getPath(), zos); // Zip �뙆�씪 �깮�꽦
+				zipEntry(files[i], files[i].getPath(), zos); // create Zip file
 			}
 		} finally {
 			if (zos != null) {
@@ -76,27 +76,27 @@ public class MultipleFileCompress {
 	}
 
 	/**
-	 * �븬異�
+	 * compression
 	 * @param sourceFile
 	 * @param sourcePath
 	 * @param zos
 	 * @throws Exception
 	 */
 	private static void zipEntry(File file, String filePath, ZipOutputStream zos) throws Exception {
-		// sourceFile�씠 �뵒�젆�넗由ъ씤 寃쎌슦 �븯�쐞 �뙆�씪 由ъ뒪�듃 媛��졇�� �옱洹��샇異�
+		// case: SourceFile is a directory, get a list of child files and recursively call
 		if (file.isDirectory()) {
-			// .metadata �뵒�젆�넗由�
+			// .metadata directory
 			if (file.getName().equalsIgnoreCase(".metadata")) {
 				return;
 			}
-			File[] fileArray = file.listFiles(); // sourceFile �쓽 �븯�쐞 �뙆�씪 由ъ뒪�듃
+			File[] fileArray = file.listFiles(); // sourceFile's child file list
 
 			for (int i = 0; i < fileArray.length; i++) {
-				zipEntry(fileArray[i], fileArray[i].getPath(), zos); // �옱洹� �샇異�
+				zipEntry(fileArray[i], fileArray[i].getPath(), zos); // recursively call
 			}
 		}
 
-		/// sourceFile�씠 �뵒�젆�넗由ш� �븘�땶 寃쎌슦
+		/// case: SourceFile is not a directory
 		else {
 			BufferedInputStream bis = null;
 
@@ -127,11 +127,11 @@ public class MultipleFileCompress {
 	}
 
 	/**
-	 * Zip 파일의 압축을 푼다.
+	 * Unzip the file.
 	 *
-	 * @param zipFile - 압축 풀 Zip 파일
-	 * @param targetDir - 압축 푼 파일이 들어간 디렉토리
-	 * @param fileNameToLowerCase - 파일명을 소문자로 바꿀지 여부
+	 * @param zipFile - Zip file you want to unzip
+	 * @param targetDir - The directory containing the unpacked files
+	 * @param fileNameToLowerCase - Whether filenames are lowercase
 	 * @throws Exception
 	 */
 	public static void unzip(File zipFile, File targetDir, boolean fileNameToLowerCase) throws Exception {
@@ -146,7 +146,7 @@ public class MultipleFileCompress {
 			while ((zentry = zis.getNextEntry()) != null) {
 				String fileNameToUnzip = zentry.getName();
 				System.out.println("====fileNameToUnzip: " + fileNameToUnzip);
-				
+
 				// fileName toLowerCase
 				if (fileNameToLowerCase) {
 					fileNameToUnzip = fileNameToUnzip.toLowerCase();
@@ -163,7 +163,7 @@ public class MultipleFileCompress {
 					// FileUtils.forceMkdir(targetFile.getAbsolutePath());
 				}
 				// case: File. make parent directory
-				else{
+				else {
 					targetFileDir = new File(targetFile.getParent());
 					System.out.println("====targetFileDir(FILE): " + targetFile.getParent());
 					targetFileDir.mkdir();
@@ -182,10 +182,10 @@ public class MultipleFileCompress {
 	}
 
 	/**
-	 * Zip 파일의 한 개 엔트리의 압축을 푼다.
+	 * Unzip one entry in the file.
 	 *
 	 * @param zis - Zip Input Stream
-	 * @param filePath - 압축 풀린 파일의 경로
+	 * @param filePath - Path to unpacked file
 	 * @return
 	 * @throws Exception
 	 */

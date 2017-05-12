@@ -30,9 +30,8 @@ import userInterface.MainScene;
 
 public class DownloadData {
 
-	public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
-//	public final static String SERVER_URL = "http://114.203.39.200:8080/websocketServerModule"; // delf's
-
+	// public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
+	public final static String SERVER_URL = "http://223.194.156.160:8080/websocketServerModule"; // delf's
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 
 	private final String charset = "UTF-8";
@@ -51,21 +50,19 @@ public class DownloadData {
 	}
 
 	/**
-	 * 다운로드하기 원하는 Data를 request 복수 선택은 File Data의 경우만 가능(추후 개선)
+	 * Send request the data you want to download
 	 * 
 	 * @param downloadDataPK
-	 *            다운로드할 Data의 고유키
+	 *            The primary key of the content to download
 	 * @param myhistory
-	 *            내가 속한 그룹의 History 정보
+	 *            History of my group
 	 */
 	public void requestDataDownload(String downloadDataPK) throws MalformedURLException {
 		History myhistory = Endpoint.user.getGroup().getHistory();
-
 		// Retrieving Contents from My History
 		requestContents = myhistory.getContentsByPK(downloadDataPK);
-		// Type of data to download
-		String contentsType = requestContents.getContentsType();
 
+		String contentsType = requestContents.getContentsType();
 		// Parameter to be sent by the GET method
 		String parameters = "userName=" + userName + "&" + "groupPK=" + groupPK + "&" + "downloadDataPK=" + downloadDataPK;
 
@@ -143,7 +140,7 @@ public class DownloadData {
 					break;
 
 				default:
-					System.out.println("어떤 형식에도 속하지 않음.");
+					System.out.println("It does not belong to any format.");
 				}
 				System.out.println();
 
@@ -214,7 +211,7 @@ public class DownloadData {
 		return ImageData;
 	}
 
-	/** download File Data to Temporary folder
+	/** Download File Data to Temporary folder
 	 * @return File object */
 	private File downloadFileData(InputStream inputStream, String fileName) throws FileNotFoundException {
 		// opens input stream from the HTTP connection
@@ -223,7 +220,7 @@ public class DownloadData {
 		File fileData;
 
 		try {
-			// Before Download 이미 존재하는 하위 Files 삭제
+			// Delete child files that already exist before downloading
 			deleteAllFiles(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 
 			// opens an output stream to save into file
@@ -246,9 +243,9 @@ public class DownloadData {
 		return fileData;
 	}
 
-	/** delete all files in directory */
+	/** Delete all files in directory */
 	public void deleteAllFiles(String parentDirPath) {
-		// 폴더내 파일을 배열로 가져온다.
+		// Get the files in the folder into an array.
 		File file = new File(parentDirPath);
 		File[] tempFile = file.listFiles();
 
@@ -256,7 +253,7 @@ public class DownloadData {
 			for (int i = 0; i < tempFile.length; i++) {
 				if (tempFile[i].isFile()) {
 					tempFile[i].delete();
-				} else { // 재귀함수
+				} else { // Recursive function
 					deleteAllFiles(tempFile[i].getPath());
 				}
 				tempFile[i].delete();

@@ -31,13 +31,13 @@ import model.Contents;
 import userInterface.MainScene;
 
 public class ClipboardController {
-	private static Clipboard systemClipboard; // 자신의 시스템 클립보드
-	private static String type; // 데이터 타입
-	
+	private static Clipboard systemClipboard; // Own system clipboard
+	private static String type; // data type
+
 	/**
-	 * 시스템 클립보드에서 Transferable 객체를 읽어와 데이터 타입을 알아내고 Contents 객체로 변환
+	 * Read the Transferable object from the system clipboard to determine the data type and convert it to a Contents object
 	 * 
-	 * @return settingObject 서버에 전송할 Contents 객체
+	 * @return settingObject - The Contents object to send to the server
 	 */
 	public static Object readClipboard() {
 		Transferable t = getSystmeClipboardContets();
@@ -46,24 +46,24 @@ public class ClipboardController {
 
 		return clipboardData;
 	}
-	
+
 	/**
-	 * 시스템 클립보드의 Transferable 객체 리턴
+	 * Get Transferable object from system clipboard
 	 * 
-	 * @return 시스템 클립보드에 존재하는 Transferable 객체
+	 * @return A Transferable object present in the system clipboard
 	 */
 	public static Transferable getSystmeClipboardContets() {
 		systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
 		return systemClipboard.getContents(null);
 	}
-	
+
 	/**
-	 * 클립보드의 Transferable 객체가 어떤 타입인지 set하고 리턴
+	 * Sets and returns the type of the Transferable object of the clipboard
 	 * 
-	 * @param t	 클립보드의 Transferable 객체
+	 * @param t - Transferable object in clipboard
 	 *            
-	 * @return t 의 DataFlavor의 종류
+	 * @return t'type - Type of DataFlavor
 	 */
 	public static DataFlavor setDataFlavor(Transferable t) {
 		DataFlavor[] flavors = t.getTransferDataFlavors();
@@ -84,60 +84,39 @@ public class ClipboardController {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * 클립보드의 Transferable 객체를 전송스트링으로 바꿈
+	 * Transforms the Transferable object of the clipboard into a transfer string
 	 * 
-	 * @param contents
-	 *            클립보드의 Transferable 객체
-	 * @return sendObject
-	 * 			   실제 전송 객체(Contents 타입) 리턴
+	 * @param contents - Transferable object in clipboard
+	 * @return sendObject - Return the actual transfer object (Contents type)
 	 */
 	private static Object extractDataFromTransferable(Transferable t) {
 		try {
 			Object extractData = null;
 
-			// 클립보드의 내용을 추출
+			// Extract the contents of the clipboard
 			if (type.equals(Contents.TYPE_STRING)) {
-				System.out.println("[ClipboardManager]클립보드 내용 타입: 문자열");
-				//contents = new StringContents((String) t.getTransferData(DataFlavor.stringFlavor));
-				//extractString = contents.toString();
+				System.out.println("[ClipboardManager]Clipboard content type: TYPE_STRING");
 				extractData = (String) t.getTransferData(DataFlavor.stringFlavor);
-				
+
 			} else if (type.equals(Contents.TYPE_IMAGE)) {
-				System.out.println("[ClipboardManager]클립보드 내용 타입: 이미지");
-				//contents = new ImageContents((Image) t.getTransferData(DataFlavor.imageFlavor));
-				//extractString = contents.toString();
+				System.out.println("[ClipboardManager]Clipboard content type: TYPE_IMAGE");
 				extractData = (Image) t.getTransferData(DataFlavor.imageFlavor);
-				
+
 			} else if (type.equals(Contents.TYPE_FILE)) {
-				System.out.println("[ClipboardManager]클립보드 내용 타입: 파일");
-				String [] filePath = getFilePathInSystemClipboard().split(", ");
-				
+				System.out.println("[ClipboardManager]Clipboard content type: TYPE_FILE");
+				String[] filePath = getFilePathInSystemClipboard().split(", ");
+
 				ArrayList<String> filePathList = new ArrayList<String>();
-				
-				for(int i=0; i<filePath.length; i++) {
+
+				for (int i = 0; i < filePath.length; i++) {
 					filePathList.add(filePath[i]);
 				}
-				
 				extractData = filePathList;
 
-//				if (filePathList.size() == 1) {
-//					contents = new FileContents(filePath[0]);
-//					extractString = contents.toString();
-//				} else {
-//					System.out.println("[ClipboardManager]클립보드 내용 타입: 여러개의 파일 또는 디렉터리");
-//					extractString = "";
-//
-//					Contents [] contentsList = new FileContents [filePath.length];
-//					
-//					for (int i = 0; i < filePath.length; i++) {
-//						contentsList[i] = new FileContents(filePath[i]);
-//						extractString += contentsList[i].toString() + "\n";
-//					}
-//				}
 			} else {
-				System.out.println("[ClipboardManager]클립보드 내용 타입: 문자열, 이미지, 파일, 디렉터리가 아님");
+				System.out.println("[ClipboardManager] Types that can not fit in the clipboard");
 			}
 
 			return extractData;
@@ -150,12 +129,13 @@ public class ClipboardController {
 		return null;
 	}
 
-	/** @return 클립보드에 있는 파일의 경로명 */
+	/** Get File pathname of the file on the system clipboard 
+	 * @return The pathname of the file on the clipboard */
 	private static String getFilePathInSystemClipboard() {
 		try {
-			Transferable contents = getSystmeClipboardContets(); // 시스템 클립보드에서 내용을 추출
+			Transferable contents = getSystmeClipboardContets(); // Extract content from system clipboard
 			String fileTotalPath = contents.getTransferData(DataFlavor.javaFileListFlavor).toString();
-			return fileTotalPath.substring(1, fileTotalPath.length() - 1); // 경로명만 얻어오기 위해 양 끝의 []를 제거
+			return fileTotalPath.substring(1, fileTotalPath.length() - 1); // Remove [] from both ends to get path names only
 		} catch (HeadlessException e) {
 			e.printStackTrace();
 		} catch (UnsupportedFlavorException e) {
@@ -165,35 +145,31 @@ public class ClipboardController {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * 전송받은 Contents 객체를 Transferable해서 클립보드에 삽입(문자열, 이미지인 경우)
+	 * Transfer the contents object that was transferred and insert it into the clipboard (if it is a string or an image)
 	 *
-	 * @param data
-	 *            전송받은 데이터
-	 * @param dataType
-	 *            전송받은 데이터 타입
+	 * @param data - Received data
+	 * @param dataType - Received data type
 	 */
-	
+
 	public static void writeClipboard(Transferable transferable) {
 		systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		systemClipboard.setContents(transferable, null); // 시스템 클립보드에 삽입
+		systemClipboard.setContents(transferable, null); // Insert into system clipboard
 	}
-	
-	
-	
+
 	private static final class WindowProc implements WinUser.WindowProc {
 
 		private HWND nextViewer;
-		
+
 		private static int count = 0;
-		
+
 		public void setNextViewer(HWND nextViewer) {
 			this.nextViewer = nextViewer;
 		}
-		
+
 		public LRESULT callback(HWND hWnd, int uMsg, WPARAM wParam, LPARAM lParam) {
-			//System.out.println("#callback : uMsg=" + uMsg);
+			// System.out.println("#callback : uMsg=" + uMsg);
 			switch (uMsg) {
 			case User32x.WM_CHANGECBCHAIN:
 				// If the next window is closing, repair the chain.
@@ -253,8 +229,7 @@ public class ClipboardController {
 		getLastError();
 
 		// create new window
-		HWND hWnd = User32.INSTANCE.CreateWindowEx(User32.WS_EX_TOPMOST, windowClass,
-				"My hidden helper window, used only to catch the windows events", 0, 0, 0, 0, 0, null, null, hInst, null);
+		HWND hWnd = User32.INSTANCE.CreateWindowEx(User32.WS_EX_TOPMOST, windowClass, "My hidden helper window, used only to catch the windows events", 0, 0, 0, 0, 0, null, null, hInst, null);
 		getLastError();
 		System.out.println("Window created hwnd: " + hWnd.getPointer().toString());
 
@@ -274,7 +249,7 @@ public class ClipboardController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		// destroy window
 		User32.INSTANCE.UnregisterClass(windowClass, hInst);
 		User32.INSTANCE.DestroyWindow(hWnd);
@@ -288,4 +263,3 @@ public class ClipboardController {
 		return rc;
 	}
 }
-

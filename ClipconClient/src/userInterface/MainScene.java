@@ -93,7 +93,7 @@ public class MainScene implements Initializable {
 
 	private ObservableList<Contents> historyList;
 
-	//private PopOver popOver = new PopOver();
+	// private PopOver popOver = new PopOver();
 	private Label popOverContents = new Label();
 
 	private Notification clipboanoti;
@@ -120,7 +120,7 @@ public class MainScene implements Initializable {
 		downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 		startHookProcess();
 		createDirectory();
-		
+
 		clipboardMonitorThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -133,18 +133,18 @@ public class MainScene implements Initializable {
 		historyList = FXCollections.observableArrayList();
 
 		// popOver.setTitle("Contents Vlaue");
-//		popOver.setAutoHide(true);
-//		popOver.setAutoFix(true);
-//		popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
-//		popOver.setHeaderAlwaysVisible(true);
-//		popOver.setDetachable(true);
-//		popOver.setDetached(true);
-//		popOver.setCornerRadius(4);
+		// popOver.setAutoHide(true);
+		// popOver.setAutoFix(true);
+		// popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
+		// popOver.setHeaderAlwaysVisible(true);
+		// popOver.setDetachable(true);
+		// popOver.setDetached(true);
+		// popOver.setCornerRadius(4);
 
 		Notifier.INSTANCE.setAlwaysOnTop(false);
 		clipboardNotifier = NotifierBuilder.create().popupLocation(Pos.BOTTOM_RIGHT).styleSheet("/resource/myclipboardnoti.css").build();
 		uploadNotifier = NotifierBuilder.create().popupLocation(Pos.BOTTOM_RIGHT).styleSheet("/resource/myuploadnoti.css").build();
-		
+
 		// run scheduler for checking
 		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -213,7 +213,7 @@ public class MainScene implements Initializable {
 			@Override
 			public void handle(MouseEvent event) {
 				if (event.getClickCount() > 1) {
-					if(historyTable.getSelectionModel().getSelectedItem() != null)
+					if (historyTable.getSelectionModel().getSelectedItem() != null)
 						getRecentlyContentsInClipboard(historyTable.getSelectionModel().getSelectedItem());
 				}
 			}
@@ -223,12 +223,12 @@ public class MainScene implements Initializable {
 		historyTable.setRowFactory((tableView) -> {
 			return new TooltipTableRow<Contents>((Contents contents) -> {
 				String tooltipMsg = null;
-				
-				if(contents.getContentsType().equals(Contents.TYPE_STRING))
+
+				if (contents.getContentsType().equals(Contents.TYPE_STRING))
 					tooltipMsg = contents.getContentsValue() + "\n\nadded : " + contents.getUploadTime();
-				else 
+				else
 					tooltipMsg = contents.getContentsValue() + "\n\nsize : " + contents.getContentsConvertedSize() + "\nadded : " + contents.getUploadTime();
-				
+
 				return tooltipMsg;
 			});
 		});
@@ -245,7 +245,7 @@ public class MainScene implements Initializable {
 		}
 
 		addGroupParticipantList();
-		
+
 	}
 
 	/** Add participant in group list */
@@ -286,7 +286,7 @@ public class MainScene implements Initializable {
 
 	/** Add content in history list */
 	public void addContentsInHistory() {
-		
+
 		historyTable.setItems(historyList);
 
 		Contents content = historyList.get(historyList.size() - 1);
@@ -335,20 +335,18 @@ public class MainScene implements Initializable {
 				return tc;
 			}
 		});
-		
+
 		// Upload notification setting
 		String notiMsg = null;
 
-		if(content.getContentsType().equals(Contents.TYPE_IMAGE)) {
+		if (content.getContentsType().equals(Contents.TYPE_IMAGE)) {
 			notiMsg = content.getContentsType() + " Content Upload";
 			Image resizeImg = content.getContentsImage();
 			uploadnoti = NotificationBuilder.create().title("Content Upload Notification").resizeImage(resizeImg).message(notiMsg).image(Notification.INFO_ICON).build();
-		}
-		else {
-			if(content.getContentsValue().length() > 10) {
+		} else {
+			if (content.getContentsValue().length() > 10) {
 				notiMsg = content.getContentsType() + " Content Upload" + " : " + content.getContentsValue().substring(0, 10);
-			}
-			else {
+			} else {
 				notiMsg = content.getContentsType() + " Content Upload" + " : " + content.getContentsValue();
 			}
 			uploadnoti = NotificationBuilder.create().title("Content Upload Notification").message(notiMsg).image(Notification.INFO_ICON).build();
@@ -487,11 +485,12 @@ public class MainScene implements Initializable {
 	}
 
 	/**
-	 * Folder 생성 메서드(download한 파일을 저장할 임시 폴더)
-	 * Create a temporary directory to save the imageFile, file
+	 * Create a temporary directory 
+	 * 	to save the imageFile, file when downloading from server
+	 * 	to save Zip file when uploading multiple file
 	 * 
 	 * @param directoryName
-	 *            이 이름으로 Directory 생성
+	 *            The name of the directory you want to create
 	 */
 	private void createDirectory() {
 		File dirForUpload = new File(MainScene.UPLOAD_TEMP_DIR_LOCATION);
@@ -499,11 +498,11 @@ public class MainScene implements Initializable {
 
 		if (!dirForUpload.exists()) {
 			dirForUpload.mkdir(); // Create Directory
-			System.out.println("------------------------------------ dirForUpload 폴더 생성");
+			System.out.println("------------------------------------ create dir for Upload ");
 		}
 		if (!dirForDownload.exists()) {
 			dirForDownload.mkdir(); // Create Directory
-			System.out.println("------------------------------------ dirForDownload 폴더 생성");
+			System.out.println("------------------------------------ create dir for Download");
 		}
 	}
 }
