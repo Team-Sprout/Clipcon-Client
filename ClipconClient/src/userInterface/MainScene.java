@@ -14,8 +14,6 @@ import java.util.function.Function;
 
 import javax.websocket.EncodeException;
 
-import org.controlsfx.control.PopOver;
-
 import contentsTransfer.ContentsUpload;
 import contentsTransfer.DownloadData;
 import controller.ClipboardController;
@@ -87,6 +85,7 @@ public class MainScene implements Initializable {
 	private boolean addGroupParticipantFlag;
 	private boolean addContentsInHistoryFlag;
 	private boolean showStartingViewFlag;
+	public static boolean clipboadChangeFlag;
 
 	private ObservableList<User> groupParticipantList;
 	private ContentsUpload contentsUpload;
@@ -94,11 +93,13 @@ public class MainScene implements Initializable {
 
 	private ObservableList<Contents> historyList;
 
-	private PopOver popOver = new PopOver();
+	//private PopOver popOver = new PopOver();
 	private Label popOverContents = new Label();
 
-	private Notification noti;
-	private Notification.Notifier notifier;
+	private Notification clipboanoti;
+	private Notification uploadnoti;
+	private Notification.Notifier clipboardNotifier;
+	private Notification.Notifier uploadNotifier;
 
 	private Thread clipboardMonitorThread;
 
@@ -111,11 +112,15 @@ public class MainScene implements Initializable {
 		ui.setMainScene(this);
 		initGroupParticipantFlag = false;
 		addGroupParticipantFlag = false;
+		addContentsInHistoryFlag = false;
+		showStartingViewFlag = false;
+		clipboadChangeFlag = false;
 
 		contentsUpload = new ContentsUpload();
 		downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 		startHookProcess();
 		createDirectory();
+		
 		clipboardMonitorThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -128,17 +133,18 @@ public class MainScene implements Initializable {
 		historyList = FXCollections.observableArrayList();
 
 		// popOver.setTitle("Contents Vlaue");
-		popOver.setAutoHide(true);
-		popOver.setAutoFix(true);
-		popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
-		popOver.setHeaderAlwaysVisible(true);
-		popOver.setDetachable(true);
-		popOver.setDetached(true);
-		popOver.setCornerRadius(4);
+//		popOver.setAutoHide(true);
+//		popOver.setAutoFix(true);
+//		popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
+//		popOver.setHeaderAlwaysVisible(true);
+//		popOver.setDetachable(true);
+//		popOver.setDetached(true);
+//		popOver.setCornerRadius(4);
 
 		Notifier.INSTANCE.setAlwaysOnTop(false);
-		notifier = NotifierBuilder.create().popupLocation(Pos.BOTTOM_RIGHT).styleSheet("/resource/mynotification.css").build();
-
+		clipboardNotifier = NotifierBuilder.create().popupLocation(Pos.BOTTOM_RIGHT).styleSheet("/resource/myclipboardnoti.css").build();
+		uploadNotifier = NotifierBuilder.create().popupLocation(Pos.BOTTOM_RIGHT).styleSheet("/resource/myuploadnoti.css").build();
+		
 		// run scheduler for checking
 		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -156,6 +162,10 @@ public class MainScene implements Initializable {
 						if (addGroupParticipantFlag) {
 							addGroupParticipantFlag = false;
 							addGroupParticipantList();
+						}
+						if (clipboadChangeFlag) {
+							clipboadChangeFlag = false;
+							showClipboardChangeNoti();
 						}
 						if (addContentsInHistoryFlag) {
 							addContentsInHistoryFlag = false;
@@ -262,6 +272,18 @@ public class MainScene implements Initializable {
 		});
 	}
 
+	public void showClipboardChangeNoti() {
+		clipboanoti = NotificationBuilder.create().build();
+
+		Notifier.setWidth(64);
+		Notifier.setHeight(64);
+		Notifier.setOffsetX(10);
+		Notifier.setOffsetY(50);
+		clipboardNotifier.notify(clipboanoti);
+		clipboardNotifier.onNotificationPressedProperty();
+		clipboardNotifier.setOnNotificationPressed(event -> contentsUpload.upload());
+	}
+
 	/** Add content in history list */
 	public void addContentsInHistory() {
 		
@@ -320,7 +342,7 @@ public class MainScene implements Initializable {
 		if(content.getContentsType().equals(Contents.TYPE_IMAGE)) {
 			notiMsg = content.getContentsType() + " Content Upload";
 			Image resizeImg = content.getContentsImage();
-			noti = NotificationBuilder.create().title("Content Upload Notification").resizeImage(resizeImg).message(notiMsg).image(Notification.INFO_ICON).build();
+			uploadnoti = NotificationBuilder.create().title("Content Upload Notification").resizeImage(resizeImg).message(notiMsg).image(Notification.INFO_ICON).build();
 		}
 		else {
 			if(content.getContentsValue().length() > 10) {
@@ -329,12 +351,16 @@ public class MainScene implements Initializable {
 			else {
 				notiMsg = content.getContentsType() + " Content Upload" + " : " + content.getContentsValue();
 			}
-			noti = NotificationBuilder.create().title("Content Upload Notification").message(notiMsg).image(Notification.INFO_ICON).build();
+			uploadnoti = NotificationBuilder.create().title("Content Upload Notification").message(notiMsg).image(Notification.INFO_ICON).build();
 		}
 
-		notifier.notify(noti);
-		notifier.onNotificationPressedProperty();
-		notifier.setOnNotificationPressed(event -> getRecentlyContentsInClipboard(content));
+		Notifier.setWidth(300);
+		Notifier.setHeight(80);
+		Notifier.setOffsetX(0);
+		Notifier.setOffsetY(25);
+		uploadNotifier.notify(uploadnoti);
+		uploadNotifier.onNotificationPressedProperty();
+		uploadNotifier.setOnNotificationPressed(event -> getRecentlyContentsInClipboard(content));
 	}
 
 	/** get Recently Contents In Clipboard */

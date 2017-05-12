@@ -59,6 +59,13 @@ public class Notification {
 	public final Image IMAGE;
 
 	// ******************** Constructors **************************************
+	public Notification() {
+		this.TITLE = null;
+		this.RESIZEIMAGE = null;
+		this.MESSAGE = null;
+		this.IMAGE = null;
+	}
+	
 	public Notification(final String TITLE, final String MESSAGE, final Image IMAGE) {
 		this.TITLE = TITLE;
 		this.RESIZEIMAGE = null;
@@ -425,6 +432,8 @@ public class Notification {
             StackPane popupContent = new StackPane();
             popupContent.setPrefSize(width, height);
             popupContent.getStyleClass().add("notification");
+//            popupContent.getStyleClass().add("clipboardNotification");
+//            popupContent.getStyleClass().add("uploadNotification");
             popupContent.getChildren().addAll(popupLayout);
 
             final Popup POPUP = new Popup();

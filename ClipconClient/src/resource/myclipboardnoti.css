@@ -1,0 +1,6 @@
+
+.notification {
+    -fx-background-color : rgba(0, 0, 0, 0);
+    -fx-background-image: url("/resource/floating.png");
+    -fx-effect           : innershadow(two-pass-box, rgba(255, 255, 255, 0.6), 5.0, 0.25, 0, 0);
+}

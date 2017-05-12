@@ -25,8 +25,8 @@ import userInterface.UserInterface;
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
 public class Endpoint {
 
-//	private String uri = "ws://delf.gonetis.com:8080/websocketServerModule/ServerEndpoint";
-	private String uri = "ws://223.194.156.160:8080/websocketServerModule/ServerEndpoint";
+	private String uri = "ws://delf.gonetis.com:8080/websocketServerModule/ServerEndpoint";
+//	private String uri = "ws://114.203.39.200:8080/websocketServerModule/ServerEndpoint";
 
 	private Session session = null;
 	private static Endpoint uniqueEndpoint;
