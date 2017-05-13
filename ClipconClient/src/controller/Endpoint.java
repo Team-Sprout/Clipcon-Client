@@ -123,6 +123,7 @@ public class Endpoint {
 			}
 
 			ui.getMainScene().setShowStartingViewFlag(true); // show StartingView
+			// [TODO] user, group 정보 초기화
 
 			break;
 
@@ -144,7 +145,7 @@ public class Endpoint {
 
 			int removeIndex = -1;
 			for (int i = 0; i < user.getGroup().getUserList().size(); i++) {
-				if (message.get(Message.PARTICIPANT_NAME).equals(user.getGroup().getUserList().get(i))) {
+				if (message.get(Message.PARTICIPANT_NAME).equals(user.getGroup().getUserList().get(i).getName())) {
 					removeIndex = i;
 				}
 			}

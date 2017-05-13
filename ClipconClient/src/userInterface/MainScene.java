@@ -184,6 +184,8 @@ public class MainScene implements Initializable {
 
 				// Send REQUEST_EXIT_GROUP Message To Server
 				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
+				exitGroupMsg.add(Message.GROUP_PK, Endpoint.user.getGroup().getPrimaryKey());
+				exitGroupMsg.add(Message.NAME, Endpoint.user.getName());
 				try {
 					if (endpoint == null) {
 						System.out.println("debuger_delf: endpoint is null");
@@ -233,9 +235,13 @@ public class MainScene implements Initializable {
 
 	/** Initialize group list */
 	public void initGroupParticipantList() {
+		groupParticipantList.clear();
 
 		groupKeyText.setText(Endpoint.user.getGroup().getPrimaryKey());
+		
 
+		System.out.println("Group size : " + Endpoint.user.getGroup().getUserList().size());
+		
 		for (int i = 0; i < Endpoint.user.getGroup().getUserList().size(); i++) {
 			groupParticipantList.add(Endpoint.user.getGroup().getUserList().get(i));
 		}
