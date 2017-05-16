@@ -14,6 +14,8 @@ import java.util.function.Function;
 
 import javax.websocket.EncodeException;
 
+import com.jfoenix.controls.JFXTabPane;
+
 import application.Main;
 import contentsTransfer.ContentsUpload;
 import contentsTransfer.DownloadData;
@@ -30,7 +32,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -62,6 +63,9 @@ public class MainScene implements Initializable {
 	private UserInterface ui = UserInterface.getIntance();
 
 	@FXML
+	private JFXTabPane tabPane;
+
+	@FXML
 	private TableView<User> groupParticipantTable;
 	@FXML
 	private TableColumn<User, String> groupPartiNicknameColumn;
@@ -74,12 +78,12 @@ public class MainScene implements Initializable {
 	private TableColumn<Contents, Object> contentsColumn;
 
 	@FXML
-	private Button exitBtn, groupKeyCopyBtn;
+	private Button exitBtn, groupKeyCopyBtn, nicknameChangeBtn;
 	@FXML
-	private Text groupKeyText;
+	private Text nicknameText, groupKeyText;
 
-	private static ActionEvent event;
 	private Endpoint endpoint = Endpoint.getIntance();
+	
 
 	private boolean initGroupParticipantFlag;
 	private boolean addGroupParticipantFlag;
@@ -104,6 +108,8 @@ public class MainScene implements Initializable {
 	private Notification.ClipboadNotifier clipboardNotifier;
 	private Notification.UploadNotifier uploadNotifier;
 
+	private hookManager.GlobalKeyboardHook hook;
+	
 	private Thread clipboardMonitorThread;
 
 	// directory location for uploading and downloading file
@@ -118,6 +124,8 @@ public class MainScene implements Initializable {
 		addContentsInHistoryFlag = false;
 		showStartingViewFlag = false;
 		clipboadChangeFlag = false;
+		
+		tabPane.getStylesheets().add("/resource/tabPaneStyle.css");
 
 		contentsUpload = new ContentsUpload();
 		downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
@@ -169,18 +177,17 @@ public class MainScene implements Initializable {
 						if (showStartingViewFlag) {
 							showStartingViewFlag = false;
 							showStartingView();
+							ui.setMainScene(null);
 							return;
 						}
 					}
 				});
-
 			}
 		}, 50, 50, TimeUnit.MILLISECONDS);
 
 		exitBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				MainScene.event = event;
 
 				// Send REQUEST_EXIT_GROUP Message To Server
 				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
@@ -202,6 +209,13 @@ public class MainScene implements Initializable {
 			@Override
 			public void handle(ActionEvent event) {
 				ClipboardController.writeClipboard(new StringSelection(Endpoint.user.getGroup().getPrimaryKey()));
+			}
+		});
+		
+		nicknameChangeBtn.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				// TODO : nickname 변경
 			}
 		});
 
@@ -237,17 +251,14 @@ public class MainScene implements Initializable {
 	public void initGroupParticipantList() {
 		groupParticipantList.clear();
 
+		nicknameText.setText(Endpoint.user.getName());
 		groupKeyText.setText(Endpoint.user.getGroup().getPrimaryKey());
-		
-
-		System.out.println("Group size : " + Endpoint.user.getGroup().getUserList().size());
 		
 		for (int i = 0; i < Endpoint.user.getGroup().getUserList().size(); i++) {
 			groupParticipantList.add(Endpoint.user.getGroup().getUserList().get(i));
 		}
 
 		addGroupParticipantList();
-
 	}
 
 	/** Add participant in group list */
@@ -348,7 +359,7 @@ public class MainScene implements Initializable {
 			notiMsg = content.getContentsType() + " Content Upload";
 			Image resizeImg = content.getContentsImage();
 			uploadnoti = NotificationBuilder.create().title("Content Upload Notification").resizeImage(resizeImg)
-					.message(notiMsg).image(Notification.INFO_ICON).build();
+					.message(notiMsg).build();
 		} else {
 			if (content.getContentsValue().length() > 10) {
 				notiMsg = content.getContentsType() + " Content Upload" + " : "
@@ -357,7 +368,7 @@ public class MainScene implements Initializable {
 				notiMsg = content.getContentsType() + " Content Upload" + " : " + content.getContentsValue();
 			}
 			uploadnoti = NotificationBuilder.create().title("Content Upload Notification").message(notiMsg)
-					.image(Notification.INFO_ICON).build();
+					.build();
 		}
 
 		uploadNotifier.notify(uploadnoti);
@@ -379,11 +390,18 @@ public class MainScene implements Initializable {
 	/** Show starting view */
 	public void showStartingView() {
 		try {
+			//clipboardMonitorThread.interrupt();
+			hook = null;
+			clipboardMonitorThread = null;
+			clipboardNotifier = null;
+			uploadNotifier = null;
+			contentsUpload = null;
+			downloader = null;
+			
 			Parent goBack = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
 			Scene scene = new Scene(goBack);
-			Stage backStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			Stage backStage = Main.getPrimaryStage();
 
-			backStage.hide();
 			backStage.setScene(scene);
 			backStage.show();
 
@@ -394,7 +412,6 @@ public class MainScene implements Initializable {
 
 	/** Start key Hooking */
 	public void startHookProcess() {
-		hookManager.GlobalKeyboardHook hook = new hookManager.GlobalKeyboardHook();
 		int uploadVitrualKey = KeyEvent.VK_H;
 		int downloadVitrualKey = KeyEvent.VK_J;
 		boolean CTRL_Key = true;
@@ -402,6 +419,7 @@ public class MainScene implements Initializable {
 		boolean SHIFT_Key = false;
 		boolean WIN_Key = false;
 
+		hook = new hookManager.GlobalKeyboardHook();
 		hook.setHotKey(uploadVitrualKey, downloadVitrualKey, ALT_Key, CTRL_Key, SHIFT_Key, WIN_Key);
 		hook.startHook();
 		// waiting for the event

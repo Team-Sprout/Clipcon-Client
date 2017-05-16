@@ -49,7 +49,6 @@ import javafx.util.Duration;
  * Created by User: hansolo Date: 01.07.13 Time: 07:10
  */
 public class Notification {
-	public static final Image INFO_ICON = new Image("/resource/info.png");
 	public final String TITLE;
 	public final Image RESIZEIMAGE;
 	public final String MESSAGE;
@@ -81,10 +80,10 @@ public class Notification {
 		public enum ClipboadNotifier {
 			INSTANCE;
 
-			private static double width = 110;
-			private static double height = 120;
-			private static double offsetX = 0;
-			private static double offsetY = 60;
+			private static double width = 80;
+			private static double height = 80;
+			private static double offsetX = 10;
+			private static double offsetY = 50;
 			private static double spacingY = 5;
 			private static Pos popupLocation = Pos.BOTTOM_RIGHT;
 			private static Stage stageRef = null;

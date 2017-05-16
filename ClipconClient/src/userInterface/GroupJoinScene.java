@@ -9,12 +9,16 @@ import java.util.concurrent.TimeUnit;
 
 import javax.websocket.EncodeException;
 
+import application.Main;
 import controller.Endpoint;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -31,7 +35,7 @@ public class GroupJoinScene implements Initializable{
 	private UserInterface ui = UserInterface.getIntance();
 
 	@FXML private TextField groupKey;
-	@FXML private Button confirmBtn;
+	@FXML private Button confirmBtn, XBtn;
 	
 	private Stage stage;
 	private Endpoint endpoint = Endpoint.getIntance();
@@ -56,6 +60,22 @@ public class GroupJoinScene implements Initializable{
 			@Override
 			public void handle(ActionEvent event) {
 				sendGroupJoinMessage();
+			}
+		});
+		
+		XBtn.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				try {
+					Parent goBack = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
+					Scene scene = new Scene(goBack);
+					Stage backStage = Main.getPrimaryStage();
+
+					backStage.setScene(scene);
+					backStage.show();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 	}
@@ -85,7 +105,6 @@ public class GroupJoinScene implements Initializable{
 							// if flag turn on then client login game
 							if (joinGroupSuccessFlag) {
 								joinGroupSuccessFlag = false;
-								closeSignUpView();
 								ui.getStartingScene().showMainView();
 								return;
 							}
@@ -95,10 +114,6 @@ public class GroupJoinScene implements Initializable{
 				}
 			}, 50, 50, TimeUnit.MILLISECONDS);
 		}
-	}
-
-	public void closeSignUpView() {
-		stage.close();
 	}
 
 }

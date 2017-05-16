@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.websocket.EncodeException;
 
+import application.Main;
 import controller.Endpoint;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -16,7 +17,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -31,9 +31,9 @@ public class StartingScene implements Initializable {
 
 	private UserInterface ui = UserInterface.getIntance();
 
+	//@FXML private StackPane pane;
 	@FXML private Button createBtn, joinBtn;
 
-	private static ActionEvent event;
 	private Endpoint endpoint = Endpoint.getIntance();
 
 	private boolean createGroupSuccessFlag;
@@ -46,7 +46,6 @@ public class StartingScene implements Initializable {
 		createBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				StartingScene.event = event;
 
 				// send REQUEST_REQUEST_CREATE_GROUP Messgae to server
 				Message createGroupMsg = new Message().setType(Message.REQUEST_CREATE_GROUP);
@@ -89,8 +88,6 @@ public class StartingScene implements Initializable {
 		joinBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				StartingScene.event = event;
-
 				showGroupJoinView();
 			}
 		});
@@ -100,11 +97,10 @@ public class StartingScene implements Initializable {
 		try {
 			Parent toMain = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
 			Scene mainScene = new Scene(toMain);
-			Stage mainStage = (Stage) ((Node) StartingScene.event.getSource()).getScene().getWindow();
-
-			mainStage.hide();
-			mainStage.setScene(mainScene);
-			mainStage.show();
+			Stage primaryStage = Main.getPrimaryStage();
+			
+			primaryStage.setScene(mainScene);
+			primaryStage.show();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -113,14 +109,28 @@ public class StartingScene implements Initializable {
 
 	public void showGroupJoinView() {
 		try {
-			Parent groupJoin = FXMLLoader.load(getClass().getResource("/view/GroupJoinView.fxml"));
-			Scene groupJoinScene = new Scene(groupJoin);
-			Stage tempStage = new Stage();
-			tempStage.setScene(groupJoinScene);
-			tempStage.setResizable(false);
-			tempStage.show();
+			Parent toGroupJoin = FXMLLoader.load(getClass().getResource("/view/GroupJoinView.fxml"));
+			Scene groupJoinScene = new Scene(toGroupJoin);
+			Stage primaryStage = Main.getPrimaryStage();
+			
+			primaryStage.setScene(groupJoinScene);
+			primaryStage.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+//		JFXDialogLayout content = new JFXDialogLayout();
+//		content.setHeading(new Text("Join"));
+//		content.setBody(new TextField(), new Text("\n\n\n\n\n\n"));
+//		JFXDialog dialog = new JFXDialog(pane, content, JFXDialog.DialogTransition.BOTTOM);
+//		JFXButton button = new JFXButton("okay");
+//		button.setOnAction(new EventHandler<ActionEvent>() {
+//			@Override
+//			public void handle(ActionEvent event) {
+//				dialog.close();
+//			}
+//		});
+//		content.setActions(button);
+//		dialog.show();
 	}
 }
