@@ -30,8 +30,8 @@ import userInterface.MainScene;
 
 public class DownloadData {
 
-	//public final static String SERVER_URL = "http://delf.gonetis.com:8080:/websocketServerModule";
-	public final static String SERVER_URL = "http://223.194.156.160:8080/websocketServerModule";
+	public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
+	//public final static String SERVER_URL = "http://223.194.152.46:8080/websocketServerModule";
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 
 	private final String charset = "UTF-8";
@@ -65,6 +65,7 @@ public class DownloadData {
 		String contentsType = requestContents.getContentsType();
 		// Parameter to be sent by the GET method
 		String parameters = "userName=" + userName + "&" + "groupPK=" + groupPK + "&" + "downloadDataPK=" + downloadDataPK;
+		System.out.println("==================" + parameters);
 
 		try {
 			URL url = new URL(SERVER_URL + SERVER_SERVLET + "?" + parameters);
