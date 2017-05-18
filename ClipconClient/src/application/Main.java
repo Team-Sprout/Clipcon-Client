@@ -14,9 +14,11 @@ public class Main extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		setPrimaryStage(primaryStage);
 		Main.primaryStage.setTitle("ClipCon");
-		Main.primaryStage.getIcons().add(new Image("resource/logologo.png"));
+		Main.primaryStage.getIcons().add(new Image("resources/Logo.png"));
 		Parent root = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
 		Scene scene = new Scene(root);
+//		primaryStage.setMinWidth(340);
+//		primaryStage.setMinHeight(480);
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.show();

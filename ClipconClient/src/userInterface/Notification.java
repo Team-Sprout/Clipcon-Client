@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package model;
+package userInterface;
 
 import java.util.stream.IntStream;
 
@@ -31,6 +31,7 @@ import javafx.event.EventType;
 import javafx.event.WeakEventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -52,28 +53,24 @@ public class Notification {
 	public final String TITLE;
 	public final Image RESIZEIMAGE;
 	public final String MESSAGE;
-	public final Image IMAGE;
 
 	// ******************** Constructors **************************************
 	public Notification() {
 		this.TITLE = null;
 		this.RESIZEIMAGE = null;
 		this.MESSAGE = null;
-		this.IMAGE = null;
 	}
 	
-	public Notification(final String TITLE, final String MESSAGE, final Image IMAGE) {
+	public Notification(final String TITLE, final String MESSAGE) {
 		this.TITLE = TITLE;
 		this.RESIZEIMAGE = null;
 		this.MESSAGE = MESSAGE;
-		this.IMAGE = IMAGE;
 	}
 
-	public Notification(final String TITLE, final Image RESIZEIMAGE, final String MESSAGE, final Image IMAGE) {
+	public Notification(final String TITLE, final Image RESIZEIMAGE) {
 		this.TITLE = TITLE;
 		this.RESIZEIMAGE = RESIZEIMAGE;
-		this.MESSAGE = MESSAGE;
-		this.IMAGE = IMAGE;
+		this.MESSAGE = null;
 	}
 	
 	// ******************** Inner Classes *************************************
@@ -115,7 +112,7 @@ public class Notification {
 			private void initGraphics() {
 				scene = new Scene(new Region());
 				scene.setFill(null);
-				scene.getStylesheets().add("/resource/myclipboardnoti.css");
+				scene.getStylesheets().add("/resources/myclipboardnoti.css");
 
 				stage = new Stage();
 				stage.setMaxWidth(1);
@@ -370,10 +367,10 @@ public class Notification {
 			
 			private static final double ICON_WIDTH = 24;
 			private static final double ICON_HEIGHT = 24;
-			private static double width = 300;
-			private static double height = 80;
+			private static double width = 270;
+			private static double height = 90;
 			private static double offsetX = 0;
-			private static double offsetY = 25;
+			private static double offsetY = 35;
 			private static double spacingY = 5;
 			private static Pos popupLocation = Pos.BOTTOM_RIGHT;
 			private static Stage stageRef = null;
@@ -403,7 +400,7 @@ public class Notification {
 			private void initGraphics() {
 				scene = new Scene(new Region());
 				scene.setFill(null);
-				scene.getStylesheets().add("/resource/myuploadnoti.css");
+				scene.getStylesheets().add("/resources/myuploadnoti.css");
 				
 				stage = new Stage();
 				stage.setMaxWidth(1);
@@ -483,33 +480,40 @@ public class Notification {
 				Label title = new Label(NOTIFICATION.TITLE);
 				title.getStyleClass().add("title");
 				
-				ImageView icon = new ImageView(NOTIFICATION.IMAGE);
-				icon.setFitWidth(ICON_WIDTH);
-				icon.setFitHeight(ICON_HEIGHT);
-				
 				Label message = null;
+				ImageView img = null;
 				
 				if(NOTIFICATION.RESIZEIMAGE != null) {
-					ImageView img = new ImageView(NOTIFICATION.RESIZEIMAGE);
-					img.setFitWidth(50);
-					img.setPreserveRatio(true);
+					img = new ImageView(NOTIFICATION.RESIZEIMAGE);
+					img.getStyleClass().add("image");
+					
+					double width = NOTIFICATION.RESIZEIMAGE.getWidth();
+					double height = NOTIFICATION.RESIZEIMAGE.getHeight();
+					double x = 0;
+					double y = height/4;
+					
+					Rectangle2D croppedPortion = new Rectangle2D(x, y, width, height/4);
+					img.setViewport(croppedPortion);
+					img.setFitWidth(180);
+					img.setFitHeight(40);
 					img.setSmooth(true);
-					//img.setFitHeight(ICON_HEIGHT);
-					//Label message2 = new Label(NOTIFICATION.MESSAGE, img);
-					message = new Label(NOTIFICATION.MESSAGE, img);
 				}
 				else {
-					//message = new Label(NOTIFICATION.MESSAGE, icon);
 					message = new Label(NOTIFICATION.MESSAGE);
+					message.getStyleClass().add("message");
 				}
 				
-				message.getStyleClass().add("message");
-				
 				VBox popupLayout = new VBox();
-				popupLayout.setSpacing(10);
-				popupLayout.setPadding(new Insets(10, 10, 10, 10));
+				popupLayout.setPadding(new Insets(15, 10, 10, 10));
 				
-				popupLayout.getChildren().addAll(title, message);
+				if(NOTIFICATION.RESIZEIMAGE != null) {
+					popupLayout.setSpacing(3);
+					popupLayout.setPadding(new Insets(15, 10, 10, 10));
+					popupLayout.getChildren().addAll(title, img);
+				} else {
+					popupLayout.setSpacing(6);
+					popupLayout.getChildren().addAll(title, message);
+				}
 				
 				StackPane popupContent = new StackPane();
 				popupContent.setPrefSize(width, height);

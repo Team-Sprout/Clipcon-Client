@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package model;
+package userInterface;
 
 import javafx.event.Event;
 import javafx.event.EventTarget;
