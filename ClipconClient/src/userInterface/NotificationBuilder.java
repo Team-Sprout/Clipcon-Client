@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package model;
+package userInterface;
 
 import javafx.beans.property.*;
 import javafx.scene.image.Image;
@@ -63,16 +63,13 @@ public class NotificationBuilder<B extends NotificationBuilder<B>> {
     
     public final Notification build() {
         final Notification NOTIFICATION;     
-        if (properties.keySet().contains("title") && properties.keySet().contains("resizeImage") && properties.keySet().contains("message") && properties.keySet().contains("image")) {
+        if (properties.keySet().contains("title") && properties.keySet().contains("resizeImage")) {
             NOTIFICATION = new Notification(((StringProperty) properties.get("title")).get(), 
-            								((ObjectProperty<Image>) properties.get("resizeImage")).get(),
-                                            ((StringProperty) properties.get("message")).get(),
-                                            ((ObjectProperty<Image>) properties.get("image")).get());
+            								((ObjectProperty<Image>) properties.get("resizeImage")).get());
         }
-        else if (properties.keySet().contains("title") && properties.keySet().contains("message") && properties.keySet().contains("image")) {
+        else if (properties.keySet().contains("title") && properties.keySet().contains("message")) {
             NOTIFICATION = new Notification(((StringProperty) properties.get("title")).get(), 
-                                            ((StringProperty) properties.get("message")).get(),
-                                            ((ObjectProperty<Image>) properties.get("image")).get());
+                                            ((StringProperty) properties.get("message")).get());
         }
         else {
         	NOTIFICATION = new Notification();

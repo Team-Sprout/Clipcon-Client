@@ -1,5 +1,7 @@
 package model;
 
+import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import lombok.AllArgsConstructor;
@@ -11,7 +13,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User extends RecursiveTreeObject<User>{
 	private String name;
 	private Group group;
 	

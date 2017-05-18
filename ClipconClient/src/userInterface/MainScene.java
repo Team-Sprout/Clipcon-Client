@@ -12,8 +12,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import javax.print.attribute.standard.DialogTypeSelection;
 import javax.websocket.EncodeException;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXTabPane;
 
 import application.Main;
@@ -32,9 +36,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -51,9 +58,6 @@ import lombok.Getter;
 import lombok.Setter;
 import model.Contents;
 import model.Message;
-import model.Notification;
-import model.NotificationBuilder;
-import model.NotifierBuilder;
 import model.User;
 
 @Getter
@@ -66,9 +70,11 @@ public class MainScene implements Initializable {
 	private JFXTabPane tabPane;
 
 	@FXML
-	private TableView<User> groupParticipantTable;
+	private TableView<User>  groupParticipantTable;
+	//private JFXTreeTableView<User> groupParticipantTable;
 	@FXML
 	private TableColumn<User, String> groupPartiNicknameColumn;
+	//private JFXTreeTableColumn<User, String> groupPartiNicknameColumn = new JFXTreeTableColumn< >("Nickname");
 
 	@FXML
 	private TableView<Contents> historyTable;
@@ -125,7 +131,10 @@ public class MainScene implements Initializable {
 		showStartingViewFlag = false;
 		clipboadChangeFlag = false;
 		
-		tabPane.getStylesheets().add("/resource/tabPaneStyle.css");
+		tabPane.getStylesheets().add("/resources/tabPaneStyle.css");
+		groupParticipantTable.getStylesheets().add("/resources/mytable.css");
+		historyTable.getStylesheets().add("/resources/myhistorytable.css");
+		
 
 		contentsUpload = new ContentsUpload();
 		downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
@@ -188,20 +197,22 @@ public class MainScene implements Initializable {
 		exitBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				Stage dialogStage = new Stage();
+				AlertPromptDialog.show(dialogStage, "그룹에서 나가며, 히스토리가 모두 삭제됩니다. 계속하시겠습니까?");
 
 				// Send REQUEST_EXIT_GROUP Message To Server
-				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
-				exitGroupMsg.add(Message.GROUP_PK, Endpoint.user.getGroup().getPrimaryKey());
-				exitGroupMsg.add(Message.NAME, Endpoint.user.getName());
-				try {
-					if (endpoint == null) {
-						System.out.println("debuger_delf: endpoint is null");
-					}
-					endpoint = Endpoint.getIntance();
-					endpoint.sendMessage(exitGroupMsg);
-				} catch (IOException | EncodeException e) {
-					e.printStackTrace();
-				}
+//				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
+//				exitGroupMsg.add(Message.GROUP_PK, Endpoint.user.getGroup().getPrimaryKey());
+//				exitGroupMsg.add(Message.NAME, Endpoint.user.getName());
+//				try {
+//					if (endpoint == null) {
+//						System.out.println("debuger_delf: endpoint is null");
+//					}
+//					endpoint = Endpoint.getIntance();
+//					endpoint.sendMessage(exitGroupMsg);
+//				} catch (IOException | EncodeException e) {
+//					e.printStackTrace();
+//				}
 			}
 		});
 
@@ -283,6 +294,19 @@ public class MainScene implements Initializable {
 				return tc;
 			}
 		});
+		
+		
+//		groupPartiNicknameColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<User, String>, ObservableValue<String>>() {
+//			@Override
+//			public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<User, String> params) {
+//				return params.getValue().getValue().getNameProperty();
+//			}
+//		});
+//		
+//		final TreeItem<User> root = new RecursiveTreeItem<User>(groupParticipantList, RecursiveTreeObject::getChildern);
+//		groupParticipantTable.getColumns().setAll(elements)
+//		groupParticipantTable.setRoot(root);
+//		groupParticipantTable.setShowRoot(false);
 	}
 
 	public void showClipboardChangeNoti() {
@@ -353,22 +377,29 @@ public class MainScene implements Initializable {
 
 		Notification uploadnoti;
 
+		String notiTitle = null;
 		String notiMsg = null;
 
-		if (content.getContentsType().equals(Contents.TYPE_IMAGE)) {
-			notiMsg = content.getContentsType() + " Content Upload";
-			Image resizeImg = content.getContentsImage();
-			uploadnoti = NotificationBuilder.create().title("Content Upload Notification").resizeImage(resizeImg)
-					.message(notiMsg).build();
-		} else {
+		if (content.getContentsType().equals(Contents.TYPE_STRING)) {
+			notiTitle = "String from " + content.getUploadUserName();
 			if (content.getContentsValue().length() > 10) {
-				notiMsg = content.getContentsType() + " Content Upload" + " : "
-						+ content.getContentsValue().substring(0, 10);
+				notiMsg = content.getContentsValue().substring(0, 10);
 			} else {
-				notiMsg = content.getContentsType() + " Content Upload" + " : " + content.getContentsValue();
+				notiMsg = content.getContentsValue();
 			}
-			uploadnoti = NotificationBuilder.create().title("Content Upload Notification").message(notiMsg)
-					.build();
+			uploadnoti = NotificationBuilder.create().title(notiTitle).message(notiMsg).build();
+		} else if (content.getContentsType().equals(Contents.TYPE_IMAGE)) {
+			notiTitle = "Image from " + content.getUploadUserName();
+			Image resizeImg = content.getContentsImage();
+			uploadnoti = NotificationBuilder.create().title(notiTitle).resizeImage(resizeImg).build();
+		} else {
+			notiTitle = "File from " + content.getUploadUserName();
+			if (content.getContentsValue().length() > 10) {
+				notiMsg = content.getContentsValue().substring(0, 10);
+			} else {
+				notiMsg = content.getContentsValue();
+			}
+			uploadnoti = NotificationBuilder.create().title(notiTitle).message(notiMsg).build();
 		}
 
 		uploadNotifier.notify(uploadnoti);
@@ -496,8 +527,19 @@ public class MainScene implements Initializable {
 				} else if (item instanceof Image) {
 					setText(null);
 					ImageView imageView = new ImageView((Image) item);
-					imageView.setFitWidth(50);
-					imageView.setPreserveRatio(true);
+					
+					double width = ((Image) item).getWidth();
+					double height = ((Image) item).getHeight();
+					double x = 0;
+					double y = height/4;
+					
+					// define crop in image coordinates:
+					Rectangle2D croppedPortion = new Rectangle2D(x, y, width, height/3);
+
+					imageView.setViewport(croppedPortion);
+					imageView.setFitWidth(180);
+					imageView.setFitHeight(50);
+					//imageView.setPreserveRatio(true);
 					imageView.setSmooth(true);
 					setGraphic(imageView);
 				} else {

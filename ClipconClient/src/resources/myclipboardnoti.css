@@ -1,7 +1,7 @@
 
 .notification {
     -fx-background-color : rgba(15, 0, 0, 0);
-    -fx-background-image: url("/resource/floatingicon.png");
+    -fx-background-image: url("/resources/FloatingIcon.png");
     -fx-background-repeat: no-repeat;
     -fx-effect           : innershadow(two-pass-box, rgba(255, 255, 255, 0.6), 5.0, 0.25, 0, 0);
 }

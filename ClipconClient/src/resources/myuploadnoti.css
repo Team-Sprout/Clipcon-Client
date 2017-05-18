@@ -15,20 +15,19 @@
  */
 
 .notification {
-    -fx-background-color : rgba(15, 0, 0, 0.8);
-    -fx-effect           : innershadow(two-pass-box, rgba(255, 255, 255, 0.6), 5.0, 0.25, 0, 0);
-    -foreground-color    : yellow;
-    -icon-color          : white;
+    -fx-background-image: url('/resources/notiBackground.png');
+    -fx-background-repeat: no-repeat;
+    -fx-padding: 0 0 0 70;
 }
 
 .notification .title {
-    -fx-font-size  : 1.083333em;
-    -fx-font-weight: bold;
-    -fx-text-fill  : yellow;
+	-fx-font-size: 13pt;
+    -fx-font-family: "affogato medium";
+    -fx-text-fill  : black;
 }
+
 .notification .message {
-    -fx-font-size       : 1.0em;
-    -fx-content-display : left;
-    -fx-graphic-text-gap: 10;
-    -fx-text-fill       : red;
+	-fx-font-size: 11pt;
+    -fx-font-family: "affogato";
+    -fx-text-fill  : #464646;
 }
