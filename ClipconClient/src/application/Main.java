@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 	private static Stage primaryStage;
+//	public static final String SERVER_ADDR = "delf.gonetis.com";
+	public static final String SERVER_ADDR = "223.194.155.71";
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
