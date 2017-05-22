@@ -137,10 +137,17 @@ public class MultipartUtility {
       FileInputStream inputStream = new FileInputStream(uploadFile);
       byte[] buffer = new byte[CHUNKSIZE];
       int bytesRead = -1;
+      long totalBytesRead = 0;
+      int percentCompleted = 0;
+      System.out.println("percentCompleted");
 
       while ((bytesRead = inputStream.read(buffer)) != -1) {
-//    	 System.out.println("bytesRead = " + bytesRead);
-         outputStream.write(buffer, 0, bytesRead);
+			totalBytesRead += bytesRead;
+			percentCompleted = (int) (totalBytesRead * 100 / uploadFile.length());
+
+			System.out.println(percentCompleted);
+
+			outputStream.write(buffer, 0, bytesRead);
       }
 
       outputStream.flush();
@@ -150,6 +157,13 @@ public class MultipartUtility {
       writer.flush();
    }
 
+   /**
+    * Write an array of bytes to the request's output stream.
+    */
+   public void writeFileBytes(byte[] bytes, int offset, int length)
+           throws IOException {
+       outputStream.write(bytes, offset, length);
+   }
 
    /**
     * Completes the request and receives response from the server.

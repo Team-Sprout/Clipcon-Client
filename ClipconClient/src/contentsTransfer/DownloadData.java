@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import application.Main;
 import controller.ClipboardController;
 import controller.Endpoint;
 import model.Contents;
@@ -30,8 +31,7 @@ import userInterface.MainScene;
 
 public class DownloadData {
 
-	public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
-	//public final static String SERVER_URL = "http://223.194.152.46:8080/websocketServerModule";
+	public final static String SERVER_URL = "http://" + Main.SERVER_ADDR + ":8080/websocketServerModule";
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 
 	private final String charset = "UTF-8";
@@ -102,6 +102,7 @@ public class DownloadData {
 
 				case Contents.TYPE_FILE:
 					String fileOriginName = requestContents.getContentsValue();
+
 					// Save Real File(filename: fileOriginName) to Clipcon Folder Get Image Object in Response Body
 					File fileData = downloadFileData(httpConn.getInputStream(), fileOriginName);
 					System.out.println("fileOriginName Result: " + fileData.getName());

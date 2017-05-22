@@ -13,6 +13,7 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 
+import application.Main;
 import model.Contents;
 import model.Message;
 import model.MessageDecoder;
@@ -24,8 +25,7 @@ import userInterface.UserInterface;
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
 public class Endpoint {
 
-	private String uri = "ws://delf.gonetis.com:8080/websocketServerModule/ServerEndpoint";
-	//private String uri = "ws://223.194.152.46:8080/websocketServerModule/ServerEndpoint";
+	private String uri = "ws://" + Main.SERVER_ADDR + ":8080/websocketServerModule/ServerEndpoint";
 
 	private Session session = null;
 	private static Endpoint uniqueEndpoint;
