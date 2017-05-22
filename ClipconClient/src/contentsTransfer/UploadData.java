@@ -2,18 +2,19 @@ package contentsTransfer;
 
 import java.awt.Image;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import application.Main;
 import userInterface.MainScene;
 
 public class UploadData {
 
-	public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
-	//public final static String SERVER_URL = "http://223.194.156.233:8080/websocketServerModule";
+	public final static String SERVER_URL = "http://" + Main.SERVER_ADDR + ":8080/websocketServerModule";
 	public final static String SERVER_SERVLET = "/UploadServlet";
-	
+
 	private String charset = "UTF-8";
 
 	private String userName = null;
@@ -83,6 +84,9 @@ public class UploadData {
 			if (fileFullPathList.size() == 1 && firstUploadFile.isFile()) {
 				System.out.println("\nSingle File Uploading~~\n");
 				multipart.addFilePart("fileData", firstUploadFile);
+
+				// [hee]
+				doInBackground(firstUploadFile, multipart);
 			}
 			/* case: Multiple file data, One or more folders */
 			else {
@@ -113,6 +117,31 @@ public class UploadData {
 			}
 		} catch (IOException ex) {
 			System.err.println(ex);
+		}
+	}
+
+	public void doInBackground(File uploadFile, MultipartUtility multipart) {
+		byte[] buffer = new byte[4096];
+		int bytesRead = -1;
+		long totalBytesRead = 0;
+		int percentCompleted = 0;
+		long fileSize = uploadFile.length();
+
+		try {
+			FileInputStream inputStream = new FileInputStream(uploadFile);
+
+			while ((bytesRead = inputStream.read(buffer)) != -1) {
+				multipart.writeFileBytes(buffer, 0, bytesRead);
+				totalBytesRead += bytesRead;
+				percentCompleted = (int) (totalBytesRead * 100 / fileSize);
+
+				System.out.println(percentCompleted);
+				// setProgress(percentCompleted);
+			}
+
+			inputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
