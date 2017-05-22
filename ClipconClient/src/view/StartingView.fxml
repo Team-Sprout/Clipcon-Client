@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane minHeight="480.0" minWidth="340.0" style="-fx-background-image: url('/resources/MainBackground.png');" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.StartingScene">
+<AnchorPane prefHeight="470.0" prefWidth="330.0" style="-fx-background-image: url('/resources/MainBackground.png');" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.StartingScene">
    <children>
       <Button fx:id="createBtn" layoutX="65.0" layoutY="325.0" minHeight="39" minWidth="209" style="-fx-background-color: transparent; -fx-background-image: url('/resources/CreateBtn.png');" />
       <Button fx:id="joinBtn" layoutX="65.0" layoutY="390.0" minHeight="39" minWidth="209" style="-fx-background-color: transparent; -fx-background-image: url('/resources/MainJoinBtn.png');" />

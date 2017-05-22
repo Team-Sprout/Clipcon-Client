@@ -31,7 +31,7 @@ import userInterface.MainScene;
 public class DownloadData {
 
 	public final static String SERVER_URL = "http://delf.gonetis.com:8080/websocketServerModule";
-	//public final static String SERVER_URL = "http://223.194.152.46:8080/websocketServerModule";
+	//public final static String SERVER_URL = "http://223.194.156.233:8080/websocketServerModule";
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 
 	private final String charset = "UTF-8";
@@ -171,14 +171,18 @@ public class DownloadData {
 					stringBuilder.append(line + "\n");
 				}
 				inputStream.close();
-
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
-		return stringBuilder.toString();
+		
+		String s = stringBuilder.toString();
+		s = s.substring(0, s.length()-2);  // \n\n 제거
+		
+		return s;
 	}
 
 	/**

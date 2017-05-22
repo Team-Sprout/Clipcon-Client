@@ -8,23 +8,23 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.control.*?>
 
-<AnchorPane minHeight="480.0" minWidth="340.0" style="-fx-background-color: #f16868;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.MainScene">
+<AnchorPane prefHeight="480.0" prefWidth="340.0" style="-fx-background-color: #f16868;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.MainScene">
    <children>
-      <Button fx:id="settingBtn" layoutX="290.0" layoutY="7.0" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent; -fx-background-image: url('/resources/SettingBtn.png'); -fx-background-repeat: no-repeat;"/>
-   	  <Button fx:id="exitBtn" layoutX="320.0" layoutY="7.0" prefHeight="20.0" prefWidth="22.0" style="-fx-background-color: transparent; -fx-background-image: url('/resources/ExitBtn.png'); -fx-background-repeat: no-repeat;"/>
-      <JFXTabPane fx:id="tabPane" layoutY="40.0" prefHeight="460.0" prefWidth="350.0" tabClosingPolicy="UNAVAILABLE">
+      <Button fx:id="settingBtn" layoutX="275.0" layoutY="10.0" prefHeight="20.0" prefWidth="20.0" style="-fx-background-color: transparent; -fx-background-image: url('/resources/SettingBtn.png'); -fx-background-repeat: no-repeat;"/>
+   	  <Button fx:id="exitBtn" layoutX="305.0" layoutY="10.0" prefHeight="20.0" prefWidth="22.0" style="-fx-background-color: transparent; -fx-background-image: url('/resources/ExitBtn.png'); -fx-background-repeat: no-repeat;"/>
+      <JFXTabPane fx:id="tabPane" layoutY="40.0" prefHeight="440.0" prefWidth="340.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="   INFO   ">
             <content>
-              <AnchorPane minHeight="280.0" minWidth="340.0" style="-fx-background-image: url('/resources/GroupInfo.png');">
+              <AnchorPane prefHeight="100.0" prefWidth="340.0" style="-fx-background-image: url('/resources/GroupInfo.png'); -fx-background-repeat: no-repeat;">
                      <children>
                         <Text fx:id="nicknameText" layoutX="165.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nickname" />
                         <Button fx:id="nicknameChangeBtn" layoutX="285.0" layoutY="16.0" prefHeight="31.0" prefWidth="31.0" style="-fx-background-color: transparent; -fx-background-image: url('/resources/ChangeBtn.png'); -fx-background-repeat: no-repeat;" />
                         <Text fx:id="groupKeyText" layoutX="165.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Key" />
                         <Button fx:id="groupKeyCopyBtn" layoutX="285.0" layoutY="50.0" prefHeight="31.0" prefWidth="31.0" style="-fx-background-color: transparent; -fx-background-image: url('/resources/CopyBtn.png'); -fx-background-repeat: no-repeat;" />
 	                    
-	                    <AnchorPane layoutY="90.0" minHeight="340.0" minWidth="350.0" style="-fx-background-image: url('/resources/Members2.png');">
-                        	<TableView fx:id="groupParticipantTable" layoutX="10.0" layoutY="35.0" prefHeight="272.0" prefWidth="327.0">
+	                    <AnchorPane layoutY="90.0" prefHeight="330.0" prefWidth="340.0" style="-fx-background-image: url('/resources/Members.png');">
+                        	<TableView fx:id="groupParticipantTable" layoutX="10.0" layoutY="35.0" prefHeight="272.0" prefWidth="320.0">
                        	   		<placeholder>
     					 		   <Label text="No Contents"/>
    								</placeholder>
@@ -32,8 +32,8 @@
                            			<TableColumn fx:id="groupPartiNicknameColumn" prefWidth="326.0" text="Nickname" sortable="false" resizable="false"/>
                           		</columns>
                        		</TableView>
-                        
                         </AnchorPane>
+                        
                      </children>
               </AnchorPane>
             </content>
@@ -42,14 +42,14 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" />
              	 <children>
-             	 	<TableView fx:id="historyTable" layoutX="10.0" layoutY="10.0" prefHeight="393.0" prefWidth="327.0">
+             	 	<TableView fx:id="historyTable" layoutX="10.0" layoutY="10.0" prefHeight="385.0" prefWidth="320.0">
              	 		<placeholder>
     					    <Label text="No Contents"/>
    						</placeholder>
                     	<columns>
 	                    	<TableColumn fx:id="typeColumn" prefWidth="70.0" text="Type" sortable="false" resizable="false"/>
-                        	<TableColumn fx:id="contentsColumn" prefWidth="175.0" text="Content" sortable="false" resizable="false"/>
-                        	<TableColumn fx:id="uploaderColumn" prefWidth="80.0" text="Uploader" sortable="false" resizable="false"/>
+                        	<TableColumn fx:id="contentsColumn" prefWidth="171.0" text="Content" sortable="false" resizable="false"/>
+                        	<TableColumn fx:id="uploaderColumn" prefWidth="77.0" text="Uploader" sortable="false" resizable="false"/>
                     	</columns>
                     </TableView>
              	 </children>

@@ -31,7 +31,6 @@ public class StartingScene implements Initializable {
 
 	private UserInterface ui = UserInterface.getIntance();
 
-	//@FXML private StackPane pane;
 	@FXML private Button createBtn, joinBtn;
 
 	private Endpoint endpoint = Endpoint.getIntance();
@@ -115,22 +114,9 @@ public class StartingScene implements Initializable {
 			
 			primaryStage.setScene(groupJoinScene);
 			primaryStage.show();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-//		JFXDialogLayout content = new JFXDialogLayout();
-//		content.setHeading(new Text("Join"));
-//		content.setBody(new TextField(), new Text("\n\n\n\n\n\n"));
-//		JFXDialog dialog = new JFXDialog(pane, content, JFXDialog.DialogTransition.BOTTOM);
-//		JFXButton button = new JFXButton("okay");
-//		button.setOnAction(new EventHandler<ActionEvent>() {
-//			@Override
-//			public void handle(ActionEvent event) {
-//				dialog.close();
-//			}
-//		});
-//		content.setActions(button);
-//		dialog.show();
 	}
 }

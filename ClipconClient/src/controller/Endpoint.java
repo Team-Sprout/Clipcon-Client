@@ -25,7 +25,7 @@ import userInterface.UserInterface;
 public class Endpoint {
 
 	private String uri = "ws://delf.gonetis.com:8080/websocketServerModule/ServerEndpoint";
-	//private String uri = "ws://223.194.152.46:8080/websocketServerModule/ServerEndpoint";
+	//private String uri = "ws://223.194.156.233:8080/websocketServerModule/ServerEndpoint";
 
 	private Session session = null;
 	private static Endpoint uniqueEndpoint;
@@ -71,7 +71,7 @@ public class Endpoint {
 				user = MessageParser.getUserAndGroupByMessage(message); // create Group Object using primaryKey, name(get from server) and set to user
 
 				while (true) {
-					if (ui.getMainScene() != null) {
+					if (ui.getMainScene() != null && user != null) {
 						break;
 					}
 				}
@@ -96,7 +96,7 @@ public class Endpoint {
 				user = MessageParser.getUserAndGroupByMessage(message); // create Group Object using primaryKey, name(get from server) and set to user
 
 				while (true) {
-					if (ui.getMainScene() != null) {
+					if (ui.getMainScene() != null && user != null) {
 						break;
 					}
 				}
@@ -106,6 +106,8 @@ public class Endpoint {
 				break;
 			case Message.REJECT:
 				System.out.println("join group reject");
+				ui.getGroupJoinScene().setJoinGroupFailFlag(true); // UI list initialization
+				
 				break;
 			}
 
@@ -163,7 +165,8 @@ public class Endpoint {
 			user.getGroup().addContents(contents);
 			System.out.println("-----<Endpoint> contentsValue Context-----\n" + contents.getContentsValue());
 
-			ui.getMainScene().getHistoryList().add(contents);
+			//ui.getMainScene().getHistoryList().add(contents);
+			ui.getMainScene().getHistoryList().add(0, contents);
 			ui.getMainScene().setAddContentsInHistoryFlag(true); // update UI list
 			break;
 
@@ -182,6 +185,7 @@ public class Endpoint {
 
 	@OnClose
 	public void onClose() {
+		System.out.println("----------------------on Close----------------------");
 		// TODO [delf] How to handle when a session is lost
 	}
 

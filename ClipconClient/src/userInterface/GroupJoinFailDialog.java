@@ -1,11 +1,6 @@
 package userInterface;
 
-import java.io.IOException;
-
-import javax.websocket.EncodeException;
-
 import application.Main;
-import controller.Endpoint;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -16,66 +11,31 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import model.Message;
 
-public class AlertPromptDialog extends Stage {
+public class GroupJoinFailDialog extends Stage {
 	
-	private Endpoint endpoint = Endpoint.getIntance();
- 
     private static Label label;
-    private static AlertPromptDialog popup;
-    private static int result;
+    private static GroupJoinFailDialog popup;
  
-    public static final int NO = 0;
-    public static final int YES = 1;
- 
-    private AlertPromptDialog() {
+    private GroupJoinFailDialog() {
         setResizable(false);
-        initModality(Modality.APPLICATION_MODAL);
         initStyle(StageStyle.TRANSPARENT);
  
         label = new Label();
         label.setWrapText(true);
         label.setGraphicTextGap(20);
+        label.getStyleClass().add("label");
  
-        Button ybutton = new Button("Yes");
-        ybutton.setOnAction(new EventHandler<ActionEvent>() {
+        Button okBtn = new Button("OK");
+        okBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				result = YES;
-                AlertPromptDialog.this.close();
-                
-				// Send REQUEST_EXIT_GROUP Message To Server
-				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
-				exitGroupMsg.add(Message.GROUP_PK, Endpoint.user.getGroup().getPrimaryKey());
-				exitGroupMsg.add(Message.NAME, Endpoint.user.getName());
-				try {
-					if (endpoint == null) {
-						System.out.println("debuger_delf: endpoint is null");
-					}
-					endpoint = Endpoint.getIntance();
-					endpoint.sendMessage(exitGroupMsg);
-				} catch (IOException | EncodeException e) {
-					e.printStackTrace();
-				}
+                GroupJoinFailDialog.this.close();
 			}
 		});
-        
-        ybutton.getStyleClass().add("button");
-        
-        Button nbutton = new Button("No");
-        nbutton.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				result = NO;
-                AlertPromptDialog.this.close();
-			}
-		});
-        
-        nbutton.getStyleClass().add("button");
+        okBtn.getStyleClass().add("button");
  
         BorderPane borderPane = new BorderPane();
  
@@ -86,9 +46,7 @@ public class AlertPromptDialog extends Stage {
         HBox hbox = new HBox();
         hbox.setSpacing(15);
         hbox.setAlignment(Pos.CENTER);
-        hbox.getChildren().add(ybutton);
-        hbox.setAlignment(Pos.CENTER);
-        hbox.getChildren().add(nbutton);
+        hbox.getChildren().add(okBtn);
  
         dropShadowPane.setBottom(hbox);
  
@@ -100,9 +58,9 @@ public class AlertPromptDialog extends Stage {
         setScene(scene);
     }
  
-    public static int show(Stage owner, String msg) {
+    public static void show(String msg) {
         if (popup == null) {
-            popup = new AlertPromptDialog();
+            popup = new GroupJoinFailDialog();
         }
  
         label.setText(msg);
@@ -122,8 +80,5 @@ public class AlertPromptDialog extends Stage {
         popup.setY(Main.getPrimaryStage().getY() + (Main.getPrimaryStage().getHeight() / 2 - popup.getHeight() / 2));
  
         popup.showAndWait();
- 
-        return result;
     }
- 
 }
