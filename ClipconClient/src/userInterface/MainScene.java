@@ -3,7 +3,6 @@ package userInterface;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -12,12 +11,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import javax.print.attribute.standard.DialogTypeSelection;
-import javax.websocket.EncodeException;
-
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDialog;
-import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXTabPane;
 
 import application.Main;
@@ -40,8 +33,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -57,7 +48,6 @@ import javafx.util.Callback;
 import lombok.Getter;
 import lombok.Setter;
 import model.Contents;
-import model.Message;
 import model.User;
 
 @Getter
@@ -66,30 +56,19 @@ public class MainScene implements Initializable {
 
 	private UserInterface ui = UserInterface.getIntance();
 
-	@FXML
-	private JFXTabPane tabPane;
+	@FXML private JFXTabPane tabPane;
 
-	@FXML
-	private TableView<User>  groupParticipantTable;
-	//private JFXTreeTableView<User> groupParticipantTable;
-	@FXML
-	private TableColumn<User, String> groupPartiNicknameColumn;
-	//private JFXTreeTableColumn<User, String> groupPartiNicknameColumn = new JFXTreeTableColumn< >("Nickname");
+	@FXML private TableView<User>  groupParticipantTable;
+	@FXML private TableColumn<User, String> groupPartiNicknameColumn;
 
-	@FXML
-	private TableView<Contents> historyTable;
-	@FXML
-	private TableColumn<Contents, String> typeColumn, uploaderColumn;
-	@FXML
-	private TableColumn<Contents, Object> contentsColumn;
+	@FXML private TableView<Contents> historyTable;
+	@FXML private TableColumn<Contents, String> typeColumn, uploaderColumn;
+	@FXML private TableColumn<Contents, Object> contentsColumn;
 
-	@FXML
-	private Button exitBtn, groupKeyCopyBtn, nicknameChangeBtn;
-	@FXML
-	private Text nicknameText, groupKeyText;
+	@FXML private Button exitBtn, groupKeyCopyBtn, nicknameChangeBtn;
+	@FXML private Text nicknameText, groupKeyText;
 
 	private Endpoint endpoint = Endpoint.getIntance();
-	
 
 	private boolean initGroupParticipantFlag;
 	private boolean addGroupParticipantFlag;
@@ -121,20 +100,25 @@ public class MainScene implements Initializable {
 	// directory location for uploading and downloading file
 	public static final String UPLOAD_TEMP_DIR_LOCATION = "C:\\Program Files\\ClipconUpload";
 	public static final String DOWNLOAD_TEMP_DIR_LOCATION = "C:\\Program Files\\ClipconDownload";
+	
+	private File dirForUpload = new File(MainScene.UPLOAD_TEMP_DIR_LOCATION);
+	private File dirForDownload = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setMainScene(this);
+		
+		// flag initialize
 		initGroupParticipantFlag = false;
 		addGroupParticipantFlag = false;
 		addContentsInHistoryFlag = false;
 		showStartingViewFlag = false;
 		clipboadChangeFlag = false;
 		
-		tabPane.getStylesheets().add("/resources/tabPaneStyle.css");
-		groupParticipantTable.getStylesheets().add("/resources/mytable.css");
+		// UI css setting
+		tabPane.getStylesheets().add("/resources/mytab.css");
+		groupParticipantTable.getStylesheets().add("/resources/myparticipanttable.css");
 		historyTable.getStylesheets().add("/resources/myhistorytable.css");
-		
 
 		contentsUpload = new ContentsUpload();
 		downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
@@ -180,6 +164,7 @@ public class MainScene implements Initializable {
 							showClipboardChangeNoti();
 						}
 						if (addContentsInHistoryFlag) {
+							System.out.println("addContentsInHistoryFlag");
 							addContentsInHistoryFlag = false;
 							addContentsInHistory();
 						}
@@ -197,22 +182,7 @@ public class MainScene implements Initializable {
 		exitBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				Stage dialogStage = new Stage();
-				AlertPromptDialog.show(dialogStage, "그룹에서 나가며, 히스토리가 모두 삭제됩니다. 계속하시겠습니까?");
-
-				// Send REQUEST_EXIT_GROUP Message To Server
-//				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
-//				exitGroupMsg.add(Message.GROUP_PK, Endpoint.user.getGroup().getPrimaryKey());
-//				exitGroupMsg.add(Message.NAME, Endpoint.user.getName());
-//				try {
-//					if (endpoint == null) {
-//						System.out.println("debuger_delf: endpoint is null");
-//					}
-//					endpoint = Endpoint.getIntance();
-//					endpoint.sendMessage(exitGroupMsg);
-//				} catch (IOException | EncodeException e) {
-//					e.printStackTrace();
-//				}
+				GroupExitDialog.show("그룹에서 나가며, 히스토리가 모두 삭제됩니다. 계속하시겠습니까?");
 			}
 		});
 
@@ -294,19 +264,6 @@ public class MainScene implements Initializable {
 				return tc;
 			}
 		});
-		
-		
-//		groupPartiNicknameColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<User, String>, ObservableValue<String>>() {
-//			@Override
-//			public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<User, String> params) {
-//				return params.getValue().getValue().getNameProperty();
-//			}
-//		});
-//		
-//		final TreeItem<User> root = new RecursiveTreeItem<User>(groupParticipantList, RecursiveTreeObject::getChildern);
-//		groupParticipantTable.getColumns().setAll(elements)
-//		groupParticipantTable.setRoot(root);
-//		groupParticipantTable.setShowRoot(false);
 	}
 
 	public void showClipboardChangeNoti() {
@@ -326,7 +283,7 @@ public class MainScene implements Initializable {
 
 		historyTable.setItems(historyList);
 
-		Contents content = historyList.get(historyList.size() - 1);
+		Contents content = historyList.get(0);
 
 		// Contents column setting
 		contentsColumn.setCellValueFactory(new ContentsValueFactory());
@@ -374,43 +331,44 @@ public class MainScene implements Initializable {
 		});
 
 		// Upload notification setting
+		
+		if (!content.getUploadUserName().equals(Endpoint.user.getName())) {
+			Notification uploadnoti;
 
-		Notification uploadnoti;
+			String notiTitle = null;
+			String notiMsg = null;
 
-		String notiTitle = null;
-		String notiMsg = null;
-
-		if (content.getContentsType().equals(Contents.TYPE_STRING)) {
-			notiTitle = "String from " + content.getUploadUserName();
-			if (content.getContentsValue().length() > 10) {
-				notiMsg = content.getContentsValue().substring(0, 10);
+			if (content.getContentsType().equals(Contents.TYPE_STRING)) {
+				notiTitle = "String from " + content.getUploadUserName();
+				if (content.getContentsValue().length() > 30) {
+					notiMsg = content.getContentsValue().substring(0, 30);
+				} else {
+					notiMsg = content.getContentsValue();
+				}
+				uploadnoti = NotificationBuilder.create().title(notiTitle).message(notiMsg).build();
+			} else if (content.getContentsType().equals(Contents.TYPE_IMAGE)) {
+				notiTitle = "Image from " + content.getUploadUserName();
+				Image resizeImg = content.getContentsImage();
+				uploadnoti = NotificationBuilder.create().title(notiTitle).resizeImage(resizeImg).build();
 			} else {
-				notiMsg = content.getContentsValue();
+				notiTitle = "File from " + content.getUploadUserName();
+				if (content.getContentsValue().length() > 30) {
+					notiMsg = content.getContentsValue().substring(0, 30);
+				} else {
+					notiMsg = content.getContentsValue();
+				}
+				uploadnoti = NotificationBuilder.create().title(notiTitle).message(notiMsg).build();
 			}
-			uploadnoti = NotificationBuilder.create().title(notiTitle).message(notiMsg).build();
-		} else if (content.getContentsType().equals(Contents.TYPE_IMAGE)) {
-			notiTitle = "Image from " + content.getUploadUserName();
-			Image resizeImg = content.getContentsImage();
-			uploadnoti = NotificationBuilder.create().title(notiTitle).resizeImage(resizeImg).build();
-		} else {
-			notiTitle = "File from " + content.getUploadUserName();
-			if (content.getContentsValue().length() > 10) {
-				notiMsg = content.getContentsValue().substring(0, 10);
-			} else {
-				notiMsg = content.getContentsValue();
-			}
-			uploadnoti = NotificationBuilder.create().title(notiTitle).message(notiMsg).build();
+
+			uploadNotifier.notify(uploadnoti);
+			uploadNotifier.onNotificationPressedProperty();
+			uploadNotifier.setOnNotificationPressed(event -> getRecentlyContentsInClipboard(content));
 		}
-
-		uploadNotifier.notify(uploadnoti);
-		uploadNotifier.onNotificationPressedProperty();
-		uploadNotifier.setOnNotificationPressed(event -> getRecentlyContentsInClipboard(content));
 	}
 
 	/** get Recently Contents In Clipboard */
 	public void getRecentlyContentsInClipboard(Contents content) {
-		String downloadDataPK = content.getContentsPKName(); // recently
-																// Contents PK
+		String downloadDataPK = content.getContentsPKName(); // recently Contents PK
 		try {
 			downloader.requestDataDownload(downloadDataPK);
 		} catch (MalformedURLException e) {
@@ -421,6 +379,7 @@ public class MainScene implements Initializable {
 	/** Show starting view */
 	public void showStartingView() {
 		try {
+			// TODO : 초기화...
 			//clipboardMonitorThread.interrupt();
 			hook = null;
 			clipboardMonitorThread = null;
@@ -428,6 +387,7 @@ public class MainScene implements Initializable {
 			uploadNotifier = null;
 			contentsUpload = null;
 			downloader = null;
+			removeDirectory();
 			
 			Parent goBack = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
 			Scene scene = new Scene(goBack);
@@ -465,8 +425,10 @@ public class MainScene implements Initializable {
 			public void onGlobalDownloadHotkeysPressed() {
 				System.out.println("CTRL + ALT + J was pressed");
 
-				Contents content = historyList.get(historyList.size() - 1);
-				getRecentlyContentsInClipboard(content);
+				if(historyList.size() > 0) {
+					Contents content = historyList.get(0);
+					getRecentlyContentsInClipboard(content);
+				}
 			}
 		});
 	}
@@ -558,9 +520,6 @@ public class MainScene implements Initializable {
 	 *            The name of the directory you want to create
 	 */
 	private void createDirectory() {
-		File dirForUpload = new File(MainScene.UPLOAD_TEMP_DIR_LOCATION);
-		File dirForDownload = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
-
 		if (!dirForUpload.exists()) {
 			dirForUpload.mkdir(); // Create Directory
 			System.out.println("------------------------------------ create dir for Upload ");
@@ -569,5 +528,10 @@ public class MainScene implements Initializable {
 			dirForDownload.mkdir(); // Create Directory
 			System.out.println("------------------------------------ create dir for Download");
 		}
+	}
+	
+	private void removeDirectory() {
+		dirForUpload.delete();
+		dirForDownload.delete();
 	}
 }

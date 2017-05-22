@@ -11,6 +11,10 @@
     -fx-padding: 10;
 }
 
+.label {
+    -fx-font-family: "나눔스퀘어";
+}
+
 .button {
 	-fx-background-color: transparent;
 }

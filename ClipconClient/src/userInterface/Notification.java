@@ -378,8 +378,6 @@ public class Notification {
 			private Duration popupAnimationTime;
 			private Stage stage;
 			private Scene scene;
-			private Popup POPUP;
-			private Timeline timeline;
 			private ObservableList<Popup> popups;
 			
 			// ******************** Constructor
@@ -519,14 +517,16 @@ public class Notification {
 				popupContent.setPrefSize(width, height);
 				popupContent.getStyleClass().add("notification");
 				popupContent.getChildren().addAll(popupLayout);
-				
-				POPUP = new Popup();
+
+				Popup POPUP = new Popup();
 				POPUP.setX(getX());
 				POPUP.setY(getY());
 				POPUP.getContent().add(popupContent);
 				POPUP.addEventHandler(MouseEvent.MOUSE_PRESSED, new WeakEventHandler<>(event -> {
 					fireNotificationEvent(new NotificationEvent(NOTIFICATION, UploadNotifier.this, POPUP, NotificationEvent.NOTIFICATION_PRESSED));
-					hidePopUp();
+					POPUP.hide();
+	                popups.remove(POPUP);
+	                //timeline.stop();
 				}));            
 				popups.add(POPUP);
 				
@@ -536,11 +536,13 @@ public class Notification {
 				
 				KeyFrame kfBegin = new KeyFrame(Duration.ZERO, fadeOutBegin);
 				KeyFrame kfEnd   = new KeyFrame(popupAnimationTime, fadeOutEnd);
-				
-				timeline = new Timeline(kfBegin, kfEnd);
+
+				Timeline timeline = new Timeline(kfBegin, kfEnd);
 				timeline.setDelay(popupLifetime);
 				timeline.setOnFinished(actionEvent -> Platform.runLater(() -> {
-					hidePopUp();
+					POPUP.hide();
+	                popups.remove(POPUP);
+	                timeline.stop();
 				}));
 				
 				if (stage.isShowing()) {
@@ -553,12 +555,6 @@ public class Notification {
 				fireNotificationEvent(new NotificationEvent(NOTIFICATION, UploadNotifier.this, POPUP, NotificationEvent.SHOW_NOTIFICATION));
 				timeline.play();
 			}
-			
-			public void hidePopUp() {
-	        	POPUP.hide();
-                popups.remove(POPUP);
-                timeline.stop();
-	        }
 			
 			private double getX() {
 				if (null == stageRef)
