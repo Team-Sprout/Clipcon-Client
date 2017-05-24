@@ -7,10 +7,9 @@ import controller.ClipboardController;
 import controller.Endpoint;
 
 public class ContentsUpload {
-	 public static UploadData uploader;
+	 public static UploadData uploader = new UploadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 	 
 	 public void upload() {
-		 uploader = new UploadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 		 
 		 Object clipboardData = ClipboardController.readClipboard();
 		 

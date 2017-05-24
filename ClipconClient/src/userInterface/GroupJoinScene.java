@@ -42,39 +42,12 @@ public class GroupJoinScene implements Initializable{
 	
 	private boolean joinGroupSuccessFlag;
 	private boolean joinGroupFailFlag;
-	
-	// run scheduler for checking
-	ScheduledExecutorService scheduler;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setGroupJoinScene(this);
 		joinGroupSuccessFlag = false;
 		joinGroupFailFlag = false;
-		
-		scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.scheduleAtFixedRate(new Runnable() {
-			@Override
-			public void run() {
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						// if flag turn on then client login game
-						if (joinGroupSuccessFlag) {
-							joinGroupSuccessFlag = false;
-							showMainView();
-							return;
-						}
-						if (joinGroupFailFlag) {
-							joinGroupFailFlag = false;
-							GroupJoinFailDialog.show("유효하지 않는 Group Key 입니다. 다시 입력하세요.");
-							groupKey.setText("");
-						}
-					}
-				});
-
-			}
-		}, 50, 50, TimeUnit.MILLISECONDS);
 		
 		groupKey.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
@@ -133,23 +106,32 @@ public class GroupJoinScene implements Initializable{
 			} catch (IOException | EncodeException e) {
 				e.printStackTrace();
 			}
-		}
-	}
-	
-	public void showMainView() {
-		try {
 			
-			scheduler.shutdown();
-			
-			Parent toMain = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
-			Scene mainScene = new Scene(toMain);
-			Stage primaryStage = Main.getPrimaryStage();
-			
-			primaryStage.setScene(mainScene);
-			primaryStage.show();
+			// run scheduler for checking
+			final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-		} catch (Exception e) {
-			e.printStackTrace();
+			scheduler.scheduleAtFixedRate(new Runnable() {
+				@Override
+				public void run() {
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							// if flag turn on then client login game
+							if (joinGroupSuccessFlag) {
+								joinGroupSuccessFlag = false;
+								ui.getStartingScene().showMainView();
+								return;
+							}
+							if (joinGroupFailFlag) {
+								joinGroupFailFlag = false;
+								GroupJoinFailDialog.show("유효하지 않는 Group Key 입니다. 다시 입력하세요.");
+								groupKey.setText("");
+							}
+						}
+					});
+
+				}
+			}, 50, 50, TimeUnit.MILLISECONDS);
 		}
 	}
 

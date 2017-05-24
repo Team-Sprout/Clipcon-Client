@@ -137,15 +137,15 @@ public class MultipartUtility {
       FileInputStream inputStream = new FileInputStream(uploadFile);
       byte[] buffer = new byte[CHUNKSIZE];
       int bytesRead = -1;
-//      long totalBytesRead = 0;
-//      int percentCompleted = 0;
-//      System.out.println("percentCompleted");
+      long totalBytesRead = 0;
+      int percentCompleted = 0;
+      System.out.println("percentCompleted");
 
       while ((bytesRead = inputStream.read(buffer)) != -1) {
-//			totalBytesRead += bytesRead;
-//			percentCompleted = (int) (totalBytesRead * 100 / uploadFile.length());
+			totalBytesRead += bytesRead;
+			percentCompleted = (int) (totalBytesRead * 100 / uploadFile.length());
 
-//			System.out.println(percentCompleted);
+			System.out.println(percentCompleted);
 
 			outputStream.write(buffer, 0, bytesRead);
       }
