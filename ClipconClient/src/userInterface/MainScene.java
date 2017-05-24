@@ -18,6 +18,7 @@ import contentsTransfer.ContentsUpload;
 import contentsTransfer.DownloadData;
 import controller.ClipboardController;
 import controller.Endpoint;
+import hookManager.GlobalKeyboardHook;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
@@ -33,7 +34,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -75,6 +75,9 @@ public class MainScene implements Initializable {
 	private boolean addContentsInHistoryFlag;
 	private boolean showStartingViewFlag;
 	public static boolean clipboadChangeFlag;
+	
+	// run scheduler for checking
+	private ScheduledExecutorService scheduler;
 
 	private ObservableList<User> groupParticipantList;
 	private ContentsUpload contentsUpload;
@@ -82,20 +85,10 @@ public class MainScene implements Initializable {
 
 	private ObservableList<Contents> historyList;
 
-	private Label popOverContents = new Label();
-
-	/*
-	 * private Notification clipboanoti; private Notification uploadnoti;
-	 * private Notification.Notifier clipboardNotifier; private
-	 * Notification.Notifier uploadNotifier;
-	 */
-
 	private Notification.ClipboadNotifier clipboardNotifier;
 	private Notification.UploadNotifier uploadNotifier;
 
 	private hookManager.GlobalKeyboardHook hook;
-	
-	private Thread clipboardMonitorThread;
 
 	// directory location for uploading and downloading file
 	public static final String UPLOAD_TEMP_DIR_LOCATION = "C:\\Program Files\\ClipconUpload";
@@ -108,6 +101,7 @@ public class MainScene implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setMainScene(this);
 		
+		Main.isInMainScene = true;
 		// flag initialize
 		initGroupParticipantFlag = false;
 		addGroupParticipantFlag = false;
@@ -125,14 +119,6 @@ public class MainScene implements Initializable {
 		startHookProcess();
 		createDirectory();
 
-		clipboardMonitorThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				ClipboardController.clipboardMonitor();
-			}
-		});
-		clipboardMonitorThread.start();
-
 		clipboardNotifier = NotifierBuilder.clipboardNotiBuild();
 		clipboardNotifier.setNotificationOwner(Main.getPrimaryStage());
 		uploadNotifier = NotifierBuilder.uploadNotibuild();
@@ -141,9 +127,7 @@ public class MainScene implements Initializable {
 		groupParticipantList = FXCollections.observableArrayList();
 		historyList = FXCollections.observableArrayList();
 
-		// run scheduler for checking
-		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
+		scheduler = Executors.newScheduledThreadPool(1);
 		scheduler.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
@@ -164,7 +148,6 @@ public class MainScene implements Initializable {
 							showClipboardChangeNoti();
 						}
 						if (addContentsInHistoryFlag) {
-							System.out.println("addContentsInHistoryFlag");
 							addContentsInHistoryFlag = false;
 							addContentsInHistory();
 						}
@@ -233,7 +216,9 @@ public class MainScene implements Initializable {
 		groupParticipantList.clear();
 
 		nicknameText.setText(Endpoint.user.getName());
+		System.out.println("-----nicknameText-----" + Endpoint.user.getName());
 		groupKeyText.setText(Endpoint.user.getGroup().getPrimaryKey());
+		System.out.println("-----groupKeyText-----" + Endpoint.user.getGroup().getPrimaryKey());
 		
 		for (int i = 0; i < Endpoint.user.getGroup().getUserList().size(); i++) {
 			groupParticipantList.add(Endpoint.user.getGroup().getUserList().get(i));
@@ -379,14 +364,14 @@ public class MainScene implements Initializable {
 	/** Show starting view */
 	public void showStartingView() {
 		try {
-			// TODO : 초기화...
-			//clipboardMonitorThread.interrupt();
-			hook = null;
-			clipboardMonitorThread = null;
+			Main.isInMainScene = false;
+			
+			hook.stopHook();
 			clipboardNotifier = null;
 			uploadNotifier = null;
 			contentsUpload = null;
 			downloader = null;
+			scheduler.shutdown();
 			removeDirectory();
 			
 			Parent goBack = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
@@ -403,11 +388,11 @@ public class MainScene implements Initializable {
 
 	/** Start key Hooking */
 	public void startHookProcess() {
-		int uploadVitrualKey = KeyEvent.VK_H;
-		int downloadVitrualKey = KeyEvent.VK_J;
+		int uploadVitrualKey = KeyEvent.VK_C;
+		int downloadVitrualKey = KeyEvent.VK_V;
 		boolean CTRL_Key = true;
-		boolean ALT_Key = true;
-		boolean SHIFT_Key = false;
+		boolean ALT_Key = false;
+		boolean SHIFT_Key = true;
 		boolean WIN_Key = false;
 
 		hook = new hookManager.GlobalKeyboardHook();
@@ -534,4 +519,7 @@ public class MainScene implements Initializable {
 		dirForUpload.delete();
 		dirForDownload.delete();
 	}
+	
+	
+	
 }

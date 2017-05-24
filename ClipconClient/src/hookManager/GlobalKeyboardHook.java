@@ -28,29 +28,26 @@ public class GlobalKeyboardHook {
 	// Hotkey Reset
 	public native void resetHotKey();
 
-	// Setting the dll file
-	private static final String KEYBOARD_HOOOK_DLL_NAME = "KeyHooking";
-
 	private boolean uploadHookStopFlag;
 	private boolean downloadHookStopFlag;
+	private boolean stopFlag;
 
 	// -------- Java listeners --------
 	private ArrayList<GlobalKeyboardListener> listeners = new ArrayList<GlobalKeyboardListener>();
 
 	// �깮�꽦�옄
 	public GlobalKeyboardHook() {
-		System.loadLibrary(KEYBOARD_HOOOK_DLL_NAME);
-		System.out.println(KEYBOARD_HOOOK_DLL_NAME + ".dll file loaded");
 		uploadHookStopFlag = false;
 		downloadHookStopFlag = false;
+		stopFlag = false;
 	}
 
 	public void addGlobalKeyboardListener(GlobalKeyboardListener listener) {
 		listeners.add(listener);
 	}
 
-	public void removeGlobalKeyboardListener(GlobalKeyboardListener listener) {
-		listeners.remove(listener);
+	public void clearGlobalKeyboardListener() {
+		listeners.clear();
 	}
 
 	// Start hooking, execute DLLStateThread, and check DLL state
@@ -67,6 +64,9 @@ public class GlobalKeyboardHook {
 	public void stopHook() {
 		uploadHookStopFlag = true;
 		downloadHookStopFlag = true;
+		stopFlag = true;
+		resetHotKey();
+		clearGlobalKeyboardListener();
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class GlobalKeyboardHook {
 	private class DLLStateThread implements Runnable {
 
 		public void run() {
-			while (true) {
+			while (!stopFlag) {
 				boolean uploadHotKeyPressed = checkUploadHotKey();
 				boolean downloadHotKeyPressed = checkDownloadHotKey();
 				if (uploadHotKeyPressed) {
