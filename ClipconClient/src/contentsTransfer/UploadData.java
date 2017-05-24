@@ -86,7 +86,7 @@ public class UploadData {
 				multipart.addFilePart("fileData", firstUploadFile);
 
 				// [hee]
-				doInBackground(firstUploadFile, multipart);
+//				doInBackground(firstUploadFile, multipart);
 			}
 			/* case: Multiple file data, One or more folders */
 			else {
@@ -120,30 +120,30 @@ public class UploadData {
 		}
 	}
 
-	public void doInBackground(File uploadFile, MultipartUtility multipart) {
-		byte[] buffer = new byte[4096];
-		int bytesRead = -1;
-		long totalBytesRead = 0;
-		int percentCompleted = 0;
-		long fileSize = uploadFile.length();
-
-		try {
-			FileInputStream inputStream = new FileInputStream(uploadFile);
-
-			while ((bytesRead = inputStream.read(buffer)) != -1) {
-				multipart.writeFileBytes(buffer, 0, bytesRead);
-				totalBytesRead += bytesRead;
-				percentCompleted = (int) (totalBytesRead * 100 / fileSize);
-
-				System.out.println(percentCompleted);
-				// setProgress(percentCompleted);
-			}
-
-			inputStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	public void doInBackground(File uploadFile, MultipartUtility multipart) {
+//		byte[] buffer = new byte[4096];
+//		int bytesRead = -1;
+//		long totalBytesRead = 0;
+//		int percentCompleted = 0;
+//		long fileSize = uploadFile.length();
+//
+//		try {
+//			FileInputStream inputStream = new FileInputStream(uploadFile);
+//
+//			while ((bytesRead = inputStream.read(buffer)) != -1) {
+//				multipart.writeFileBytes(buffer, 0, bytesRead);
+//				totalBytesRead += bytesRead;
+//				percentCompleted = (int) (totalBytesRead * 100 / fileSize);
+//
+//				System.out.println(percentCompleted);
+//				// setProgress(percentCompleted);
+//			}
+//
+//			inputStream.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	/** Parameter to be set in common for all data
 	 * userName, groupPK, uploadTime */

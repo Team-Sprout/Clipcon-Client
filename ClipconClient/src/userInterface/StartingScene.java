@@ -36,11 +36,33 @@ public class StartingScene implements Initializable {
 	private Endpoint endpoint = Endpoint.getIntance();
 
 	private boolean createGroupSuccessFlag;
+	
+	// run scheduler for checking
+	ScheduledExecutorService scheduler;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setStartingScene(this);
 		createGroupSuccessFlag = false;
+		
+		scheduler = Executors.newScheduledThreadPool(1);
+		scheduler.scheduleAtFixedRate(new Runnable() {
+			@Override
+			public void run() {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						// if flag turn on then client login game
+						if (createGroupSuccessFlag) {
+							createGroupSuccessFlag = false;
+							showMainView();
+							return;
+						}
+					}
+				});
+
+			}
+		}, 50, 50, TimeUnit.MILLISECONDS);
 
 		createBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -60,27 +82,6 @@ public class StartingScene implements Initializable {
 				} catch (IOException | EncodeException e) {
 					e.printStackTrace();
 				}
-
-				// run scheduler for checking
-				final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-				scheduler.scheduleAtFixedRate(new Runnable() {
-					@Override
-					public void run() {
-						Platform.runLater(new Runnable() {
-							@Override
-							public void run() {
-								// if flag turn on then client login game
-								if (createGroupSuccessFlag) {
-									createGroupSuccessFlag = false;
-									showMainView();
-									return;
-								}
-							}
-						});
-
-					}
-				}, 50, 50, TimeUnit.MILLISECONDS);
 			}
 		});
 
@@ -94,6 +95,9 @@ public class StartingScene implements Initializable {
 
 	public void showMainView() {
 		try {
+			
+			scheduler.shutdown();
+			
 			Parent toMain = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
 			Scene mainScene = new Scene(toMain);
 			Stage primaryStage = Main.getPrimaryStage();
@@ -108,6 +112,9 @@ public class StartingScene implements Initializable {
 
 	public void showGroupJoinView() {
 		try {
+			
+			scheduler.shutdown();
+			
 			Parent toGroupJoin = FXMLLoader.load(getClass().getResource("/view/GroupJoinView.fxml"));
 			Scene groupJoinScene = new Scene(toGroupJoin);
 			Stage primaryStage = Main.getPrimaryStage();

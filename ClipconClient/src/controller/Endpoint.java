@@ -72,10 +72,11 @@ public class Endpoint {
 
 				while (true) {
 					if (ui.getMainScene() != null && user != null) {
-						break;
+							break;
 					}
+					System.out.print(""); // 개 야매.......ㅋ..
 				}
-				System.out.println("Group key : " + user.getGroup().getPrimaryKey());
+				
 				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list initialization
 
 				break;
@@ -100,7 +101,7 @@ public class Endpoint {
 						break;
 					}
 				}
-				System.out.println("Group key : " + user.getGroup().getPrimaryKey());
+				
 				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list initialization
 
 				break;
@@ -165,7 +166,6 @@ public class Endpoint {
 			user.getGroup().addContents(contents);
 			System.out.println("-----<Endpoint> contentsValue Context-----\n" + contents.getContentsValue());
 
-			//ui.getMainScene().getHistoryList().add(contents);
 			ui.getMainScene().getHistoryList().add(0, contents);
 			ui.getMainScene().setAddContentsInHistoryFlag(true); // update UI list
 			break;
