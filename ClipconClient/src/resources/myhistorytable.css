@@ -3,6 +3,8 @@
     -fx-base: #ffffff;
     -fx-control-inner-background: #ffffff;
     -fx-background-color: #cecece;
+    -fx-background-image: url('/resources/NoContents.png');
+    -fx-background-repeat: no-repeat;
 }
 
 .table-view .column-header {

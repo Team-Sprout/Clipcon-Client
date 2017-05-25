@@ -45,7 +45,7 @@
              	 <children>
              	 	<TableView fx:id="historyTable" layoutX="10.0" layoutY="10.0" prefHeight="385.0" prefWidth="320.0">
              	 		<placeholder>
-    					    <Label text="No Contents"/>
+    					    <Label text=""/>
    						</placeholder>
                     	<columns>
 	                    	<TableColumn fx:id="typeColumn" prefWidth="70.0" text="Type" sortable="false" resizable="false"/>

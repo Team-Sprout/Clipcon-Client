@@ -37,7 +37,6 @@ public class GroupJoinScene implements Initializable{
 	@FXML private TextField groupKey;
 	@FXML private Button confirmBtn, XBtn;
 	
-	private Stage stage;
 	private Endpoint endpoint = Endpoint.getIntance();
 	
 	private boolean joinGroupSuccessFlag;
@@ -124,7 +123,6 @@ public class GroupJoinScene implements Initializable{
 	// send REQUEST_JOIN_GROUP Messgae to server
 	public void sendGroupJoinMessage() {
 		if (groupKey.getText().length() != 0) {
-			stage = (Stage) confirmBtn.getScene().getWindow();
 			
 			Message signUpMsg = new Message().setType(Message.REQUEST_JOIN_GROUP);
 			signUpMsg.add(Message.GROUP_PK, groupKey.getText());

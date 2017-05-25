@@ -64,14 +64,17 @@ public class Message {
 
 	public final static String REQUEST_CREATE_GROUP = "request/create group";
 	public final static String REQUEST_JOIN_GROUP = "request/join group";
+	public final static String REQUEST_CHANGE_NAME = "request/change name";
 	public final static String REQUEST_EXIT_GROUP = "request/exit group";
 	public final static String REQUEST_TEST = "request/test";
 
 	public final static String RESPONSE_CREATE_GROUP = "response/create group";
 	public final static String RESPONSE_JOIN_GROUP = "response/join group";
+	public final static String RESPONSE_CHANGE_NAME = "response/change name";
 	public final static String RESPONSE_EXIT_GROUP = "response/exit group";
 	
 	public final static String NOTI_ADD_PARTICIPANT = "noti/add participant";
+	public final static String NOTI_CHANGE_NAME = "noti/change name";
 	public final static String NOTI_EXIT_PARTICIPANT = "noti/exit participant";
 	public final static String NOTI_UPLOAD_DATA = "noti/upload data";
 	
@@ -80,6 +83,7 @@ public class Message {
 	public final static String REJECT = "reject";
 
 	public final static String NAME = "name";
+	public final static String CHANGE_NAME = "change name";
 	public final static String CONTENTS = "contents";
 	public final static String LIST = "list";
 	public final static String USER_INFO = "user information";

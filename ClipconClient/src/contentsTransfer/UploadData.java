@@ -2,7 +2,6 @@ package contentsTransfer;
 
 import java.awt.Image;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +48,8 @@ public class UploadData {
 	/** Upload Captured Image Data in Clipboard */
 	public void uploadCapturedImageData(Image capturedImageData) {
 		try {
+			MainScene.showProgressBarFlag = true;
+			
 			MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
 			setCommonParameter(multipart);
 
@@ -82,6 +83,8 @@ public class UploadData {
 
 			/* case: Single file data(not a folder) */
 			if (fileFullPathList.size() == 1 && firstUploadFile.isFile()) {
+				MainScene.showProgressBarFlag = true;
+				
 				System.out.println("\nSingle File Uploading~~\n");
 				multipart.addFilePart("fileData", firstUploadFile);
 
@@ -90,6 +93,8 @@ public class UploadData {
 			}
 			/* case: Multiple file data, One or more folders */
 			else {
+				MainScene.showProgressBarFlag = true;
+				
 				System.out.println("\nMultiple File or Directory Uploading~~\n");
 				try {
 					File uploadRootDir = new File(MainScene.UPLOAD_TEMP_DIR_LOCATION);
@@ -115,6 +120,7 @@ public class UploadData {
 			for (String line : response) {
 				System.out.println(line);
 			}
+			
 		} catch (IOException ex) {
 			System.err.println(ex);
 		}
