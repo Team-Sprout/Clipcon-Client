@@ -13,17 +13,19 @@ import userInterface.TrayIconManager;
 
 public class Main extends Application {
 	private static Stage primaryStage;
+
 //	public static final String SERVER_ADDR = "delf.gonetis.com";
 	public static final String SERVER_ADDR = "223.194.153.30";
+
 	public static boolean isInMainScene = false;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		setPrimaryStage(primaryStage);
-		
+
 		TrayIconManager tray = new TrayIconManager();
 		tray.addTrayIconInSystemTray();
-		
+
 		Main.primaryStage.setTitle("ClipCon");
 		Main.primaryStage.getIcons().add(new javafx.scene.image.Image("resources/Logo.png"));
 		Parent root = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
@@ -31,7 +33,7 @@ public class Main extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.show();
-		
+
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent t) {
 				System.out.println("Stage is closing");
@@ -47,10 +49,10 @@ public class Main extends Application {
 				}
 			}
 		});
-		
+
 		System.loadLibrary("KeyHooking");
 		System.out.println("KeyHooking.dll file loaded");
-		
+
 		Thread clipboardMonitorThread = new Thread(new Runnable() {
 			@Override
 			public void run() {

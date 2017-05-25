@@ -59,26 +59,22 @@ public class MultipartUtility {
 	}
 
 	/**
-	 * Adds a header field to the request.
-	 *
-	 * @param name
-	 *            name of the header field
-	 * @param value
-	 *            value of the header field
-	 */
+	* Adds a header field to the request.
+	*
+	* @param name name of the header field
+	* @param value value of the header field
+	*/
 	public void addHeaderField(String name, String value) {
 		writer.append(name + ": " + value).append(LINE_FEED);
 		writer.flush();
 	}
 
 	/**
-	 * Adds a form field to the request
-	 *
-	 * @param name
-	 *            field name
-	 * @param value
-	 *            field value
-	 */
+	* Adds a form field to the request
+	*
+	* @param name field name
+	* @param value field value
+	*/
 	public void addFormField(String name, String value) {
 		writer.append("--" + boundary).append(LINE_FEED);
 		writer.append("Content-Disposition: form-data; name=\"" + name + "\"").append(LINE_FEED);
@@ -89,20 +85,17 @@ public class MultipartUtility {
 	}
 
 	/**
-	 * Adds a upload file section to the request
-	 * 
-	 * @param fieldName
-	 *            name attribute in <input type="file" name="..." />
-	 * @param uploadFile
-	 *            a File to be uploaded
-	 * @throws IOException
-	 */
+	* Adds a upload file section to the request
+	* 
+	* @param fieldName name attribute in <input type="file" name="..." />
+	* @param uploadFile a File to be uploaded
+	* @throws IOException
+	*/
 	public void addImagePart(String fieldName, Image image) throws IOException {
 		String imageName = "capturedImage";
 
 		writer.append("--" + boundary).append(LINE_FEED);
-		writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + imageName + "\"")
-				.append(LINE_FEED);
+		writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + imageName + "\"").append(LINE_FEED);
 		writer.append("Content-Type: image/png").append(LINE_FEED);
 		writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
 		writer.append(LINE_FEED);
@@ -124,44 +117,30 @@ public class MultipartUtility {
 	}
 
 	/**
-	 * Adds a upload file section to the request
-	 * 
-	 * @param fieldName
-	 *            name attribute in <input type="file" name="..." />
-	 * @param uploadFile
-	 *            a File to be uploaded
-	 * @throws IOException
-	 */
+	* Adds a upload file section to the request
+	* 
+	* @param fieldName name attribute in <input type="file" name="..." />
+	* @param uploadFile a File to be uploaded
+	* @throws IOException
+	*/
 	public void addFilePart(String fieldName, File uploadFile) throws IOException {
 		String fileName = uploadFile.getName();
 
 		writer.append("--" + boundary).append(LINE_FEED);
-		writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + fileName + "\"")
-				.append(LINE_FEED);
+		writer.append("Content-Disposition: form-data; name=\"" + fieldName + "\"; filename=\"" + fileName + "\"").append(LINE_FEED);
 		writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName)).append(LINE_FEED);
 		writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
 		writer.append(LINE_FEED);
 		writer.flush();
 
 		FileInputStream inputStream = new FileInputStream(uploadFile);
-		byte[] buffer = new byte[CHUNKSIZE];
-		int bytesRead = -1;
-		long totalBytesRead = 0;
-		double percentCompleted = 0;
-		System.out.println("percentCompleted");
-		
-		while ((bytesRead = inputStream.read(buffer)) != -1) {
-			totalBytesRead += bytesRead;
-			percentCompleted = (double) (totalBytesRead*100 / uploadFile.length());
-			
-			// progress bar test start
-			//ProgressBarScene.value = (double) percentCompleted/100;
-			//ProgressBarScene.setProgressBarFlag = true;
-			// progress bar test end
 
+		int bytesRead = -1;
+		byte[] buffer = new byte[CHUNKSIZE];
+
+		while ((bytesRead = inputStream.read(buffer)) != -1) {
 			outputStream.write(buffer, 0, bytesRead);
 		}
-
 		outputStream.flush();
 		inputStream.close();
 
@@ -170,19 +149,11 @@ public class MultipartUtility {
 	}
 
 	/**
-	 * Write an array of bytes to the request's output stream.
-	 */
-	public void writeFileBytes(byte[] bytes, int offset, int length) throws IOException {
-		outputStream.write(bytes, offset, length);
-	}
-
-	/**
-	 * Completes the request and receives response from the server.
-	 *
-	 * @return a list of Strings as response in case the server returned status
-	 *         OK, otherwise an exception is thrown.
-	 * @throws IOException
-	 */
+	* Completes the request and receives response from the server.
+	*
+	* @return a list of Strings as response in case the server returned status OK, otherwise an exception is thrown.
+	* @throws IOException
+	*/
 	public List<String> finish() throws IOException {
 		List<String> response = new ArrayList<String>();
 
