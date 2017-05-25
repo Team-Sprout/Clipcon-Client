@@ -72,11 +72,11 @@ public class Endpoint {
 
 				while (true) {
 					if (ui.getMainScene() != null && user != null) {
-							break;
+						break;
 					}
 					System.out.print(""); // 개 야매.......ㅋ..
 				}
-				
+
 				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list initialization
 
 				break;
@@ -101,14 +101,14 @@ public class Endpoint {
 						break;
 					}
 				}
-				
+
 				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list initialization
 
 				break;
 			case Message.REJECT:
 				System.out.println("join group reject");
 				ui.getGroupJoinScene().setJoinGroupFailFlag(true); // UI list initialization
-				
+
 				break;
 			}
 

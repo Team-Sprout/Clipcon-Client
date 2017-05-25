@@ -34,6 +34,7 @@ public class DownloadData {
 	public final static String SERVER_URL = "http://" + Main.SERVER_ADDR + ":8080/websocketServerModule";
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 
+	private static final int CHUNKSIZE = 4096;
 	private final String charset = "UTF-8";
 	private HttpURLConnection httpConn;
 
@@ -85,16 +86,16 @@ public class DownloadData {
 				case Contents.TYPE_STRING:
 					// Get String Object in Response Body
 					String stringData = downloadStringData(httpConn.getInputStream());
-					System.out.println("stringData Result: " + stringData);
 
 					StringSelection stringTransferable = new StringSelection(stringData);
 					ClipboardController.writeClipboard(stringTransferable);
 					break;
 
 				case Contents.TYPE_IMAGE:
+					long imageSize = httpConn.getContentLengthLong();
+
 					// Get Image Object in Response Body
-					Image imageData = downloadCapturedImageData(httpConn.getInputStream());
-					System.out.println("ImageData Result: " + imageData.toString());
+					Image imageData = downloadCapturedImageData(httpConn.getInputStream(), imageSize);
 
 					ImageTransferable imageTransferable = new ImageTransferable(imageData);
 					ClipboardController.writeClipboard(imageTransferable);
@@ -102,10 +103,10 @@ public class DownloadData {
 
 				case Contents.TYPE_FILE:
 					String fileOriginName = requestContents.getContentsValue();
+					long fileSize = httpConn.getContentLengthLong();
 
 					// Save Real File(filename: fileOriginName) to Clipcon Folder Get Image Object in Response Body
-					File fileData = downloadFileData(httpConn.getInputStream(), fileOriginName);
-					System.out.println("fileOriginName Result: " + fileData.getName());
+					File fileData = downloadFileData(httpConn.getInputStream(), fileOriginName, fileSize);
 
 					ArrayList<File> fileList = new ArrayList<File>();
 					fileList.add(fileData);
@@ -116,9 +117,10 @@ public class DownloadData {
 
 				case Contents.TYPE_MULTIPLE_FILE:
 					String multipleFileOriginName = requestContents.getContentsValue();
+					long multipleFileSize = httpConn.getContentLengthLong();
+
 					// Save Real ZIP File(filename: fileOriginName) to Clipcon Folder
-					File multipleFile = downloadFileData(httpConn.getInputStream(), multipleFileOriginName);
-					System.out.println("multipleFileOriginName Result: " + multipleFile.getName());
+					File multipleFile = downloadFileData(httpConn.getInputStream(), multipleFileOriginName, multipleFileSize);
 
 					File outputUnZipFile = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 					System.out.println("outputUnZipFile Result: " + multipleFile.getName());
@@ -172,17 +174,17 @@ public class DownloadData {
 					stringBuilder.append(line + "\n");
 				}
 				inputStream.close();
-				
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		String s = stringBuilder.toString();
-		s = s.substring(0, s.length()-2);  // \n\n 제거
-		
+		s = s.substring(0, s.length() - 2);  // \n\n 제거
+
 		return s;
 	}
 
@@ -190,15 +192,20 @@ public class DownloadData {
 	 * Download Captured Image Data
 	 * Change to Image object from file form of Image data
 	 */
-	private Image downloadCapturedImageData(InputStream inputStream) {
+	private Image downloadCapturedImageData(InputStream inputStream, long imageSize) {
 		byte[] imageInByte = null;
 		BufferedImage bImageFromConvert = null;
 
-		try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();) {
-			byte[] buffer = new byte[0xFFFF]; // 65536
+		try {
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-			for (int len; (len = inputStream.read(buffer)) != -1;)
-				byteArrayOutputStream.write(buffer, 0, len);
+			int bytesRead = -1;
+			byte[] buffer = new byte[CHUNKSIZE];
+			// byte[] buffer = new byte[0xFFFF]; // 65536
+
+			while ((bytesRead = inputStream.read(buffer)) != -1) {
+				byteArrayOutputStream.write(buffer, 0, bytesRead);
+			}
 
 			byteArrayOutputStream.flush();
 			imageInByte = byteArrayOutputStream.toByteArray();
@@ -219,9 +226,8 @@ public class DownloadData {
 
 	/** Download File Data to Temporary folder
 	 * @return File object */
-	private File downloadFileData(InputStream inputStream, String fileName) throws FileNotFoundException {
+	private File downloadFileData(InputStream inputStream, String fileName, long fileSize) throws FileNotFoundException {
 		// opens input stream from the HTTP connection
-		// InputStream inputStream = httpConn.getInputStream();
 		String saveFileFullPath = MainScene.DOWNLOAD_TEMP_DIR_LOCATION + File.separator + fileName;
 		File fileData;
 
@@ -233,7 +239,8 @@ public class DownloadData {
 			FileOutputStream fileOutputStream = new FileOutputStream(saveFileFullPath);
 
 			int bytesRead = -1;
-			byte[] buffer = new byte[0xFFFF];
+			byte[] buffer = new byte[CHUNKSIZE];
+			// byte[] buffer = new byte[0xFFFF]; // 65536
 
 			while ((bytesRead = inputStream.read(buffer)) != -1) {
 				fileOutputStream.write(buffer, 0, bytesRead);
