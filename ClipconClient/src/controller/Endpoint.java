@@ -14,12 +14,14 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 
 import application.Main;
+import javafx.beans.property.SimpleStringProperty;
 import model.Contents;
 import model.Message;
 import model.MessageDecoder;
 import model.MessageEncoder;
 import model.MessageParser;
 import model.User;
+import userInterface.MainScene;
 import userInterface.UserInterface;
 
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
@@ -58,9 +60,9 @@ public class Endpoint {
 
 	@OnMessage
 	public void onMessage(Message message) {
-		System.out.println("message type: " + message.getType());
+		//System.out.println("message type: " + message.getType());
+		System.out.println("message type: " + message.get(Message.TYPE));
 		switch (message.get(Message.TYPE)) {
-
 		case Message.RESPONSE_CREATE_GROUP:
 
 			switch (message.get(Message.RESULT)) {
@@ -86,7 +88,30 @@ public class Endpoint {
 			}
 
 			break;
+			
+		case Message.RESPONSE_CHANGE_NAME:
+			
+			switch (message.get(Message.RESULT)) {
+			case Message.CONFIRM:
+				System.out.println("nickname change confirm");
+	
+				String changeName = message.get(Message.CHANGE_NAME);
+				
+				user.setName(changeName);
+				user.getGroup().getUserList().get(0).setName(changeName);
+				user.getGroup().getUserList().get(0).setNameProperty(new SimpleStringProperty(changeName));
+				
+				ui.getMainScene().setCloseNicknameChangeFlag(true);
+				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list initialization
 
+				break;
+			case Message.REJECT:
+				System.out.println("nickname change reject");
+				break;
+			}
+			
+			break;
+			
 		case Message.RESPONSE_JOIN_GROUP:
 
 			switch (message.get(Message.RESULT)) {
@@ -140,6 +165,26 @@ public class Endpoint {
 			ui.getMainScene().setAddGroupParticipantFlag(true); // update UI list
 
 			break;
+			
+		case Message.NOTI_CHANGE_NAME:
+			
+			System.out.println("change name noti");
+			
+			String name = message.get(Message.NAME);
+			System.out.println("name = " + name);
+			String changeName = message.get(Message.CHANGE_NAME);
+			System.out.println("change name = " + changeName);
+			
+			for(int i=0; i<user.getGroup().getUserList().size(); i++) {
+				if(user.getGroup().getUserList().get(i).getName().equals(name)) {
+					user.getGroup().getUserList().remove(i);
+					user.getGroup().getUserList().add(i, new User(changeName));
+				}
+			}
+			
+			ui.getMainScene().setInitGroupParticipantFlag(true); // UI list initialization
+			
+			break;
 
 		case Message.NOTI_EXIT_PARTICIPANT:
 
@@ -168,10 +213,12 @@ public class Endpoint {
 
 			ui.getMainScene().getHistoryList().add(0, contents);
 			ui.getMainScene().setAddContentsInHistoryFlag(true); // update UI list
+			
 			break;
 
 		default:
-			System.out.println("default");
+			System.out.println("Endpoint default");
+			System.out.println("Endpoint default message type: " + message.get(Message.TYPE));
 			break;
 		}
 	}

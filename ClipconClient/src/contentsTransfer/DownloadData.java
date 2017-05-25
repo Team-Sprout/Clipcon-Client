@@ -92,35 +92,37 @@ public class DownloadData {
 					break;
 
 				case Contents.TYPE_IMAGE:
-					long imageSize = httpConn.getContentLengthLong();
+					MainScene.showProgressBarFlag = true;
 
 					// Get Image Object in Response Body
-					Image imageData = downloadCapturedImageData(httpConn.getInputStream(), imageSize);
+					Image imageData = downloadCapturedImageData(httpConn.getInputStream());
 
 					ImageTransferable imageTransferable = new ImageTransferable(imageData);
 					ClipboardController.writeClipboard(imageTransferable);
+					MainScene.closeProgressBarFlag = true;
 					break;
 
 				case Contents.TYPE_FILE:
+					MainScene.showProgressBarFlag = true;
+            
 					String fileOriginName = requestContents.getContentsValue();
-					long fileSize = httpConn.getContentLengthLong();
-
 					// Save Real File(filename: fileOriginName) to Clipcon Folder Get Image Object in Response Body
-					File fileData = downloadFileData(httpConn.getInputStream(), fileOriginName, fileSize);
+					File fileData = downloadFileData(httpConn.getInputStream(), fileOriginName);
 
 					ArrayList<File> fileList = new ArrayList<File>();
 					fileList.add(fileData);
 
 					FileTransferable fileTransferable = new FileTransferable(fileList);
 					ClipboardController.writeClipboard(fileTransferable);
+					MainScene.closeProgressBarFlag = true;
 					break;
 
 				case Contents.TYPE_MULTIPLE_FILE:
+					MainScene.showProgressBarFlag = true;
+            
 					String multipleFileOriginName = requestContents.getContentsValue();
-					long multipleFileSize = httpConn.getContentLengthLong();
-
 					// Save Real ZIP File(filename: fileOriginName) to Clipcon Folder
-					File multipleFile = downloadFileData(httpConn.getInputStream(), multipleFileOriginName, multipleFileSize);
+					File multipleFile = downloadFileData(httpConn.getInputStream(), multipleFileOriginName);
 
 					File outputUnZipFile = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 					System.out.println("outputUnZipFile Result: " + multipleFile.getName());
@@ -140,7 +142,7 @@ public class DownloadData {
 					}
 					FileTransferable multipleFileTransferable = new FileTransferable(multipleFileList);
 					ClipboardController.writeClipboard(multipleFileTransferable);
-
+					MainScene.closeProgressBarFlag = true;
 					break;
 
 				default:
@@ -192,7 +194,7 @@ public class DownloadData {
 	 * Download Captured Image Data
 	 * Change to Image object from file form of Image data
 	 */
-	private Image downloadCapturedImageData(InputStream inputStream, long imageSize) {
+	private Image downloadCapturedImageData(InputStream inputStream) {
 		byte[] imageInByte = null;
 		BufferedImage bImageFromConvert = null;
 
@@ -226,7 +228,7 @@ public class DownloadData {
 
 	/** Download File Data to Temporary folder
 	 * @return File object */
-	private File downloadFileData(InputStream inputStream, String fileName, long fileSize) throws FileNotFoundException {
+	private File downloadFileData(InputStream inputStream, String fileName) throws FileNotFoundException {
 		// opens input stream from the HTTP connection
 		String saveFileFullPath = MainScene.DOWNLOAD_TEMP_DIR_LOCATION + File.separator + fileName;
 		File fileData;

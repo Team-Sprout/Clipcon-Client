@@ -31,8 +31,6 @@ public class MessageParser {
 		User user = new User(message.get(Message.NAME));
 		Group group = new Group(message.get(Message.GROUP_PK));
 
-		// group.setName(name);
-
 		List<String> userStringList = new ArrayList<String>();
 		JSONArray tmpArray = message.getJson().getJSONArray(Message.LIST);
 		Iterator<?> it = tmpArray.iterator();

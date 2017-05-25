@@ -3,6 +3,7 @@ package userInterface;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -18,7 +19,6 @@ import contentsTransfer.ContentsUpload;
 import contentsTransfer.DownloadData;
 import controller.ClipboardController;
 import controller.Endpoint;
-import hookManager.GlobalKeyboardHook;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
@@ -44,6 +44,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import lombok.Getter;
 import lombok.Setter;
@@ -69,10 +70,16 @@ public class MainScene implements Initializable {
 	@FXML private Text nicknameText, groupKeyText;
 
 	private Endpoint endpoint = Endpoint.getIntance();
+	
+	private Stage nicknameChangeStage;
+	private Stage progressBarStage;
 
 	private boolean initGroupParticipantFlag;
 	private boolean addGroupParticipantFlag;
+	private boolean closeNicknameChangeFlag;
 	private boolean addContentsInHistoryFlag;
+	public static boolean showProgressBarFlag;
+	public static boolean closeProgressBarFlag;
 	private boolean showStartingViewFlag;
 	public static boolean clipboadChangeFlag;
 	
@@ -105,7 +112,9 @@ public class MainScene implements Initializable {
 		// flag initialize
 		initGroupParticipantFlag = false;
 		addGroupParticipantFlag = false;
+		closeNicknameChangeFlag = false;
 		addContentsInHistoryFlag = false;
+		showProgressBarFlag = false;
 		showStartingViewFlag = false;
 		clipboadChangeFlag = false;
 		
@@ -143,6 +152,10 @@ public class MainScene implements Initializable {
 							addGroupParticipantFlag = false;
 							addGroupParticipantList();
 						}
+						if (closeNicknameChangeFlag) {
+							closeNicknameChangeFlag = false;
+							nicknameChangeStage.close();
+						}
 						if (clipboadChangeFlag) {
 							clipboadChangeFlag = false;
 							showClipboardChangeNoti();
@@ -150,6 +163,14 @@ public class MainScene implements Initializable {
 						if (addContentsInHistoryFlag) {
 							addContentsInHistoryFlag = false;
 							addContentsInHistory();
+						}
+						if (showProgressBarFlag) {
+							showProgressBarFlag = false;
+							showProgressBar();
+						}
+						if (closeProgressBarFlag) {
+							closeProgressBarFlag = false;
+							progressBarStage.close();
 						}
 						if (showStartingViewFlag) {
 							showStartingViewFlag = false;
@@ -179,7 +200,16 @@ public class MainScene implements Initializable {
 		nicknameChangeBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				// TODO : nickname 변경
+				try {
+					Parent toNicknameChange = FXMLLoader.load(getClass().getResource("/view/NicknameChangeView.fxml"));
+					Scene scene = new Scene(toNicknameChange);
+					nicknameChangeStage = new Stage();
+
+					nicknameChangeStage.setScene(scene);
+					nicknameChangeStage.show();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -348,6 +378,9 @@ public class MainScene implements Initializable {
 			uploadNotifier.notify(uploadnoti);
 			uploadNotifier.onNotificationPressedProperty();
 			uploadNotifier.setOnNotificationPressed(event -> getRecentlyContentsInClipboard(content));
+		} 
+		else if(!content.getContentsType().equals(Contents.TYPE_STRING) && content.getUploadUserName().equals(Endpoint.user.getName())) {
+			MainScene.closeProgressBarFlag = true;
 		}
 	}
 
@@ -381,6 +414,23 @@ public class MainScene implements Initializable {
 			backStage.setScene(scene);
 			backStage.show();
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void showProgressBar() {
+		try {
+			// progress bar test start
+			Parent toProgressBar = FXMLLoader.load(getClass().getResource("/view/ProgressBar.fxml"));
+			Scene scene = new Scene(toProgressBar);
+			scene.getStylesheets().add("resources/myprogressbar.css");
+			progressBarStage = new Stage();
+			
+			progressBarStage.initStyle(StageStyle.TRANSPARENT);
+			progressBarStage.setScene(scene);
+			progressBarStage.show();
+			// progress bar test end`
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

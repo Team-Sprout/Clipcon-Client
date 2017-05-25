@@ -33,13 +33,13 @@ public class MultipartUtility {
 	private PrintWriter writer;
 
 	/**
-	* This constructor initializes a new HTTP POST request with content type is
-	* set to multipart/form-data
-	* 
-	* @param requestURL
-	* @param charset
-	* @throws IOException
-	*/
+	 * This constructor initializes a new HTTP POST request with content type is
+	 * set to multipart/form-data
+	 * 
+	 * @param requestURL
+	 * @param charset
+	 * @throws IOException
+	 */
 	public MultipartUtility(String requestURL, String charset) throws IOException {
 		this.charset = charset;
 
