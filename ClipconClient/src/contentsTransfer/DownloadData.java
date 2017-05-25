@@ -92,15 +92,18 @@ public class DownloadData {
 					break;
 
 				case Contents.TYPE_IMAGE:
+					MainScene.showProgressBarFlag = true;
 					// Get Image Object in Response Body
 					Image imageData = downloadCapturedImageData(httpConn.getInputStream());
 					System.out.println("ImageData Result: " + imageData.toString());
 
 					ImageTransferable imageTransferable = new ImageTransferable(imageData);
 					ClipboardController.writeClipboard(imageTransferable);
+					MainScene.closeProgressBarFlag = true;
 					break;
 
 				case Contents.TYPE_FILE:
+					MainScene.showProgressBarFlag = true;
 					String fileOriginName = requestContents.getContentsValue();
 
 					// Save Real File(filename: fileOriginName) to Clipcon Folder Get Image Object in Response Body
@@ -112,9 +115,11 @@ public class DownloadData {
 
 					FileTransferable fileTransferable = new FileTransferable(fileList);
 					ClipboardController.writeClipboard(fileTransferable);
+					MainScene.closeProgressBarFlag = true;
 					break;
 
 				case Contents.TYPE_MULTIPLE_FILE:
+					MainScene.showProgressBarFlag = true;
 					String multipleFileOriginName = requestContents.getContentsValue();
 					// Save Real ZIP File(filename: fileOriginName) to Clipcon Folder
 					File multipleFile = downloadFileData(httpConn.getInputStream(), multipleFileOriginName);
@@ -138,7 +143,7 @@ public class DownloadData {
 					}
 					FileTransferable multipleFileTransferable = new FileTransferable(multipleFileList);
 					ClipboardController.writeClipboard(multipleFileTransferable);
-
+					MainScene.closeProgressBarFlag = true;
 					break;
 
 				default:
