@@ -30,7 +30,7 @@ public class NicknameChangeScene implements Initializable {
 	private UserInterface ui = UserInterface.getIntance();
 
 	@FXML private TextField nicknameTF;
-	@FXML private Button changeBtn;
+	@FXML private Button OkBtn, XBtn;
 	
 	private Endpoint endpoint = Endpoint.getIntance();
 	
@@ -84,7 +84,7 @@ public class NicknameChangeScene implements Initializable {
 			}
 		});
 		
-		changeBtn.setOnAction(new EventHandler<ActionEvent>() {
+		OkBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				if(nicknameTF.getText().length() == 0) {
@@ -92,6 +92,13 @@ public class NicknameChangeScene implements Initializable {
 				} else {
 					sendNicknameChangeMessage(nicknameTF.getText());
 				}
+			}
+		});
+		
+		XBtn.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				MainScene.closeNicknameChangeFlag = true;
 			}
 		});
 		
