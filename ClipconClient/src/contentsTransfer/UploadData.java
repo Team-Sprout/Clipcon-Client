@@ -33,10 +33,8 @@ public class UploadData {
 			setCommonParameter(multipart);
 
 			multipart.addFormField("stringData", stringData);
-			System.out.println("stringData: " + stringData);
 
 			List<String> response = multipart.finish();
-
 			for (String line : response) {
 				System.out.println(line);
 			}
@@ -54,10 +52,8 @@ public class UploadData {
 			setCommonParameter(multipart);
 
 			multipart.addImagePart("imageData", capturedImageData);
-			System.out.println("imageData: " + capturedImageData.toString());
 
 			List<String> response = multipart.finish();
-
 			for (String line : response) {
 				System.out.println(line);
 			}
@@ -69,7 +65,7 @@ public class UploadData {
 
 	/** Upload File Data
 	 * 
-	 * @param fileFullPathList	 file path from clipboard
+	 * @param fileFullPathLis - file path from clipboard
 	 */
 	public void uploadMultipartData(ArrayList<String> fileFullPathList) {
 		try {
@@ -84,24 +80,17 @@ public class UploadData {
 			/* case: Single file data(not a folder) */
 			if (fileFullPathList.size() == 1 && firstUploadFile.isFile()) {
 				MainScene.showProgressBarFlag = true;
-				
-				System.out.println("\nSingle File Uploading~~\n");
 				multipart.addFilePart("fileData", firstUploadFile);
-
-				// [hee]
-//				doInBackground(firstUploadFile, multipart);
 			}
 			/* case: Multiple file data, One or more folders */
 			else {
 				MainScene.showProgressBarFlag = true;
-				
-				System.out.println("\nMultiple File or Directory Uploading~~\n");
+
 				try {
 					File uploadRootDir = new File(MainScene.UPLOAD_TEMP_DIR_LOCATION);
 					String zipFileFillPath = MultipleFileCompress.compress(fileFullPathList);
-					System.out.println("----------------------<<zipFileFullPath>>: " + zipFileFillPath);
+					
 					File uploadZipFile = new File(zipFileFillPath);
-
 					multipart.addFilePart("multipartFileData", uploadZipFile);
 
 					// Delete child files that already exist after uploading
@@ -109,14 +98,11 @@ public class UploadData {
 						for (int i = 0; i < uploadRootDir.listFiles().length; i++)
 							uploadRootDir.listFiles()[i].delete();
 					}
-
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-
 			List<String> response = multipart.finish();
-
 			for (String line : response) {
 				System.out.println(line);
 			}
@@ -125,31 +111,6 @@ public class UploadData {
 			System.err.println(ex);
 		}
 	}
-
-//	public void doInBackground(File uploadFile, MultipartUtility multipart) {
-//		byte[] buffer = new byte[4096];
-//		int bytesRead = -1;
-//		long totalBytesRead = 0;
-//		int percentCompleted = 0;
-//		long fileSize = uploadFile.length();
-//
-//		try {
-//			FileInputStream inputStream = new FileInputStream(uploadFile);
-//
-//			while ((bytesRead = inputStream.read(buffer)) != -1) {
-//				multipart.writeFileBytes(buffer, 0, bytesRead);
-//				totalBytesRead += bytesRead;
-//				percentCompleted = (int) (totalBytesRead * 100 / fileSize);
-//
-//				System.out.println(percentCompleted);
-//				// setProgress(percentCompleted);
-//			}
-//
-//			inputStream.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
 
 	/** Parameter to be set in common for all data
 	 * userName, groupPK, uploadTime */
