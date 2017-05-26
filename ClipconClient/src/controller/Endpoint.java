@@ -101,7 +101,7 @@ public class Endpoint {
 				user.getGroup().getUserList().get(0).setName(changeName);
 				user.getGroup().getUserList().get(0).setNameProperty(new SimpleStringProperty(changeName));
 				
-				ui.getMainScene().setCloseNicknameChangeFlag(true);
+				MainScene.closeNicknameChangeFlag = true;
 				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list initialization
 
 				break;

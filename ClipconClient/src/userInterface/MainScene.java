@@ -76,7 +76,7 @@ public class MainScene implements Initializable {
 
 	private boolean initGroupParticipantFlag;
 	private boolean addGroupParticipantFlag;
-	private boolean closeNicknameChangeFlag;
+	public static boolean closeNicknameChangeFlag;
 	private boolean addContentsInHistoryFlag;
 	public static boolean showProgressBarFlag;
 	public static boolean closeProgressBarFlag;
@@ -206,6 +206,7 @@ public class MainScene implements Initializable {
 					nicknameChangeStage = new Stage();
 
 					nicknameChangeStage.setScene(scene);
+					nicknameChangeStage.initStyle(StageStyle.TRANSPARENT);
 					nicknameChangeStage.show();
 				} catch (IOException e) {
 					e.printStackTrace();
