@@ -52,7 +52,7 @@ public class MultipartUtility {
 		httpConn.setDoOutput(true); // indicates POST method
 		httpConn.setDoInput(true);
 		httpConn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-		httpConn.setRequestProperty("User-Agent", "Heeee");
+		httpConn.setRequestProperty("User-Agent", "pcProgram");
 
 		outputStream = httpConn.getOutputStream();
 		writer = new PrintWriter(new OutputStreamWriter(outputStream, charset), true);

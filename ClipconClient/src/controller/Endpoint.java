@@ -153,7 +153,7 @@ public class Endpoint {
 			user = null;
 
 			break;
-
+			
 		case Message.NOTI_ADD_PARTICIPANT: // receive a message when another user enters the group and updates the UI
 
 			System.out.println("add participant noti");
@@ -214,6 +214,9 @@ public class Endpoint {
 			ui.getMainScene().getHistoryList().add(0, contents);
 			ui.getMainScene().setAddContentsInHistoryFlag(true); // update UI list
 			
+			break;
+			
+		case Message.RESPONSE_UPLOAD_INFO:
 			break;
 
 		default:

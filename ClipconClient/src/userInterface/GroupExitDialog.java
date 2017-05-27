@@ -16,6 +16,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.Message;
@@ -34,6 +35,8 @@ public class GroupExitDialog extends Stage {
     private GroupExitDialog() {
         setResizable(false);
         initStyle(StageStyle.TRANSPARENT);
+        initOwner(Main.getPrimaryStage());
+        initModality(Modality.WINDOW_MODAL);
  
         label = new Label();
         label.setWrapText(true);
@@ -93,7 +96,7 @@ public class GroupExitDialog extends Stage {
         borderPane.setCenter(dropShadowPane);
  
         Scene scene = new Scene(borderPane);                       
-        scene.getStylesheets().add("resources/alert.css");
+        scene.getStylesheets().add("resources/myAlert.css");
         scene.setFill(Color.TRANSPARENT);
         setScene(scene);
     }

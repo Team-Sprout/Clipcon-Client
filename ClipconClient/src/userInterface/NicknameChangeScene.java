@@ -61,7 +61,7 @@ public class NicknameChangeScene implements Initializable {
 						}
 						if (changeGroupFailFlag) {
 							changeGroupFailFlag = false;
-							GroupJoinFailDialog.show("중복되는 nickname 입니다. 다시 입력하세요.");
+							FailDialog.show("중복되는 nickname 입니다. 다시 입력하세요.");
 							nicknameTF.setText("");
 						}
 					}
@@ -105,7 +105,7 @@ public class NicknameChangeScene implements Initializable {
 	}
 	
 	public void notInputNickname() {
-		GroupJoinFailDialog.show("변경할 Nickname 을 입력하세요.");
+		FailDialog.show("변경할 Nickname 을 입력하세요.");
 	}
 	
 	public void sendNicknameChangeMessage(String nickname) {
