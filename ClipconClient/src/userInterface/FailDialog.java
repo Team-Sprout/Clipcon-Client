@@ -11,17 +11,20 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class GroupJoinFailDialog extends Stage {
+public class FailDialog extends Stage {
 	
     private static Label label;
-    private static GroupJoinFailDialog popup;
+    private static FailDialog popup;
  
-    private GroupJoinFailDialog() {
+    private FailDialog() {
         setResizable(false);
         initStyle(StageStyle.TRANSPARENT);
+        initOwner(Main.getPrimaryStage());
+        initModality(Modality.WINDOW_MODAL);
  
         label = new Label();
         label.setWrapText(true);
@@ -32,7 +35,7 @@ public class GroupJoinFailDialog extends Stage {
         okBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-                GroupJoinFailDialog.this.close();
+                FailDialog.this.close();
 			}
 		});
         okBtn.getStyleClass().add("button");
@@ -53,14 +56,14 @@ public class GroupJoinFailDialog extends Stage {
         borderPane.setCenter(dropShadowPane);
  
         Scene scene = new Scene(borderPane);                       
-        scene.getStylesheets().add("resources/alert.css");
+        scene.getStylesheets().add("resources/myAlert.css");
         scene.setFill(Color.TRANSPARENT);
         setScene(scene);
     }
  
     public static void show(String msg) {
         if (popup == null) {
-            popup = new GroupJoinFailDialog();
+            popup = new FailDialog();
         }
  
         label.setText(msg);

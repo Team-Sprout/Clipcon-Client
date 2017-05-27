@@ -66,7 +66,7 @@ public class GroupJoinScene implements Initializable{
 						}
 						if (joinGroupFailFlag) {
 							joinGroupFailFlag = false;
-							GroupJoinFailDialog.show("유효하지 않는 Group Key 입니다. 다시 입력하세요.");
+							FailDialog.show("유효하지 않는 Group Key 입니다. 다시 입력하세요.");
 							groupKey.setText("");
 						}
 					}
@@ -117,7 +117,7 @@ public class GroupJoinScene implements Initializable{
 	}
 	
 	public void notInputGroupKey() {
-		GroupJoinFailDialog.show("Group key 를 입력하세요.");
+		FailDialog.show("Group key 를 입력하세요.");
 	}
 	
 	// send REQUEST_JOIN_GROUP Messgae to server
