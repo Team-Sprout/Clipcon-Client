@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.text.*?>
+
+ <AnchorPane prefHeight="147.0" prefWidth="291.0" style="-fx-background-image: url('/resources/SettingBackground.png');" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.SettingScene">
+   <children>
+		<CheckBox fx:id="clipboardMonitorNotiCB" layoutX="22.0" layoutY="80.0" mnemonicParsing="false" text="Turn off clipboard monitor notification" onAction="#checkEvent" />
+		<CheckBox fx:id="uploadNotiCB" layoutX="22.0" layoutY="105.0" mnemonicParsing="false" text="Turn off upload notification" onAction="#checkEvent"/>
+  		<Button fx:id="XBtn" layoutX="265.0" layoutY="10.0" minHeight="18" minWidth="18" style="-fx-background-color: transparent; -fx-background-image: url('/resources/XBtn.png'); -fx-background-repeat: no-repeat;" /> 
+   </children>
+</AnchorPane>

@@ -43,6 +43,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
@@ -66,17 +67,19 @@ public class MainScene implements Initializable {
 	@FXML private TableColumn<Contents, String> typeColumn, uploaderColumn;
 	@FXML private TableColumn<Contents, Object> contentsColumn;
 
-	@FXML private Button exitBtn, groupKeyCopyBtn, nicknameChangeBtn;
+	@FXML private Button exitBtn, settingBtn, groupKeyCopyBtn, nicknameChangeBtn;
 	@FXML private Text nicknameText, groupKeyText;
 
 	private Endpoint endpoint = Endpoint.getIntance();
 	
+	private Stage SettingStage;
 	private Stage nicknameChangeStage;
 	private Stage progressBarStage;
 
 	private boolean initGroupParticipantFlag;
 	private boolean addGroupParticipantFlag;
 	public static boolean closeNicknameChangeFlag;
+	public static boolean closeSettingFlag;
 	private boolean addContentsInHistoryFlag;
 	public static boolean showProgressBarFlag;
 	public static boolean closeProgressBarFlag;
@@ -113,8 +116,10 @@ public class MainScene implements Initializable {
 		initGroupParticipantFlag = false;
 		addGroupParticipantFlag = false;
 		closeNicknameChangeFlag = false;
+		closeSettingFlag = false;
 		addContentsInHistoryFlag = false;
 		showProgressBarFlag = false;
+		closeProgressBarFlag = false;
 		showStartingViewFlag = false;
 		clipboadChangeFlag = false;
 		
@@ -156,9 +161,14 @@ public class MainScene implements Initializable {
 							closeNicknameChangeFlag = false;
 							nicknameChangeStage.close();
 						}
+						if (closeSettingFlag) {
+							closeSettingFlag = false;
+							SettingStage.close();
+						}
 						if (clipboadChangeFlag) {
 							clipboadChangeFlag = false;
-							showClipboardChangeNoti();
+							if(SettingScene.clipboardMonitorNotiFlag)
+								showClipboardChangeNoti();
 						}
 						if (addContentsInHistoryFlag) {
 							addContentsInHistoryFlag = false;
@@ -170,7 +180,14 @@ public class MainScene implements Initializable {
 						}
 						if (closeProgressBarFlag) {
 							closeProgressBarFlag = false;
-							progressBarStage.close();
+							Platform.runLater(() -> {
+								ui.getProgressBarScene().getText().setText("complete!");
+								ui.getProgressBarScene().getProgressBar().setProgress(1);
+		                    });
+		                    try { 
+		                    	Thread.sleep(1000); 
+		                    	progressBarStage.close();
+		                    } catch (InterruptedException e) {}
 						}
 						if (showStartingViewFlag) {
 							showStartingViewFlag = false;
@@ -187,6 +204,25 @@ public class MainScene implements Initializable {
 			@Override
 			public void handle(ActionEvent event) {
 				GroupExitDialog.show("그룹에서 나가며, 히스토리가 모두 삭제됩니다. 계속하시겠습니까?");
+			}
+		});
+		
+		settingBtn.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				try {
+					Parent toSetting = FXMLLoader.load(getClass().getResource("/view/SettingView.fxml"));
+					Scene scene = new Scene(toSetting);
+					SettingStage = new Stage();
+
+					SettingStage.setScene(scene);
+					SettingStage.initStyle(StageStyle.TRANSPARENT);
+					SettingStage.initOwner(Main.getPrimaryStage());
+					SettingStage.initModality(Modality.WINDOW_MODAL);
+					SettingStage.show();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -207,6 +243,10 @@ public class MainScene implements Initializable {
 
 					nicknameChangeStage.setScene(scene);
 					nicknameChangeStage.initStyle(StageStyle.TRANSPARENT);
+					//nicknameChangeStage.setX(Main.getPrimaryStage().getX() + (Main.getPrimaryStage().getWidth() / 2 - nicknameChangeStage.getWidth() / 2));
+					//nicknameChangeStage.setY(Main.getPrimaryStage().getY() + (Main.getPrimaryStage().getHeight() / 2 - nicknameChangeStage.getHeight() / 2));
+					nicknameChangeStage.initOwner(Main.getPrimaryStage());
+					nicknameChangeStage.initModality(Modality.WINDOW_MODAL);
 					nicknameChangeStage.show();
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -348,7 +388,7 @@ public class MainScene implements Initializable {
 
 		// Upload notification setting
 		
-		if (!content.getUploadUserName().equals(Endpoint.user.getName())) {
+		if (!content.getUploadUserName().equals(Endpoint.user.getName()) && SettingScene.uploadNotiFlag) {
 			Notification uploadnoti;
 
 			String notiTitle = null;
@@ -382,6 +422,7 @@ public class MainScene implements Initializable {
 		} 
 		else if(!content.getContentsType().equals(Contents.TYPE_STRING) && content.getUploadUserName().equals(Endpoint.user.getName())) {
 			MainScene.closeProgressBarFlag = true;
+			//ProgressBarScene.completeFlag = true;
 		}
 	}
 
@@ -422,16 +463,19 @@ public class MainScene implements Initializable {
 	
 	public void showProgressBar() {
 		try {
-			// progress bar test start
 			Parent toProgressBar = FXMLLoader.load(getClass().getResource("/view/ProgressBar.fxml"));
 			Scene scene = new Scene(toProgressBar);
 			scene.getStylesheets().add("resources/myprogressbar.css");
 			progressBarStage = new Stage();
 			
-			progressBarStage.initStyle(StageStyle.TRANSPARENT);
+			//progressBarStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth() - progressBarStage.getWidth());
+			//progressBarStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight() - progressBarStage.getHeight());
+			//progressBarStage.initStyle(StageStyle.TRANSPARENT);
 			progressBarStage.setScene(scene);
+			//progressBarStage.initOwner(Main.getPrimaryStage());
+			//progressBarStage.initModality(Modality.WINDOW_MODAL);
 			progressBarStage.show();
-			// progress bar test end`
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -453,13 +497,13 @@ public class MainScene implements Initializable {
 		hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
 			/* Upload HotKey */
 			public void onGlobalUploadHotkeysPressed() {
-				System.out.println("CTRL + ALT + H was pressed");
+				System.out.println("CTRL + SHIFT + C was pressed");
 				contentsUpload.upload();
 			}
 
 			/* Download HotKey */
 			public void onGlobalDownloadHotkeysPressed() {
-				System.out.println("CTRL + ALT + J was pressed");
+				System.out.println("CTRL + SHIFT + V was pressed");
 
 				if(historyList.size() > 0) {
 					Contents content = historyList.get(0);
