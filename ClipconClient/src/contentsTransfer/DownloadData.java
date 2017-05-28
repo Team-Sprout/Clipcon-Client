@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.websocket.EncodeException;
 
 import application.Main;
 import controller.ClipboardController;
@@ -27,7 +28,9 @@ import model.Contents;
 import model.FileTransferable;
 import model.History;
 import model.ImageTransferable;
+import model.Message;
 import userInterface.MainScene;
+import userInterface.ProgressBarScene;
 
 public class DownloadData {
 
@@ -42,6 +45,10 @@ public class DownloadData {
 	private String groupPK = null;
 
 	private Contents requestContents; // Contents Info to download
+	
+	private Endpoint endpoint = Endpoint.getIntance();
+	
+	private String multipartFileSize = "";
 
 	/** Constructor
 	 * Setting userName and groupPK */
@@ -59,6 +66,11 @@ public class DownloadData {
 	 *            History of my group
 	 */
 	public void requestDataDownload(String downloadDataPK) throws MalformedURLException {
+		ProgressBarScene.startDownloadingFlag = true;
+		MainScene.showProgressBarFlag = true;
+		
+		Message downloadInfoMsg = new Message().setType(Message.LOG_DOWNLOAD_INFO);
+		
 		History myhistory = Endpoint.user.getGroup().getHistory();
 		// Retrieving Contents from My History
 		requestContents = myhistory.getContentsByPK(downloadDataPK);
@@ -89,6 +101,9 @@ public class DownloadData {
 
 					StringSelection stringTransferable = new StringSelection(stringData);
 					ClipboardController.writeClipboard(stringTransferable);
+					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, "0");
+					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "stringData");
+					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, "");
 					break;
 
 				case Contents.TYPE_IMAGE:
@@ -100,6 +115,10 @@ public class DownloadData {
 					ImageTransferable imageTransferable = new ImageTransferable(imageData);
 					ClipboardController.writeClipboard(imageTransferable);
 					MainScene.closeProgressBarFlag = true;
+					
+					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, "0");
+					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "imageData");
+					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, "");
 					break;
 
 				case Contents.TYPE_FILE:
@@ -115,6 +134,10 @@ public class DownloadData {
 					FileTransferable fileTransferable = new FileTransferable(fileList);
 					ClipboardController.writeClipboard(fileTransferable);
 					MainScene.closeProgressBarFlag = true;
+					
+					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, "0");
+					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "fileData");
+					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, "");
 					break;
 
 				case Contents.TYPE_MULTIPLE_FILE:
@@ -124,6 +147,8 @@ public class DownloadData {
 					// Save Real ZIP File(filename: fileOriginName) to Clipcon Folder
 					File multipleFile = downloadFileData(httpConn.getInputStream(), multipleFileOriginName);
 
+					long endTimeAfterCompress = System.currentTimeMillis();
+					
 					File outputUnZipFile = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 					System.out.println("outputUnZipFile Result: " + multipleFile.getName());
 					ArrayList<File> multipleFileList = new ArrayList<File>();
@@ -136,6 +161,7 @@ public class DownloadData {
 
 						for (int j = 0; j < multipleFiles.length; j++) {
 							multipleFileList.add(multipleFiles[j]);
+							multipartFileSize += multipleFiles[j].length() + ", ";
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -143,6 +169,10 @@ public class DownloadData {
 					FileTransferable multipleFileTransferable = new FileTransferable(multipleFileList);
 					ClipboardController.writeClipboard(multipleFileTransferable);
 					MainScene.closeProgressBarFlag = true;
+					
+					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, Long.toString(endTimeAfterCompress));
+					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "multipartFileData");
+					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, multipartFileSize);
 					break;
 
 				default:
@@ -153,6 +183,19 @@ public class DownloadData {
 			} else {
 				throw new IOException("Server returned non-OK status: " + status);
 			}
+			
+			long endTimeAfterCompress = System.currentTimeMillis();
+			
+			downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_AFTER_COMPRESS, Long.toString(endTimeAfterCompress));
+			downloadInfoMsg.add(Message.DOWNLOAD_DEVICETYPE, "pcProgram");
+			downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_LENGTH, Long.toString(Endpoint.user.getGroup().getContents(downloadDataPK).getContentsSize()));
+			
+			try {
+				endpoint.sendMessage(downloadInfoMsg);
+			} catch (EncodeException e) {
+				e.printStackTrace();
+			}
+			
 			httpConn.disconnect();
 
 		} catch (IOException e) {
