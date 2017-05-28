@@ -98,6 +98,7 @@ public class UploadData {
 			/* case: Single file data(not a folder) */
 			if (fileFullPathList.size() == 1 && firstUploadFile.isFile()) {
 				multipart.addFilePart("fileData", firstUploadFile);
+				uploadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, "");
 			}
 			/* case: Multiple file data, One or more folders */
 			else {
