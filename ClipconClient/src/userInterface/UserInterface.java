@@ -9,6 +9,7 @@ public class UserInterface {
 	private StartingScene startingScene;
 	private GroupJoinScene groupJoinScene;
 	private MainScene mainScene;
+	private ProgressBarScene progressBarScene;
 
 	private static UserInterface uniqueUserInterface;
 

@@ -66,7 +66,7 @@ public class DownloadData {
 	 *            History of my group
 	 */
 	public void requestDataDownload(String downloadDataPK) throws MalformedURLException {
-		ProgressBarScene.startDownloadingFlag = true;
+		//ProgressBarScene.text.setText("downloading...");
 		MainScene.showProgressBarFlag = true;
 		
 		Message downloadInfoMsg = new Message().setType(Message.LOG_DOWNLOAD_INFO);
@@ -101,29 +101,27 @@ public class DownloadData {
 
 					StringSelection stringTransferable = new StringSelection(stringData);
 					ClipboardController.writeClipboard(stringTransferable);
+					
+					MainScene.closeProgressBarFlag = true;
 					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, "0");
 					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "stringData");
 					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, "");
 					break;
 
 				case Contents.TYPE_IMAGE:
-					MainScene.showProgressBarFlag = true;
-
 					// Get Image Object in Response Body
 					Image imageData = downloadCapturedImageData(httpConn.getInputStream());
 
 					ImageTransferable imageTransferable = new ImageTransferable(imageData);
 					ClipboardController.writeClipboard(imageTransferable);
-					MainScene.closeProgressBarFlag = true;
 					
+					MainScene.closeProgressBarFlag = true;
 					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, "0");
 					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "imageData");
 					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, "");
 					break;
 
 				case Contents.TYPE_FILE:
-					MainScene.showProgressBarFlag = true;
-            
 					String fileOriginName = requestContents.getContentsValue();
 					// Save Real File(filename: fileOriginName) to Clipcon Folder Get Image Object in Response Body
 					File fileData = downloadFileData(httpConn.getInputStream(), fileOriginName);
@@ -133,16 +131,14 @@ public class DownloadData {
 
 					FileTransferable fileTransferable = new FileTransferable(fileList);
 					ClipboardController.writeClipboard(fileTransferable);
-					MainScene.closeProgressBarFlag = true;
 					
+					MainScene.closeProgressBarFlag = true;
 					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, "0");
 					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "fileData");
 					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, "");
 					break;
 
 				case Contents.TYPE_MULTIPLE_FILE:
-					MainScene.showProgressBarFlag = true;
-            
 					String multipleFileOriginName = requestContents.getContentsValue();
 					// Save Real ZIP File(filename: fileOriginName) to Clipcon Folder
 					File multipleFile = downloadFileData(httpConn.getInputStream(), multipleFileOriginName);
@@ -168,8 +164,8 @@ public class DownloadData {
 					}
 					FileTransferable multipleFileTransferable = new FileTransferable(multipleFileList);
 					ClipboardController.writeClipboard(multipleFileTransferable);
-					MainScene.closeProgressBarFlag = true;
 					
+					MainScene.closeProgressBarFlag = true;
 					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, Long.toString(endTimeAfterCompress));
 					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "multipartFileData");
 					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, multipartFileSize);
