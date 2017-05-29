@@ -28,12 +28,12 @@ import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
 import model.Contents;
-import userInterface.MainScene;
+import userInterface.UserInterface;
 
 public class ClipboardController {
 	private static Clipboard systemClipboard; // Own system clipboard
 	private static String type; // data type
-
+	
 	/**
 	 * Read the Transferable object from the system clipboard to determine the data type and convert it to a Contents object
 	 * 
@@ -159,6 +159,8 @@ public class ClipboardController {
 	}
 
 	private static final class WindowProc implements WinUser.WindowProc {
+		
+		private UserInterface ui = UserInterface.getIntance();
 
 		private HWND nextViewer;
 
@@ -185,7 +187,7 @@ public class ClipboardController {
 				if (count > 1) {
 					try {
 						System.out.println("clipboard change!!!! " + count);
-						MainScene.clipboadChangeFlag = true;
+						ui.getMainScene().showClipboardChangeNoti();
 					} catch (IllegalStateException e) {
 					}
 				}

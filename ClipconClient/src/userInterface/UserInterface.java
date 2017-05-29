@@ -10,6 +10,8 @@ public class UserInterface {
 	private GroupJoinScene groupJoinScene;
 	private MainScene mainScene;
 	private ProgressBarScene progressBarScene;
+	private NicknameChangeScene nicknameChangeScene;
+	private SettingScene settingScene;
 
 	private static UserInterface uniqueUserInterface;
 

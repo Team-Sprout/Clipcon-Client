@@ -7,9 +7,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import com.jfoenix.controls.JFXTabPane;
@@ -75,20 +72,7 @@ public class MainScene implements Initializable {
 	private Stage SettingStage;
 	private Stage nicknameChangeStage;
 	private Stage progressBarStage;
-
-	private boolean initGroupParticipantFlag;
-	private boolean addGroupParticipantFlag;
-	public static boolean closeNicknameChangeFlag;
-	public static boolean closeSettingFlag;
-	private boolean addContentsInHistoryFlag;
-	public static boolean showProgressBarFlag;
-	private boolean closeProgressBarFlag;
-	private boolean showStartingViewFlag;
-	public static boolean clipboadChangeFlag;
 	
-	// run scheduler for checking
-	private ScheduledExecutorService scheduler;
-
 	private ObservableList<User> groupParticipantList;
 	private ContentsUpload contentsUpload;
 	private DownloadData downloader;
@@ -112,16 +96,6 @@ public class MainScene implements Initializable {
 		ui.setMainScene(this);
 		
 		Main.isInMainScene = true;
-		// flag initialize
-		initGroupParticipantFlag = false;
-		addGroupParticipantFlag = false;
-		closeNicknameChangeFlag = false;
-		closeSettingFlag = false;
-		addContentsInHistoryFlag = false;
-		showProgressBarFlag = false;
-		closeProgressBarFlag = false;
-		showStartingViewFlag = false;
-		clipboadChangeFlag = false;
 		
 		// UI css setting
 		tabPane.getStylesheets().add("/resources/mytab.css");
@@ -140,58 +114,6 @@ public class MainScene implements Initializable {
 
 		groupParticipantList = FXCollections.observableArrayList();
 		historyList = FXCollections.observableArrayList();
-
-		scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.scheduleAtFixedRate(new Runnable() {
-			@Override
-			public void run() {
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						// if flag turn on then client login game
-						if (initGroupParticipantFlag) {
-							initGroupParticipantFlag = false;
-							initGroupParticipantList();
-						}
-						if (addGroupParticipantFlag) {
-							addGroupParticipantFlag = false;
-							addGroupParticipantList();
-						}
-						if (closeNicknameChangeFlag) {
-							closeNicknameChangeFlag = false;
-							nicknameChangeStage.close();
-						}
-						if (closeSettingFlag) {
-							closeSettingFlag = false;
-							SettingStage.close();
-						}
-						if (clipboadChangeFlag) {
-							clipboadChangeFlag = false;
-							if(SettingScene.clipboardMonitorNotiFlag)
-								showClipboardChangeNoti();
-						}
-						if (addContentsInHistoryFlag) {
-							addContentsInHistoryFlag = false;
-							addContentsInHistory();
-						}
-						if (showProgressBarFlag) {
-							showProgressBarFlag = false;
-							showProgressBar();
-						}
-						if (closeProgressBarFlag) {
-							closeProgressBarFlag = false;
-							progressBarStage.close();
-						}
-						if (showStartingViewFlag) {
-							showStartingViewFlag = false;
-							showStartingView();
-							ui.setMainScene(null);
-							return;
-						}
-					}
-				});
-			}
-		}, 50, 50, TimeUnit.MILLISECONDS);
 
 		exitBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -279,145 +201,151 @@ public class MainScene implements Initializable {
 
 	/** Initialize group list */
 	public void initGroupParticipantList() {
-		groupParticipantList.clear();
+		Platform.runLater(() -> {
+			groupParticipantList.clear();
 
-		nicknameText.setText(Endpoint.user.getName());
-		System.out.println("-----nicknameText-----" + Endpoint.user.getName());
-		groupKeyText.setText(Endpoint.user.getGroup().getPrimaryKey());
-		System.out.println("-----groupKeyText-----" + Endpoint.user.getGroup().getPrimaryKey());
-		
-		for (int i = 0; i < Endpoint.user.getGroup().getUserList().size(); i++) {
-			groupParticipantList.add(Endpoint.user.getGroup().getUserList().get(i));
-		}
+			nicknameText.setText(Endpoint.user.getName());
+			groupKeyText.setText(Endpoint.user.getGroup().getPrimaryKey());
+			
+			for (int i = 0; i < Endpoint.user.getGroup().getUserList().size(); i++) {
+				groupParticipantList.add(Endpoint.user.getGroup().getUserList().get(i));
+			}
 
-		addGroupParticipantList();
+			addGroupParticipantList();
+		});
 	}
 
 	/** Add participant in group list */
 	public void addGroupParticipantList() {
+		Platform.runLater(() -> {
+			groupParticipantTable.setItems(groupParticipantList);
 
-		groupParticipantTable.setItems(groupParticipantList);
-
-		// Nickname column setting
-		groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
-		groupPartiNicknameColumn.setCellFactory(new Callback<TableColumn<User, String>, TableCell<User, String>>() {
-			@Override
-			public TableCell<User, String> call(TableColumn<User, String> column) {
-				TableCell<User, String> tc = new TableCell<User, String>() {
-					@Override
-					public void updateItem(String item, boolean empty) {
-						if (item != null) {
-							setText(item);
+			// Nickname column setting
+			groupPartiNicknameColumn.setCellValueFactory(cellData -> cellData.getValue().getNameProperty());
+			groupPartiNicknameColumn.setCellFactory(new Callback<TableColumn<User, String>, TableCell<User, String>>() {
+				@Override
+				public TableCell<User, String> call(TableColumn<User, String> column) {
+					TableCell<User, String> tc = new TableCell<User, String>() {
+						@Override
+						public void updateItem(String item, boolean empty) {
+							if (item != null) {
+								setText(item);
+							}
 						}
-					}
-				};
-				tc.setAlignment(Pos.CENTER);
-				return tc;
-			}
+					};
+					tc.setAlignment(Pos.CENTER);
+					return tc;
+				}
+			});
 		});
 	}
 
 	public void showClipboardChangeNoti() {
-		Notification clipboanoti = NotificationBuilder.create().build();
-
-		if (clipboardNotifier.getIsShowing()) {
-			clipboardNotifier.hidePopUp();
-		}
+		if(SettingScene.clipboardMonitorNotiFlag) {
+			Platform.runLater(() -> {
+				Notification clipboanoti = NotificationBuilder.create().build();
 		
-		clipboardNotifier.notify(clipboanoti);
-		clipboardNotifier.onNotificationPressedProperty();
-		clipboardNotifier.setOnNotificationPressed(event -> contentsUpload.upload());
+				if (clipboardNotifier.getIsShowing()) {
+					clipboardNotifier.hidePopUp();
+				}
+				
+				clipboardNotifier.notify(clipboanoti);
+				clipboardNotifier.onNotificationPressedProperty();
+				clipboardNotifier.setOnNotificationPressed(event -> contentsUpload.upload());
+			});
+		}
 	}
 
 	/** Add content in history list */
 	public void addContentsInHistory() {
-
-		historyTable.setItems(historyList);
-
-		Contents content = historyList.get(0);
-
-		// Contents column setting
-		contentsColumn.setCellValueFactory(new ContentsValueFactory());
-		contentsColumn.setCellFactory(new Callback<TableColumn<Contents, Object>, TableCell<Contents, Object>>() {
-			@Override
-			public TableCell<Contents, Object> call(TableColumn<Contents, Object> column) {
-				return new ContentsValueCell();
-			}
-		});
-
-		// Type column setting
-		typeColumn.setCellValueFactory(cellData -> cellData.getValue().getTypeProperty());
-		typeColumn.setCellFactory(new Callback<TableColumn<Contents, String>, TableCell<Contents, String>>() {
-			@Override
-			public TableCell<Contents, String> call(TableColumn<Contents, String> column) {
-				TableCell<Contents, String> tc = new TableCell<Contents, String>() {
-					@Override
-					public void updateItem(String item, boolean empty) {
-						if (item != null) {
-							setText(item);
-						}
-					}
-				};
-				tc.setAlignment(Pos.CENTER);
-				return tc;
-			}
-		});
-
-		// Uploader column setting
-		uploaderColumn.setCellValueFactory(cellData -> cellData.getValue().getUploaderProperty());
-		uploaderColumn.setCellFactory(new Callback<TableColumn<Contents, String>, TableCell<Contents, String>>() {
-			@Override
-			public TableCell<Contents, String> call(TableColumn<Contents, String> column) {
-				TableCell<Contents, String> tc = new TableCell<Contents, String>() {
-					@Override
-					public void updateItem(String item, boolean empty) {
-						if (item != null) {
-							setText(item);
-						}
-					}
-				};
-				tc.setAlignment(Pos.CENTER);
-				return tc;
-			}
-		});
-
-		// Upload notification setting
-		
-		if (!content.getUploadUserName().equals(Endpoint.user.getName()) && SettingScene.uploadNotiFlag) {
-			Notification uploadnoti;
-
-			String notiTitle = null;
-			String notiMsg = null;
-
-			if (content.getContentsType().equals(Contents.TYPE_STRING)) {
-				notiTitle = "String from " + content.getUploadUserName();
-				if (content.getContentsValue().length() > 30) {
-					notiMsg = content.getContentsValue().substring(0, 30);
-				} else {
-					notiMsg = content.getContentsValue();
+		Platform.runLater(() -> {
+			historyTable.setItems(historyList);
+	
+			Contents content = historyList.get(0);
+	
+			// Contents column setting
+			contentsColumn.setCellValueFactory(new ContentsValueFactory());
+			contentsColumn.setCellFactory(new Callback<TableColumn<Contents, Object>, TableCell<Contents, Object>>() {
+				@Override
+				public TableCell<Contents, Object> call(TableColumn<Contents, Object> column) {
+					return new ContentsValueCell();
 				}
-				uploadnoti = NotificationBuilder.create().title(notiTitle).message(notiMsg).build();
-			} else if (content.getContentsType().equals(Contents.TYPE_IMAGE)) {
-				notiTitle = "Image from " + content.getUploadUserName();
-				Image resizeImg = content.getContentsImage();
-				uploadnoti = NotificationBuilder.create().title(notiTitle).resizeImage(resizeImg).build();
-			} else {
-				notiTitle = "File from " + content.getUploadUserName();
-				if (content.getContentsValue().length() > 30) {
-					notiMsg = content.getContentsValue().substring(0, 30);
-				} else {
-					notiMsg = content.getContentsValue();
+			});
+	
+			// Type column setting
+			typeColumn.setCellValueFactory(cellData -> cellData.getValue().getTypeProperty());
+			typeColumn.setCellFactory(new Callback<TableColumn<Contents, String>, TableCell<Contents, String>>() {
+				@Override
+				public TableCell<Contents, String> call(TableColumn<Contents, String> column) {
+					TableCell<Contents, String> tc = new TableCell<Contents, String>() {
+						@Override
+						public void updateItem(String item, boolean empty) {
+							if (item != null) {
+								setText(item);
+							}
+						}
+					};
+					tc.setAlignment(Pos.CENTER);
+					return tc;
 				}
-				uploadnoti = NotificationBuilder.create().title(notiTitle).message(notiMsg).build();
+			});
+	
+			// Uploader column setting
+			uploaderColumn.setCellValueFactory(cellData -> cellData.getValue().getUploaderProperty());
+			uploaderColumn.setCellFactory(new Callback<TableColumn<Contents, String>, TableCell<Contents, String>>() {
+				@Override
+				public TableCell<Contents, String> call(TableColumn<Contents, String> column) {
+					TableCell<Contents, String> tc = new TableCell<Contents, String>() {
+						@Override
+						public void updateItem(String item, boolean empty) {
+							if (item != null) {
+								setText(item);
+							}
+						}
+					};
+					tc.setAlignment(Pos.CENTER);
+					return tc;
+				}
+			});
+	
+			// Upload notification setting
+			
+			if (!content.getUploadUserName().equals(Endpoint.user.getName()) && SettingScene.uploadNotiFlag) {
+				Notification uploadnoti;
+	
+				String notiTitle = null;
+				String notiMsg = null;
+	
+				if (content.getContentsType().equals(Contents.TYPE_STRING)) {
+					notiTitle = "String from " + content.getUploadUserName();
+					if (content.getContentsValue().length() > 30) {
+						notiMsg = content.getContentsValue().substring(0, 30);
+					} else {
+						notiMsg = content.getContentsValue();
+					}
+					uploadnoti = NotificationBuilder.create().title(notiTitle).message(notiMsg).build();
+				} else if (content.getContentsType().equals(Contents.TYPE_IMAGE)) {
+					notiTitle = "Image from " + content.getUploadUserName();
+					Image resizeImg = content.getContentsImage();
+					uploadnoti = NotificationBuilder.create().title(notiTitle).resizeImage(resizeImg).build();
+				} else {
+					notiTitle = "File from " + content.getUploadUserName();
+					if (content.getContentsValue().length() > 30) {
+						notiMsg = content.getContentsValue().substring(0, 30);
+					} else {
+						notiMsg = content.getContentsValue();
+					}
+					uploadnoti = NotificationBuilder.create().title(notiTitle).message(notiMsg).build();
+				}
+	
+				uploadNotifier.notify(uploadnoti);
+				uploadNotifier.onNotificationPressedProperty();
+				uploadNotifier.setOnNotificationPressed(event -> getRecentlyContentsInClipboard(content));
+			} 
+			else if(!content.getContentsType().equals(Contents.TYPE_STRING) && content.getUploadUserName().equals(Endpoint.user.getName())) {
+				ui.getProgressBarScene().completeProgress();
 			}
-
-			uploadNotifier.notify(uploadnoti);
-			uploadNotifier.onNotificationPressedProperty();
-			uploadNotifier.setOnNotificationPressed(event -> getRecentlyContentsInClipboard(content));
-		} 
-		else if(!content.getContentsType().equals(Contents.TYPE_STRING) && content.getUploadUserName().equals(Endpoint.user.getName())) {
-			ui.getProgressBarScene().completeProgress();
-		}
+		});
 	}
 
 	/** get Recently Contents In Clipboard */
@@ -431,89 +359,13 @@ public class MainScene implements Initializable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			closeProgressBarFlag = true;
+			closeProgressBarStage();
 		
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 	}
-
-	/** Show starting view */
-	public void showStartingView() {
-		try {
-			Main.isInMainScene = false;
-			
-			hook.stopHook();
-			clipboardNotifier = null;
-			uploadNotifier = null;
-			contentsUpload = null;
-			downloader = null;
-			scheduler.shutdown();
-			removeDirectory();
-			
-			Parent goBack = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
-			Scene scene = new Scene(goBack);
-			Stage backStage = Main.getPrimaryStage();
-
-			backStage.setScene(scene);
-			backStage.show();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	
-	public void showProgressBar() {
-		try {
-			Parent toProgressBar = FXMLLoader.load(getClass().getResource("/view/ProgressBar.fxml"));
-			Scene scene = new Scene(toProgressBar);
-			scene.getStylesheets().add("resources/myprogressbar.css");
-			progressBarStage = new Stage();
-			
-			progressBarStage.initStyle(StageStyle.TRANSPARENT);
-			progressBarStage.setScene(scene);
-			progressBarStage.initOwner(Main.getPrimaryStage());
-			progressBarStage.initModality(Modality.WINDOW_MODAL);
-			progressBarStage.show();
-			progressBarStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth()/2 - progressBarStage.getWidth()/2);
-			progressBarStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight()/2 - progressBarStage.getHeight()/2);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/** Start key Hooking */
-	public void startHookProcess() {
-		int uploadVitrualKey = KeyEvent.VK_C;
-		int downloadVitrualKey = KeyEvent.VK_V;
-		boolean CTRL_Key = true;
-		boolean ALT_Key = false;
-		boolean SHIFT_Key = true;
-		boolean WIN_Key = false;
-
-		hook = new hookManager.GlobalKeyboardHook();
-		hook.setHotKey(uploadVitrualKey, downloadVitrualKey, ALT_Key, CTRL_Key, SHIFT_Key, WIN_Key);
-		hook.startHook();
-		// waiting for the event
-		hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
-			/* Upload HotKey */
-			public void onGlobalUploadHotkeysPressed() {
-				System.out.println("CTRL + SHIFT + C was pressed");
-				contentsUpload.upload();
-			}
-
-			/* Download HotKey */
-			public void onGlobalDownloadHotkeysPressed() {
-				System.out.println("CTRL + SHIFT + V was pressed");
-
-				if(historyList.size() > 0) {
-					Contents content = historyList.get(0);
-					getRecentlyContentsInClipboard(content);
-				}
-			}
-		});
-	}
-
 	/** Define toolTip class */
 	public class TooltipTableRow<T> extends TableRow<T> {
 
@@ -536,8 +388,7 @@ public class MainScene implements Initializable {
 	}
 
 	/** Define content column value class */
-	public class ContentsValueFactory
-			implements Callback<TableColumn.CellDataFeatures<Contents, Object>, ObservableValue<Object>> {
+	public class ContentsValueFactory implements Callback<TableColumn.CellDataFeatures<Contents, Object>, ObservableValue<Object>> {
 		@SuppressWarnings("unchecked")
 		@Override
 		public ObservableValue<Object> call(TableColumn.CellDataFeatures<Contents, Object> data) {
@@ -592,7 +443,104 @@ public class MainScene implements Initializable {
 			}
 		}
 	}
+	
+	/** Start key Hooking */
+	public void startHookProcess() {
+		int uploadVitrualKey = KeyEvent.VK_C;
+		int downloadVitrualKey = KeyEvent.VK_V;
+		boolean CTRL_Key = true;
+		boolean ALT_Key = false;
+		boolean SHIFT_Key = true;
+		boolean WIN_Key = false;
 
+		hook = new hookManager.GlobalKeyboardHook();
+		hook.setHotKey(uploadVitrualKey, downloadVitrualKey, ALT_Key, CTRL_Key, SHIFT_Key, WIN_Key);
+		hook.startHook();
+		// waiting for the event
+		hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
+			/* Upload HotKey */
+			public void onGlobalUploadHotkeysPressed() {
+				System.out.println("CTRL + SHIFT + C was pressed");
+				contentsUpload.upload();
+			}
+
+			/* Download HotKey */
+			public void onGlobalDownloadHotkeysPressed() {
+				System.out.println("CTRL + SHIFT + V was pressed");
+
+				if(historyList.size() > 0) {
+					Contents content = historyList.get(0);
+					getRecentlyContentsInClipboard(content);
+				}
+			}
+		});
+	}
+	
+	public void showProgressBar() {
+		Platform.runLater(() -> {
+			try {
+				Parent toProgressBar = FXMLLoader.load(getClass().getResource("/view/ProgressBar.fxml"));
+				Scene scene = new Scene(toProgressBar);
+				scene.getStylesheets().add("resources/myprogressbar.css");
+				progressBarStage = new Stage();
+				
+				progressBarStage.initStyle(StageStyle.TRANSPARENT);
+				progressBarStage.setScene(scene);
+				progressBarStage.initOwner(Main.getPrimaryStage());
+				progressBarStage.initModality(Modality.WINDOW_MODAL);
+				progressBarStage.show();
+				progressBarStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth()/2 - progressBarStage.getWidth()/2);
+				progressBarStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight()/2 - progressBarStage.getHeight()/2);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+	
+	/** Show starting view */
+	public void showStartingView() {
+		ui.setMainScene(null);
+		Main.isInMainScene = false;
+		
+		hook.stopHook();
+		clipboardNotifier = null;
+		uploadNotifier = null;
+		contentsUpload = null;
+		downloader = null;
+		removeDirectory();
+		
+		Platform.runLater(() -> {
+			try {
+				Parent goBack = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
+				Scene scene = new Scene(goBack);
+				Stage backStage = Main.getPrimaryStage();
+	
+				backStage.setScene(scene);
+				backStage.show();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+	
+	public void closeProgressBarStage() {
+		Platform.runLater(() -> {
+			progressBarStage.close();
+		});
+	}
+	
+	public void closeNicknameChangeStage() {
+		Platform.runLater(() -> {
+			nicknameChangeStage.close();
+		});
+	}
+	
+	public void closeSettingStage() {
+		Platform.runLater(() -> {
+			SettingStage.close();
+		});
+	}
+	
 	/**
 	 * Create a temporary directory to save the imageFile, file when downloading
 	 * from server to save Zip file when uploading multiple file

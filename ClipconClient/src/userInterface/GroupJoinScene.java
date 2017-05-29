@@ -3,9 +3,6 @@ package userInterface;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.websocket.EncodeException;
 
@@ -39,41 +36,9 @@ public class GroupJoinScene implements Initializable{
 	
 	private Endpoint endpoint = Endpoint.getIntance();
 	
-	private boolean joinGroupSuccessFlag;
-	private boolean joinGroupFailFlag;
-	
-	// run scheduler for checking
-	ScheduledExecutorService scheduler;
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setGroupJoinScene(this);
-		joinGroupSuccessFlag = false;
-		joinGroupFailFlag = false;
-		
-		scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.scheduleAtFixedRate(new Runnable() {
-			@Override
-			public void run() {
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						// if flag turn on then client login game
-						if (joinGroupSuccessFlag) {
-							joinGroupSuccessFlag = false;
-							showMainView();
-							return;
-						}
-						if (joinGroupFailFlag) {
-							joinGroupFailFlag = false;
-							FailDialog.show("유효하지 않는 Group Key 입니다. 다시 입력하세요.");
-							groupKey.setText("");
-						}
-					}
-				});
-
-			}
-		}, 50, 50, TimeUnit.MILLISECONDS);
 		
 		groupKey.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
@@ -134,21 +99,25 @@ public class GroupJoinScene implements Initializable{
 		}
 	}
 	
+	public void failGroupJoin() {
+		FailDialog.show("유효하지 않는 Group Key 입니다. 다시 입력하세요.");
+		groupKey.setText("");
+	}
+	
 	public void showMainView() {
-		try {
-			
-			scheduler.shutdown();
-			
-			Parent toMain = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
-			Scene mainScene = new Scene(toMain);
-			Stage primaryStage = Main.getPrimaryStage();
-			
-			primaryStage.setScene(mainScene);
-			primaryStage.show();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		Platform.runLater(() -> {
+			try {
+				Parent toMain = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
+				Scene mainScene = new Scene(toMain);
+				Stage primaryStage = Main.getPrimaryStage();
+				
+				primaryStage.setScene(mainScene);
+				primaryStage.show();
+	
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 }
