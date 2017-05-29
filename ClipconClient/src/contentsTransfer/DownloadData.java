@@ -24,6 +24,7 @@ import javax.websocket.EncodeException;
 import application.Main;
 import controller.ClipboardController;
 import controller.Endpoint;
+import javafx.scene.control.ProgressBar;
 import model.Contents;
 import model.FileTransferable;
 import model.History;
@@ -31,6 +32,7 @@ import model.ImageTransferable;
 import model.Message;
 import userInterface.MainScene;
 import userInterface.ProgressBarScene;
+import userInterface.UserInterface;
 
 public class DownloadData {
 
@@ -45,6 +47,9 @@ public class DownloadData {
 	private String groupPK = null;
 
 	private Contents requestContents; // Contents Info to download
+	
+	public static boolean isDownloading = false;
+	private UserInterface ui = UserInterface.getIntance();
 	
 	private Endpoint endpoint = Endpoint.getIntance();
 	
@@ -66,7 +71,7 @@ public class DownloadData {
 	 *            History of my group
 	 */
 	public void requestDataDownload(String downloadDataPK) throws MalformedURLException {
-		//ProgressBarScene.text.setText("downloading...");
+		isDownloading = true;
 		MainScene.showProgressBarFlag = true;
 		
 		Message downloadInfoMsg = new Message().setType(Message.LOG_DOWNLOAD_INFO);
@@ -102,7 +107,7 @@ public class DownloadData {
 					StringSelection stringTransferable = new StringSelection(stringData);
 					ClipboardController.writeClipboard(stringTransferable);
 					
-					MainScene.closeProgressBarFlag = true;
+					
 					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, "0");
 					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "stringData");
 					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, "");
@@ -115,7 +120,7 @@ public class DownloadData {
 					ImageTransferable imageTransferable = new ImageTransferable(imageData);
 					ClipboardController.writeClipboard(imageTransferable);
 					
-					MainScene.closeProgressBarFlag = true;
+					ui.getProgressBarScene().completeProgress();
 					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, "0");
 					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "imageData");
 					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, "");
@@ -132,7 +137,7 @@ public class DownloadData {
 					FileTransferable fileTransferable = new FileTransferable(fileList);
 					ClipboardController.writeClipboard(fileTransferable);
 					
-					MainScene.closeProgressBarFlag = true;
+					ui.getProgressBarScene().completeProgress();
 					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, "0");
 					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "fileData");
 					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, "");
@@ -165,7 +170,7 @@ public class DownloadData {
 					FileTransferable multipleFileTransferable = new FileTransferable(multipleFileList);
 					ClipboardController.writeClipboard(multipleFileTransferable);
 					
-					MainScene.closeProgressBarFlag = true;
+					ui.getProgressBarScene().completeProgress();
 					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, Long.toString(endTimeAfterCompress));
 					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "multipartFileData");
 					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, multipartFileSize);
@@ -192,6 +197,7 @@ public class DownloadData {
 				e.printStackTrace();
 			}
 			
+			isDownloading = false;
 			httpConn.disconnect();
 
 		} catch (IOException e) {
