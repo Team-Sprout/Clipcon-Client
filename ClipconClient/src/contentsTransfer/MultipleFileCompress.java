@@ -44,12 +44,9 @@ public class MultipleFileCompress {
 		zos = new ZipOutputStream(bos); // ZipOutputStream
 		zos.setLevel(COMPRESSION_LEVEL); // Compression level - maximum compression ratio is 9, default 8
 
-		System.out.println(fileFullPathList.size());
-
 		try {
 			for (int i = 0; i < fileFullPathList.size(); i++) {
 				files[i] = new File(fileFullPathList.get(i));
-				System.out.println("---------------------------- created file path: " + files[i].getPath());
 
 				lastIndex = files[i].getPath().lastIndexOf(File.separator);
 

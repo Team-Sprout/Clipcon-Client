@@ -54,9 +54,6 @@ public class GroupExitDialog extends Stage {
 				exitGroupMsg.add(Message.GROUP_PK, Endpoint.user.getGroup().getPrimaryKey());
 				exitGroupMsg.add(Message.NAME, Endpoint.user.getName());
 				try {
-					if (endpoint == null) {
-						System.out.println("debuger_delf: endpoint is null");
-					}
 					endpoint = Endpoint.getIntance();
 					endpoint.sendMessage(exitGroupMsg);
 				} catch (IOException | EncodeException e) {

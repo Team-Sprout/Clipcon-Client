@@ -44,11 +44,8 @@ public class UploadData {
 			setCommonParameter(multipart);
 
 			multipart.addFormField("stringData", stringData);
-
-			List<String> response = multipart.finish();
-			for (String line : response) {
-				System.out.println(line);
-			}
+			multipart.finish();
+			
 		} catch (IOException ex) {
 			System.err.println(ex);
 		}
@@ -63,11 +60,7 @@ public class UploadData {
 			setCommonParameter(multipart);
 
 			multipart.addImagePart("imageData", capturedImageData);
-
-			List<String> response = multipart.finish();
-			for (String line : response) {
-				System.out.println(line);
-			}
+			multipart.finish();
 
 		} catch (IOException ex) {
 			System.err.println(ex);
@@ -86,9 +79,6 @@ public class UploadData {
 			// create uploading file
 			File firstUploadFile = new File(fileFullPathList.get(0));
 
-			System.out.println("uploadMultipartData file name :" + firstUploadFile.getName());
-
-			
 			// send LOG_UPLOAD_TIME Message to server
 			ui.getMainScene().showProgressBar();
 			long startTime = System.currentTimeMillis();
@@ -130,10 +120,7 @@ public class UploadData {
 				e.printStackTrace();
 			}
 			
-			List<String> response = multipart.finish();
-			for (String line : response) {
-				System.out.println(line);
-			}
+			multipart.finish();
 			
 		} catch (IOException ex) {
 			System.err.println(ex);

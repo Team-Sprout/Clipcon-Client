@@ -27,6 +27,7 @@ import com.sun.jna.platform.win32.WinUser.WNDCLASSEX;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
+import application.Main;
 import model.Contents;
 import userInterface.UserInterface;
 
@@ -97,15 +98,12 @@ public class ClipboardController {
 
 			// Extract the contents of the clipboard
 			if (type.equals(Contents.TYPE_STRING)) {
-				System.out.println("[ClipboardManager]Clipboard content type: TYPE_STRING");
 				extractData = (String) t.getTransferData(DataFlavor.stringFlavor);
 
 			} else if (type.equals(Contents.TYPE_IMAGE)) {
-				System.out.println("[ClipboardManager]Clipboard content type: TYPE_IMAGE");
 				extractData = (Image) t.getTransferData(DataFlavor.imageFlavor);
 
 			} else if (type.equals(Contents.TYPE_FILE)) {
-				System.out.println("[ClipboardManager]Clipboard content type: TYPE_FILE");
 				String[] filePath = getFilePathInSystemClipboard().split(", ");
 
 				ArrayList<String> filePathList = new ArrayList<String>();
@@ -115,8 +113,6 @@ public class ClipboardController {
 				}
 				extractData = filePathList;
 
-			} else {
-				System.out.println("[ClipboardManager] Types that can not fit in the clipboard");
 			}
 
 			return extractData;
@@ -164,18 +160,14 @@ public class ClipboardController {
 
 		private HWND nextViewer;
 
-		private static int count = 0;
-
 		public void setNextViewer(HWND nextViewer) {
 			this.nextViewer = nextViewer;
 		}
 
 		public LRESULT callback(HWND hWnd, int uMsg, WPARAM wParam, LPARAM lParam) {
-			// System.out.println("#callback : uMsg=" + uMsg);
 			switch (uMsg) {
 			case User32x.WM_CHANGECBCHAIN:
 				// If the next window is closing, repair the chain.
-				System.out.println("Repairing clipboard viewers chain...");
 				if (nextViewer.toNative().equals(wParam.toNative())) {
 					nextViewer = new HWND(Pointer.createConstant(lParam.longValue()));
 				} else if (nextViewer != null) {
@@ -183,14 +175,11 @@ public class ClipboardController {
 				}
 				return new LRESULT(0);
 			case User32x.WM_DRAWCLIPBOARD:
-				count++;
-				if (count > 1) {
-					try {
-						System.out.println("clipboard change!!!! " + count);
+				try {
+					if(Main.isInMainScene) {
 						ui.getMainScene().showClipboardChangeNoti();
-					} catch (IllegalStateException e) {
 					}
-				}
+				} catch (IllegalStateException e) { }
 				break;
 			}
 			return User32.INSTANCE.DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -233,7 +222,6 @@ public class ClipboardController {
 		// create new window
 		HWND hWnd = User32.INSTANCE.CreateWindowEx(User32.WS_EX_TOPMOST, windowClass, "My hidden helper window, used only to catch the windows events", 0, 0, 0, 0, 0, null, null, hInst, null);
 		getLastError();
-		System.out.println("Window created hwnd: " + hWnd.getPointer().toString());
 
 		// set clipboard viewer
 		HWND nextViewer = User32x.INSTANCE.SetClipboardViewer(hWnd);
@@ -260,8 +248,6 @@ public class ClipboardController {
 
 	public static int getLastError() {
 		int rc = Kernel32.INSTANCE.GetLastError();
-		if (rc != 0)
-			System.out.println("error: " + rc);
 		return rc;
 	}
 }
