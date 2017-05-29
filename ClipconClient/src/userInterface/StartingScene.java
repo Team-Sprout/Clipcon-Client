@@ -43,12 +43,6 @@ public class StartingScene implements Initializable {
 				// send REQUEST_REQUEST_CREATE_GROUP Messgae to server
 				Message createGroupMsg = new Message().setType(Message.REQUEST_CREATE_GROUP);
 				try {
-					if (endpoint == null) {
-						System.out.println("debuger_delf: endpoint is null");
-					}
-					if (createGroupMsg == null) {
-						System.out.println("debuger_delf: createGroupMsg is null");
-					}
 					endpoint = Endpoint.getIntance();
 					endpoint.sendMessage(createGroupMsg);
 				} catch (IOException | EncodeException e) {

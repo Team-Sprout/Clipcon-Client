@@ -80,10 +80,6 @@ public class NicknameChangeScene implements Initializable {
 		changeNicknameMsg.add(Message.CHANGE_NAME, nickname);
 		
 		try {
-			if (endpoint == null) {
-				System.out.println("debuger_delf: endpoint is null");
-			}
-
 			endpoint = Endpoint.getIntance();
 			endpoint.sendMessage(changeNicknameMsg);
 		} catch (IOException | EncodeException e) {

@@ -37,7 +37,6 @@ public class Message {
 		json = new JSONObject();
 		json.put(TYPE, type);
 		json.put(CONTENTS, jsonString);
-		System.out.println(json.toString());
 	}
 
 	public void add(String key, String value) {

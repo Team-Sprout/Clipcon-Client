@@ -62,11 +62,8 @@ public class Endpoint {
 		System.out.println("message type: " + message.get(Message.TYPE));
 		switch (message.get(Message.TYPE)) {
 		case Message.RESPONSE_CREATE_GROUP:
-
 			switch (message.get(Message.RESULT)) {
 			case Message.CONFIRM:
-				System.out.println("create group confirm");
-
 				ui.getStartingScene().showMainView(); // Show MainView
 				user = MessageParser.getUserAndGroupByMessage(message); // create Group Object using primaryKey, name(get from server) and set to user
 
@@ -78,21 +75,13 @@ public class Endpoint {
 				}
 
 				ui.getMainScene().initGroupParticipantList(); // UI list initialization
-				
-				break;
-			case Message.REJECT:
-				System.out.println("create group reject");
 				break;
 			}
-
 			break;
 			
 		case Message.RESPONSE_CHANGE_NAME:
-			
 			switch (message.get(Message.RESULT)) {
 			case Message.CONFIRM:
-				System.out.println("nickname change confirm");
-	
 				String changeName = message.get(Message.CHANGE_NAME);
 				
 				user.setName(changeName);
@@ -101,21 +90,13 @@ public class Endpoint {
 				
 				ui.getMainScene().closeNicknameChangeStage();
 				ui.getMainScene().initGroupParticipantList(); // UI list initialization
-
-				break;
-			case Message.REJECT:
-				System.out.println("nickname change reject");
 				break;
 			}
-			
 			break;
 			
 		case Message.RESPONSE_JOIN_GROUP:
-
 			switch (message.get(Message.RESULT)) {
 			case Message.CONFIRM:
-				System.out.println("join group confirm");
-
 				ui.getGroupJoinScene().showMainView(); // close group join and show MainView
 				user = MessageParser.getUserAndGroupByMessage(message); // create Group Object using primaryKey, name(get from server) and set to user
 
@@ -127,21 +108,15 @@ public class Endpoint {
 				}
 
 				ui.getMainScene().initGroupParticipantList(); // UI list initialization
-
 				break;
+				
 			case Message.REJECT:
-				System.out.println("join group reject");
 				ui.getGroupJoinScene().failGroupJoin(); // UI list initialization
-
 				break;
 			}
-
 			break;
 
 		case Message.RESPONSE_EXIT_GROUP:
-
-			System.out.println("exit group");
-
 			while (true) {
 				if (ui.getMainScene() != null) {
 					break;
@@ -150,29 +125,19 @@ public class Endpoint {
 
 			ui.getMainScene().showStartingView(); // show StartingView
 			user = null;
-
 			break;
 			
 		case Message.NOTI_ADD_PARTICIPANT: // receive a message when another user enters the group and updates the UI
-
-			System.out.println("add participant noti");
-
 			User newParticipant = new User(message.get(Message.PARTICIPANT_NAME));
 
 			user.getGroup().getUserList().add(newParticipant);
 			ui.getMainScene().getGroupParticipantList().add(newParticipant);
 			ui.getMainScene().addGroupParticipantList(); // update UI list
-
 			break;
 			
 		case Message.NOTI_CHANGE_NAME:
-			
-			System.out.println("change name noti");
-			
 			String name = message.get(Message.NAME);
-			System.out.println("name = " + name);
 			String changeName = message.get(Message.CHANGE_NAME);
-			System.out.println("change name = " + changeName);
 			
 			for(int i=0; i<user.getGroup().getUserList().size(); i++) {
 				if(user.getGroup().getUserList().get(i).getName().equals(name)) {
@@ -182,13 +147,9 @@ public class Endpoint {
 			}
 			
 			ui.getMainScene().initGroupParticipantList(); // UI list initialization
-			
 			break;
 
 		case Message.NOTI_EXIT_PARTICIPANT:
-
-			System.out.println("exit participant noti");
-
 			for (int i = 0; i < user.getGroup().getUserList().size(); i++) {
 				if (message.get(Message.PARTICIPANT_NAME).equals(user.getGroup().getUserList().get(i).getName())) {
 					int removeIndex = i;
@@ -196,19 +157,14 @@ public class Endpoint {
 					break;
 				}
 			}
-
+			
 			ui.getMainScene().initGroupParticipantList(); // update UI list
-
 			break;
 
 		case Message.NOTI_UPLOAD_DATA:
-
-			System.out.println("update date noti");
-
 			Contents contents = MessageParser.getContentsbyMessage(message);
 
 			user.getGroup().addContents(contents);
-			System.out.println("-----<Endpoint> contentsValue Context-----\n" + contents.getContentsValue());
 
 			ui.getMainScene().getHistoryList().add(0, contents);
 			ui.getMainScene().addContentsInHistory(); // update UI list
@@ -221,30 +177,22 @@ public class Endpoint {
 				}
 				ui.getMainScene().closeProgressBarStage();
 			}
-			
 			break;
 			
 		case Message.RESPONSE_UPLOAD_INFO:
 		case Message.RESPONSE_DOWNLOAD_INFO:
-			break;
-
 		default:
-			System.out.println("Endpoint default");
-			System.out.println("Endpoint default message type: " + message.get(Message.TYPE));
 			break;
 		}
 	}
 
 	public void sendMessage(Message message) throws IOException, EncodeException {
-		if (session == null) {
-			System.out.println("debuger_delf: session is null");
-		}
 		session.getBasicRemote().sendObject(message);
 	}
 
 	@OnClose
 	public void onClose() {
-		System.out.println("----------------------on Close----------------------");
+		System.out.println("[on Close]");
 		// TODO [delf] How to handle when a session is lost
 	}
 

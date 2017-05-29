@@ -81,7 +81,6 @@ public class DownloadData {
 		String contentsType = requestContents.getContentsType();
 		// Parameter to be sent by the GET method
 		String parameters = "userName=" + userName + "&" + "groupPK=" + groupPK + "&" + "downloadDataPK=" + downloadDataPK;
-		System.out.println("==================" + parameters);
 
 		try {
 			URL url = new URL(SERVER_URL + SERVER_SERVLET + "?" + parameters);
@@ -149,7 +148,6 @@ public class DownloadData {
 					long endTimeAfterCompress = System.currentTimeMillis();
 					
 					File outputUnZipFile = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
-					System.out.println("outputUnZipFile Result: " + multipleFile.getName());
 					ArrayList<File> multipleFileList = new ArrayList<File>();
 					File[] multipleFiles = null;
 
@@ -175,9 +173,8 @@ public class DownloadData {
 					break;
 
 				default:
-					System.out.println("It does not belong to any format.");
+					break;
 				}
-				System.out.println();
 
 			} else {
 				throw new IOException("Server returned non-OK status: " + status);

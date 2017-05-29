@@ -49,18 +49,14 @@ public class SettingScene implements Initializable {
 	public void checkEvent(ActionEvent event){
         if(clipboardMonitorNotiCB.isSelected()){
         	clipboardMonitorNotiFlag = false;
-        	System.out.println("Turn Off Clipboard Monitor Noti Flag");
         } else {
         	clipboardMonitorNotiFlag = true;
-        	System.out.println("Turn On Clipboard Monitor Noti Flag");
         }
         
         if(uploadNotiCB.isSelected()){
         	uploadNotiFlag = false;
-        	System.out.println("Turn Off Upload Noti Flag");
         } else {
         	uploadNotiFlag = true;
-        	System.out.println("Turn On Upload Noti Flag");
         }
     }
 }

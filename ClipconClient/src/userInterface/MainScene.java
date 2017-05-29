@@ -460,14 +460,11 @@ public class MainScene implements Initializable {
 		hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
 			/* Upload HotKey */
 			public void onGlobalUploadHotkeysPressed() {
-				System.out.println("CTRL + SHIFT + C was pressed");
 				contentsUpload.upload();
 			}
 
 			/* Download HotKey */
 			public void onGlobalDownloadHotkeysPressed() {
-				System.out.println("CTRL + SHIFT + V was pressed");
-
 				if(historyList.size() > 0) {
 					Contents content = historyList.get(0);
 					getRecentlyContentsInClipboard(content);
@@ -551,11 +548,9 @@ public class MainScene implements Initializable {
 	private void createDirectory() {
 		if (!dirForUpload.exists()) {
 			dirForUpload.mkdir(); // Create Directory
-			System.out.println("------------------------------------ create dir for Upload ");
 		}
 		if (!dirForDownload.exists()) {
 			dirForDownload.mkdir(); // Create Directory
-			System.out.println("------------------------------------ create dir  for Download");
 		}
 	}
 	

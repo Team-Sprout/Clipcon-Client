@@ -60,7 +60,6 @@ public class TrayIconManager {
 		closeListener = new ActionListener() {
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
-				System.out.println("closeListener");
 				System.exit(0);
 			}
 		};
@@ -71,7 +70,6 @@ public class TrayIconManager {
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
-						System.out.println("showListener");
 						Main.getPrimaryStage().show();
 					}
 				});
@@ -91,7 +89,6 @@ public class TrayIconManager {
 					Platform.runLater(new Runnable() {
 						@Override
 						public void run() {
-							System.out.println("mousePressed");
 							Main.getPrimaryStage().show();
 						}
 					});

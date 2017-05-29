@@ -15,15 +15,12 @@ public class ContentsUpload {
 		 Object clipboardData = ClipboardController.readClipboard();
 		 
 		 if (clipboardData instanceof String) {
-			 System.out.println("instanceof String");
 			 uploader.uploadStringData((String) clipboardData);
 	     } 
 		 else if (clipboardData instanceof Image) {
-			 System.out.println("instanceof Image");
 			 uploader.uploadCapturedImageData((Image) clipboardData);
 	     }
 		 else if (clipboardData instanceof ArrayList<?>) {
-			 System.out.println("instanceof ArrayList");
 			 uploader.uploadMultipartData((ArrayList<String>) clipboardData);
 		 }
 	 }

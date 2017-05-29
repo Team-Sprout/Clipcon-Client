@@ -31,12 +31,11 @@ public class Main extends Application {
 		Parent root = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
-		primaryStage.setResizable(false);
+		//primaryStage.setResizable(false);
 		primaryStage.show();
 
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent t) {
-				System.out.println("Stage is closing");
 				if (isInMainScene) {
 					Platform.runLater(new Runnable() {
 						@Override
@@ -51,7 +50,6 @@ public class Main extends Application {
 		});
 
 		System.loadLibrary("KeyHooking");
-		System.out.println("KeyHooking.dll file loaded");
 
 		Thread clipboardMonitorThread = new Thread(new Runnable() {
 			@Override
