@@ -82,7 +82,7 @@ public class MainScene implements Initializable {
 	public static boolean closeSettingFlag;
 	private boolean addContentsInHistoryFlag;
 	public static boolean showProgressBarFlag;
-	public static boolean closeProgressBarFlag;
+	private boolean closeProgressBarFlag;
 	private boolean showStartingViewFlag;
 	public static boolean clipboadChangeFlag;
 	
@@ -180,14 +180,7 @@ public class MainScene implements Initializable {
 						}
 						if (closeProgressBarFlag) {
 							closeProgressBarFlag = false;
-							Platform.runLater(() -> {
-								ui.getProgressBarScene().getText().setText("complete!");
-								ui.getProgressBarScene().getProgressBar().setProgress(1);
-		                    });
-		                    try { 
-		                    	Thread.sleep(1000); 
-		                    	progressBarStage.close();
-		                    } catch (InterruptedException e) {}
+							progressBarStage.close();
 						}
 						if (showStartingViewFlag) {
 							showStartingViewFlag = false;
@@ -220,6 +213,8 @@ public class MainScene implements Initializable {
 					SettingStage.initOwner(Main.getPrimaryStage());
 					SettingStage.initModality(Modality.WINDOW_MODAL);
 					SettingStage.show();
+					SettingStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth()/2 - SettingStage.getWidth()/2);
+					SettingStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight()/2 - SettingStage.getHeight()/2);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -243,11 +238,11 @@ public class MainScene implements Initializable {
 
 					nicknameChangeStage.setScene(scene);
 					nicknameChangeStage.initStyle(StageStyle.TRANSPARENT);
-					//nicknameChangeStage.setX(Main.getPrimaryStage().getX() + (Main.getPrimaryStage().getWidth() / 2 - nicknameChangeStage.getWidth() / 2));
-					//nicknameChangeStage.setY(Main.getPrimaryStage().getY() + (Main.getPrimaryStage().getHeight() / 2 - nicknameChangeStage.getHeight() / 2));
 					nicknameChangeStage.initOwner(Main.getPrimaryStage());
 					nicknameChangeStage.initModality(Modality.WINDOW_MODAL);
 					nicknameChangeStage.show();
+					nicknameChangeStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth()/2 - nicknameChangeStage.getWidth()/2);
+					nicknameChangeStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight()/2 - nicknameChangeStage.getHeight()/2);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -421,8 +416,7 @@ public class MainScene implements Initializable {
 			uploadNotifier.setOnNotificationPressed(event -> getRecentlyContentsInClipboard(content));
 		} 
 		else if(!content.getContentsType().equals(Contents.TYPE_STRING) && content.getUploadUserName().equals(Endpoint.user.getName())) {
-			MainScene.closeProgressBarFlag = true;
-			//ProgressBarScene.completeFlag = true;
+			ui.getProgressBarScene().completeProgress();
 		}
 	}
 
@@ -431,6 +425,14 @@ public class MainScene implements Initializable {
 		String downloadDataPK = content.getContentsPKName(); // recently Contents PK
 		try {
 			downloader.requestDataDownload(downloadDataPK);
+			
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			closeProgressBarFlag = true;
+		
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -468,14 +470,13 @@ public class MainScene implements Initializable {
 			scene.getStylesheets().add("resources/myprogressbar.css");
 			progressBarStage = new Stage();
 			
-			//progressBarStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth() - progressBarStage.getWidth());
-			//progressBarStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight() - progressBarStage.getHeight());
-			//progressBarStage.initStyle(StageStyle.TRANSPARENT);
+			progressBarStage.initStyle(StageStyle.TRANSPARENT);
 			progressBarStage.setScene(scene);
-			//progressBarStage.initOwner(Main.getPrimaryStage());
-			//progressBarStage.initModality(Modality.WINDOW_MODAL);
+			progressBarStage.initOwner(Main.getPrimaryStage());
+			progressBarStage.initModality(Modality.WINDOW_MODAL);
 			progressBarStage.show();
-			
+			progressBarStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth()/2 - progressBarStage.getWidth()/2);
+			progressBarStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight()/2 - progressBarStage.getHeight()/2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -606,7 +607,7 @@ public class MainScene implements Initializable {
 		}
 		if (!dirForDownload.exists()) {
 			dirForDownload.mkdir(); // Create Directory
-			System.out.println("------------------------------------ create dir for Download");
+			System.out.println("------------------------------------ create dir  for Download");
 		}
 	}
 	
@@ -614,7 +615,5 @@ public class MainScene implements Initializable {
 		dirForUpload.delete();
 		dirForDownload.delete();
 	}
-	
-	
-	
+
 }

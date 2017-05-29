@@ -190,14 +190,14 @@ public class Endpoint {
 
 			System.out.println("exit participant noti");
 
-			int removeIndex = -1;
 			for (int i = 0; i < user.getGroup().getUserList().size(); i++) {
 				if (message.get(Message.PARTICIPANT_NAME).equals(user.getGroup().getUserList().get(i).getName())) {
-					removeIndex = i;
+					int removeIndex = i;
+					user.getGroup().getUserList().remove(removeIndex);
+					break;
 				}
 			}
 
-			user.getGroup().getUserList().remove(removeIndex);
 			ui.getMainScene().setInitGroupParticipantFlag(true); // update UI list
 
 			break;
@@ -214,9 +214,19 @@ public class Endpoint {
 			ui.getMainScene().getHistoryList().add(0, contents);
 			ui.getMainScene().setAddContentsInHistoryFlag(true); // update UI list
 			
+			if (contents.getUploadUserName().equals(Endpoint.user.getName())) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				ui.getMainScene().setCloseProgressBarFlag(true);
+			}
+			
 			break;
 			
 		case Message.RESPONSE_UPLOAD_INFO:
+		case Message.RESPONSE_DOWNLOAD_INFO:
 			break;
 
 		default:

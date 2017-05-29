@@ -2,10 +2,8 @@ package userInterface;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
+import contentsTransfer.DownloadData;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,37 +20,21 @@ public class ProgressBarScene implements Initializable {
 
 	@FXML private Text text;
 	@FXML private ProgressBar progressBar ;
-	
-	public static boolean completeFlag;
-	
-	// run scheduler for checking
-	ScheduledExecutorService scheduler;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setProgressBarScene(this);
 		
+		if(DownloadData.isDownloading) {
+			text.setText("Downloading...");
+		}
 		progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-		
-		scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.scheduleAtFixedRate(new Runnable() {
-			@Override
-			public void run() {
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						if (completeFlag) {
-							completeFlag = false;
-							text.setText("Complete!");
-							progressBar.setProgress(1);
-							return;
-						}
-
-					}
-				});
-
-			}
-		}, 50, 50, TimeUnit.MILLISECONDS);
-		
+	}
+	
+	public void completeProgress() {
+		Platform.runLater(() -> {
+			text.setText("Complete!");
+			progressBar.setProgress(1);
+        });
 	}
 }
