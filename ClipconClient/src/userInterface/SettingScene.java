@@ -16,6 +16,8 @@ import lombok.Setter;
 @Setter
 public class SettingScene implements Initializable {
 	
+	private UserInterface ui = UserInterface.getIntance();
+	
 	@FXML private CheckBox clipboardMonitorNotiCB, uploadNotiCB;
 	@FXML private Button XBtn;
 	
@@ -38,7 +40,7 @@ public class SettingScene implements Initializable {
 		XBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				MainScene.closeSettingFlag = true;
+				ui.getMainScene().closeSettingStage();
 			}
 		});
 		

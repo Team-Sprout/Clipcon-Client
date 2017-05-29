@@ -33,43 +33,10 @@ public class NicknameChangeScene implements Initializable {
 	@FXML private Button OkBtn, XBtn;
 	
 	private Endpoint endpoint = Endpoint.getIntance();
-	
-	private boolean changeGroupSuccessFlag;
-	private boolean changeGroupFailFlag;
-	
-	// run scheduler for checking
-	ScheduledExecutorService scheduler;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		//ui.setGroupJoinScene(this);
-		changeGroupSuccessFlag = false;
-		changeGroupFailFlag = false;
-		
-		scheduler = Executors.newScheduledThreadPool(1);
-		scheduler.scheduleAtFixedRate(new Runnable() {
-			@Override
-			public void run() {
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						// if flag turn on then client login game
-						if (changeGroupSuccessFlag) {
-							changeGroupSuccessFlag = false;
-							closeNicknameChangeView();
-							return;
-						}
-						if (changeGroupFailFlag) {
-							changeGroupFailFlag = false;
-							FailDialog.show("중복되는 nickname 입니다. 다시 입력하세요.");
-							nicknameTF.setText("");
-						}
-					}
-
-				});
-
-			}
-		}, 50, 50, TimeUnit.MILLISECONDS);
+		ui.setNicknameChangeScene(this);
 		
 		nicknameTF.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
@@ -98,7 +65,7 @@ public class NicknameChangeScene implements Initializable {
 		XBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				MainScene.closeNicknameChangeFlag = true;
+				ui.getMainScene().closeNicknameChangeStage();
 			}
 		});
 		
@@ -122,9 +89,5 @@ public class NicknameChangeScene implements Initializable {
 		} catch (IOException | EncodeException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public void closeNicknameChangeView() {
-		
 	}
 }

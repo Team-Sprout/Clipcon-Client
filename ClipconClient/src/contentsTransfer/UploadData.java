@@ -12,6 +12,7 @@ import application.Main;
 import controller.Endpoint;
 import model.Message;
 import userInterface.MainScene;
+import userInterface.UserInterface;
 
 public class UploadData {
 
@@ -22,6 +23,8 @@ public class UploadData {
 
 	private String userName = null;
 	private String groupPK = null;
+	
+	private UserInterface ui = UserInterface.getIntance();
 	
 	private Endpoint endpoint = Endpoint.getIntance();
 	
@@ -54,8 +57,7 @@ public class UploadData {
 	/** Upload Captured Image Data in Clipboard */
 	public void uploadCapturedImageData(Image capturedImageData) {
 		try {
-			MainScene.showProgressBarFlag = true;
-			//startTime = System.currentTimeMillis();
+			ui.getMainScene().showProgressBar();
 			
 			MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
 			setCommonParameter(multipart);
@@ -88,7 +90,7 @@ public class UploadData {
 
 			
 			// send LOG_UPLOAD_TIME Message to server
-			MainScene.showProgressBarFlag = true;
+			ui.getMainScene().showProgressBar();
 			long startTime = System.currentTimeMillis();
 			
 			Message uploadInfoMsg = new Message().setType(Message.LOG_UPLOAD_INFO);

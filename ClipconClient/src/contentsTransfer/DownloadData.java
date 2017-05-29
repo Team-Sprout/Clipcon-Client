@@ -24,14 +24,12 @@ import javax.websocket.EncodeException;
 import application.Main;
 import controller.ClipboardController;
 import controller.Endpoint;
-import javafx.scene.control.ProgressBar;
 import model.Contents;
 import model.FileTransferable;
 import model.History;
 import model.ImageTransferable;
 import model.Message;
 import userInterface.MainScene;
-import userInterface.ProgressBarScene;
 import userInterface.UserInterface;
 
 public class DownloadData {
@@ -72,7 +70,7 @@ public class DownloadData {
 	 */
 	public void requestDataDownload(String downloadDataPK) throws MalformedURLException {
 		isDownloading = true;
-		MainScene.showProgressBarFlag = true;
+		ui.getMainScene().showProgressBar();
 		
 		Message downloadInfoMsg = new Message().setType(Message.LOG_DOWNLOAD_INFO);
 		

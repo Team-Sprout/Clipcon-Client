@@ -21,7 +21,6 @@ import model.MessageDecoder;
 import model.MessageEncoder;
 import model.MessageParser;
 import model.User;
-import userInterface.MainScene;
 import userInterface.UserInterface;
 
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
@@ -60,7 +59,6 @@ public class Endpoint {
 
 	@OnMessage
 	public void onMessage(Message message) {
-		//System.out.println("message type: " + message.getType());
 		System.out.println("message type: " + message.get(Message.TYPE));
 		switch (message.get(Message.TYPE)) {
 		case Message.RESPONSE_CREATE_GROUP:
@@ -69,18 +67,18 @@ public class Endpoint {
 			case Message.CONFIRM:
 				System.out.println("create group confirm");
 
-				ui.getStartingScene().setCreateGroupSuccessFlag(true); // Show MainView
+				ui.getStartingScene().showMainView(); // Show MainView
 				user = MessageParser.getUserAndGroupByMessage(message); // create Group Object using primaryKey, name(get from server) and set to user
 
 				while (true) {
 					if (ui.getMainScene() != null && user != null) {
 						break;
 					}
-					System.out.print(""); // 개 야매.......ㅋ..
+					System.out.print(""); // [TODO] UI refresh
 				}
 
-				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list initialization
-
+				ui.getMainScene().initGroupParticipantList(); // UI list initialization
+				
 				break;
 			case Message.REJECT:
 				System.out.println("create group reject");
@@ -101,8 +99,8 @@ public class Endpoint {
 				user.getGroup().getUserList().get(0).setName(changeName);
 				user.getGroup().getUserList().get(0).setNameProperty(new SimpleStringProperty(changeName));
 				
-				MainScene.closeNicknameChangeFlag = true;
-				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list initialization
+				ui.getMainScene().closeNicknameChangeStage();
+				ui.getMainScene().initGroupParticipantList(); // UI list initialization
 
 				break;
 			case Message.REJECT:
@@ -118,21 +116,22 @@ public class Endpoint {
 			case Message.CONFIRM:
 				System.out.println("join group confirm");
 
-				ui.getGroupJoinScene().setJoinGroupSuccessFlag(true); // close group join and show MainView
+				ui.getGroupJoinScene().showMainView(); // close group join and show MainView
 				user = MessageParser.getUserAndGroupByMessage(message); // create Group Object using primaryKey, name(get from server) and set to user
 
 				while (true) {
 					if (ui.getMainScene() != null && user != null) {
 						break;
 					}
+					System.out.print(""); // [TODO] UI refresh
 				}
 
-				ui.getMainScene().setInitGroupParticipantFlag(true); // UI list initialization
+				ui.getMainScene().initGroupParticipantList(); // UI list initialization
 
 				break;
 			case Message.REJECT:
 				System.out.println("join group reject");
-				ui.getGroupJoinScene().setJoinGroupFailFlag(true); // UI list initialization
+				ui.getGroupJoinScene().failGroupJoin(); // UI list initialization
 
 				break;
 			}
@@ -149,7 +148,7 @@ public class Endpoint {
 				}
 			}
 
-			ui.getMainScene().setShowStartingViewFlag(true); // show StartingView
+			ui.getMainScene().showStartingView(); // show StartingView
 			user = null;
 
 			break;
@@ -162,7 +161,7 @@ public class Endpoint {
 
 			user.getGroup().getUserList().add(newParticipant);
 			ui.getMainScene().getGroupParticipantList().add(newParticipant);
-			ui.getMainScene().setAddGroupParticipantFlag(true); // update UI list
+			ui.getMainScene().addGroupParticipantList(); // update UI list
 
 			break;
 			
@@ -182,7 +181,7 @@ public class Endpoint {
 				}
 			}
 			
-			ui.getMainScene().setInitGroupParticipantFlag(true); // UI list initialization
+			ui.getMainScene().initGroupParticipantList(); // UI list initialization
 			
 			break;
 
@@ -198,7 +197,7 @@ public class Endpoint {
 				}
 			}
 
-			ui.getMainScene().setInitGroupParticipantFlag(true); // update UI list
+			ui.getMainScene().initGroupParticipantList(); // update UI list
 
 			break;
 
@@ -212,7 +211,7 @@ public class Endpoint {
 			System.out.println("-----<Endpoint> contentsValue Context-----\n" + contents.getContentsValue());
 
 			ui.getMainScene().getHistoryList().add(0, contents);
-			ui.getMainScene().setAddContentsInHistoryFlag(true); // update UI list
+			ui.getMainScene().addContentsInHistory(); // update UI list
 			
 			if (contents.getUploadUserName().equals(Endpoint.user.getName())) {
 				try {
@@ -220,7 +219,7 @@ public class Endpoint {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				ui.getMainScene().setCloseProgressBarFlag(true);
+				ui.getMainScene().closeProgressBarStage();
 			}
 			
 			break;
