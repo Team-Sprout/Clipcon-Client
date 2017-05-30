@@ -179,8 +179,6 @@ public class Endpoint {
 			}
 			break;
 			
-		case Message.RESPONSE_UPLOAD_INFO:
-		case Message.RESPONSE_DOWNLOAD_INFO:
 		default:
 			break;
 		}

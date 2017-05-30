@@ -19,7 +19,6 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.websocket.EncodeException;
 
 import application.Main;
 import controller.ClipboardController;
@@ -28,7 +27,6 @@ import model.Contents;
 import model.FileTransferable;
 import model.History;
 import model.ImageTransferable;
-import model.Message;
 import userInterface.MainScene;
 import userInterface.UserInterface;
 
@@ -49,10 +47,6 @@ public class DownloadData {
 	public static boolean isDownloading = false;
 	private UserInterface ui = UserInterface.getIntance();
 	
-	private Endpoint endpoint = Endpoint.getIntance();
-	
-	private String multipartFileSize = "";
-
 	/** Constructor
 	 * Setting userName and groupPK */
 	public DownloadData(String userName, String groupPK) {
@@ -73,8 +67,6 @@ public class DownloadData {
 		
 		isDownloading = true;
 		ui.getMainScene().showProgressBar();
-		
-		Message downloadInfoMsg = new Message().setType(Message.LOG_DOWNLOAD_INFO);
 		
 		History myhistory = Endpoint.user.getGroup().getHistory();
 		// Retrieving Contents from My History
@@ -101,15 +93,13 @@ public class DownloadData {
 				switch (contentsType) {
 				case Contents.TYPE_STRING:
 					// Get String Object in Response Body
+					
 					String stringData = downloadStringData(httpConn.getInputStream());
 
 					StringSelection stringTransferable = new StringSelection(stringData);
 					ClipboardController.writeClipboard(stringTransferable);
 					
-					
-					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, "0");
-					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "stringData");
-					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, "");
+					ui.getProgressBarScene().completeProgress();
 					break;
 
 				case Contents.TYPE_IMAGE:
@@ -120,9 +110,6 @@ public class DownloadData {
 					ClipboardController.writeClipboard(imageTransferable);
 					
 					ui.getProgressBarScene().completeProgress();
-					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, "0");
-					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "imageData");
-					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, "");
 					break;
 
 				case Contents.TYPE_FILE:
@@ -139,9 +126,6 @@ public class DownloadData {
 					System.out.println("걸린 시간  : " + (end-start));
 					
 					ui.getProgressBarScene().completeProgress();
-					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, "0");
-					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "fileData");
-					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, "");
 					break;
 
 				case Contents.TYPE_MULTIPLE_FILE:
@@ -149,8 +133,6 @@ public class DownloadData {
 					// Save Real ZIP File(filename: fileOriginName) to Clipcon Folder
 					File multipleFile = downloadFileData(httpConn.getInputStream(), multipleFileOriginName);
 
-					long endTimeAfterCompress = System.currentTimeMillis();
-					
 					File outputUnZipFile = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 					ArrayList<File> multipleFileList = new ArrayList<File>();
 					File[] multipleFiles = null;
@@ -162,7 +144,6 @@ public class DownloadData {
 
 						for (int j = 0; j < multipleFiles.length; j++) {
 							multipleFileList.add(multipleFiles[j]);
-							multipartFileSize += multipleFiles[j].length() + ", ";
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -173,9 +154,6 @@ public class DownloadData {
 					System.out.println("걸린 시간  : " + (end2-start));
 					
 					ui.getProgressBarScene().completeProgress();
-					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, Long.toString(endTimeAfterCompress));
-					downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_TYPE, "multipartFileData");
-					downloadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, multipartFileSize);
 					break;
 
 				default:
@@ -184,18 +162,6 @@ public class DownloadData {
 
 			} else {
 				throw new IOException("Server returned non-OK status: " + status);
-			}
-			
-			long endTimeAfterCompress = System.currentTimeMillis();
-			
-			downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_AFTER_COMPRESS, Long.toString(endTimeAfterCompress));
-			downloadInfoMsg.add(Message.DOWNLOAD_DEVICETYPE, "pcProgram");
-			downloadInfoMsg.add(Message.DOWNLOAD_CONTENTS_LENGTH, Long.toString(Endpoint.user.getGroup().getContents(downloadDataPK).getContentsSize()));
-			
-			try {
-				endpoint.sendMessage(downloadInfoMsg);
-			} catch (EncodeException e) {
-				e.printStackTrace();
 			}
 			
 			isDownloading = false;
@@ -249,7 +215,7 @@ public class DownloadData {
 
 			int bytesRead = -1;
 			byte[] buffer = new byte[CHUNKSIZE];
-			// byte[] buffer = new byte[0xFFFF]; // 65536
+			//byte[] buffer = new byte[0xFFFF]; // 65536
 
 			while ((bytesRead = inputStream.read(buffer)) != -1) {
 				byteArrayOutputStream.write(buffer, 0, bytesRead);
@@ -288,7 +254,7 @@ public class DownloadData {
 
 			int bytesRead = -1;
 			byte[] buffer = new byte[CHUNKSIZE];
-			// byte[] buffer = new byte[0xFFFF]; // 65536
+			//byte[] buffer = new byte[0xFFFF]; // 65536
 
 			while ((bytesRead = inputStream.read(buffer)) != -1) {
 				fileOutputStream.write(buffer, 0, bytesRead);

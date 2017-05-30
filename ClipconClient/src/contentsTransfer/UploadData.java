@@ -5,11 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.websocket.EncodeException;
-
 import application.Main;
-import controller.Endpoint;
-import model.Message;
 import userInterface.MainScene;
 import userInterface.UserInterface;
 
@@ -24,10 +20,6 @@ public class UploadData {
 	private String groupPK = null;
 	
 	private UserInterface ui = UserInterface.getIntance();
-	
-	private Endpoint endpoint = Endpoint.getIntance();
-	
-	public static String multipartFileSize = "";
 
 	/** Constructor
 	 * setting userName and groupPK. */
@@ -78,17 +70,9 @@ public class UploadData {
 			// create uploading file
 			File firstUploadFile = new File(fileFullPathList.get(0));
 
-			// send LOG_UPLOAD_TIME Message to server
-			long startTime = System.currentTimeMillis();
-			
-			Message uploadInfoMsg = new Message().setType(Message.LOG_UPLOAD_INFO);
-			uploadInfoMsg.add(Message.UPLOAD_START_TIME, Long.toString(startTime));
-			
-			
 			/* case: Single file data(not a folder) */
 			if (fileFullPathList.size() == 1 && firstUploadFile.isFile()) {
 				multipart.addFilePart("fileData", firstUploadFile);
-				uploadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, "");
 			}
 			/* case: Multiple file data, One or more folders */
 			else {
@@ -105,17 +89,9 @@ public class UploadData {
 							uploadRootDir.listFiles()[i].delete();
 					}
 					
-					uploadInfoMsg.add(Message.MULTIPLE_CONTENTS_INFO, multipartFileSize);
-					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
-			
-			try {
-				endpoint.sendMessage(uploadInfoMsg);
-			} catch (IOException | EncodeException e) {
-				e.printStackTrace();
 			}
 			
 			multipart.finish();

@@ -19,6 +19,7 @@ public class MessageEncoder implements Encoder.Text<Message> {
 	}
 
 	public String encode(Message message) throws EncodeException {
+		System.out.println("String to send to server: " + message.getJson());
 		return message.getJson().toString();
 	}
 }
