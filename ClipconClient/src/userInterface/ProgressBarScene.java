@@ -27,6 +27,7 @@ public class ProgressBarScene implements Initializable {
 		
 		if(DownloadData.isDownloading) {
 			text.setText("Downloading...");
+			text.setX(text.getX() - 5);
 		}
 		progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 	}

@@ -4,7 +4,6 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.websocket.EncodeException;
 
@@ -35,6 +34,8 @@ public class UploadData {
 	public UploadData(String userName, String groupPK) {
 		this.userName = userName;
 		this.groupPK = groupPK;
+		
+		ui.getMainScene().showProgressBar();
 	}
 
 	/** Upload String Data */
@@ -54,8 +55,6 @@ public class UploadData {
 	/** Upload Captured Image Data in Clipboard */
 	public void uploadCapturedImageData(Image capturedImageData) {
 		try {
-			ui.getMainScene().showProgressBar();
-			
 			MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
 			setCommonParameter(multipart);
 
@@ -80,7 +79,6 @@ public class UploadData {
 			File firstUploadFile = new File(fileFullPathList.get(0));
 
 			// send LOG_UPLOAD_TIME Message to server
-			ui.getMainScene().showProgressBar();
 			long startTime = System.currentTimeMillis();
 			
 			Message uploadInfoMsg = new Message().setType(Message.LOG_UPLOAD_INFO);

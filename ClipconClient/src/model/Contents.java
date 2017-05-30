@@ -49,12 +49,18 @@ public class Contents {
 		this.uploadTime = uploadTime;
 		if (contentsType.equals(Contents.TYPE_IMAGE)) {
 			this.contentsValue = "Image";
+		} else if (contentsType.equals(Contents.TYPE_MULTIPLE_FILE)) {
+			// [TODO] 파일 목록 ?
 		} else {
 			this.contentsValue = contentsValue;
 		}
 		this.contentsImage = contentsImage;
-
-		this.typeProperty = new SimpleStringProperty(contentsType);
+		
+		if (contentsType.equals(Contents.TYPE_MULTIPLE_FILE)) {
+			this.typeProperty = new SimpleStringProperty("MULTIPLE\n    FILE");
+		} else {
+			this.typeProperty = new SimpleStringProperty(contentsType);
+		}
 		this.uploaderProperty = new SimpleStringProperty(uploadUserName);
 	}
 
