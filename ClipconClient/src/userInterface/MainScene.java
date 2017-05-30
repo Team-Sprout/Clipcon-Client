@@ -75,7 +75,9 @@ public class MainScene implements Initializable {
 	
 	private ObservableList<User> groupParticipantList;
 	private ContentsUpload contentsUpload;
+	private Thread uploadThread;
 	private DownloadData downloader;
+	private Thread downloadThread;
 
 	private ObservableList<Contents> historyList;
 
@@ -103,7 +105,14 @@ public class MainScene implements Initializable {
 		historyTable.getStylesheets().add("/resources/myhistorytable.css");
 
 		contentsUpload = new ContentsUpload();
+		uploadThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				contentsUpload.upload();
+			}
+		});
 		downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
+		
 		startHookProcess();
 		createDirectory();
 
@@ -177,7 +186,7 @@ public class MainScene implements Initializable {
 			public void handle(MouseEvent event) {
 				if (event.getClickCount() > 1) {
 					if (historyTable.getSelectionModel().getSelectedItem() != null)
-						getRecentlyContentsInClipboard(historyTable.getSelectionModel().getSelectedItem());
+						getSelectedContentsInClipboard(historyTable.getSelectionModel().getSelectedItem());
 				}
 			}
 		});
@@ -251,7 +260,7 @@ public class MainScene implements Initializable {
 				
 				clipboardNotifier.notify(clipboanoti);
 				clipboardNotifier.onNotificationPressedProperty();
-				clipboardNotifier.setOnNotificationPressed(event -> contentsUpload.upload());
+				clipboardNotifier.setOnNotificationPressed(event -> uploadThread.start());
 			});
 		}
 	}
@@ -340,9 +349,9 @@ public class MainScene implements Initializable {
 	
 				uploadNotifier.notify(uploadnoti);
 				uploadNotifier.onNotificationPressedProperty();
-				uploadNotifier.setOnNotificationPressed(event -> getRecentlyContentsInClipboard(content));
+				uploadNotifier.setOnNotificationPressed(event -> getSelectedContentsInClipboard(content));
 			} 
-			else if(!content.getContentsType().equals(Contents.TYPE_STRING) && content.getUploadUserName().equals(Endpoint.user.getName())) {
+			else if(content.getUploadUserName().equals(Endpoint.user.getName())) {
 				ui.getProgressBarScene().completeProgress();
 			}
 		});
@@ -350,8 +359,8 @@ public class MainScene implements Initializable {
 
 	/** get Recently Contents In Clipboard */
 	public void getRecentlyContentsInClipboard(Contents content) {
-		String downloadDataPK = content.getContentsPKName(); // recently Contents PK
 		try {
+			String downloadDataPK = content.getContentsPKName(); // recently Contents PK
 			downloader.requestDataDownload(downloadDataPK);
 			
 			try {
@@ -359,11 +368,39 @@ public class MainScene implements Initializable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
 			closeProgressBarStage();
-		
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			
+		} catch (MalformedURLException e1) {
+			e1.printStackTrace();
 		}
+	}
+	
+	/** get Selected Contents In Clipboard */
+	public void getSelectedContentsInClipboard(Contents content) {
+			String downloadDataPK = content.getContentsPKName(); // recently Contents PK
+			
+			downloadThread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						downloader.requestDataDownload(downloadDataPK);
+						
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						
+						closeProgressBarStage();
+						
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			downloadThread.start();
+			
 	}
 	
 	/** Define toolTip class */
@@ -503,7 +540,9 @@ public class MainScene implements Initializable {
 		clipboardNotifier = null;
 		uploadNotifier = null;
 		contentsUpload = null;
+		uploadThread = null;
 		downloader = null;
+		downloadThread = null;
 		removeDirectory();
 		
 		Platform.runLater(() -> {

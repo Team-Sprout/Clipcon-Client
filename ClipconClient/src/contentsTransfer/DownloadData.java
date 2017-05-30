@@ -69,6 +69,8 @@ public class DownloadData {
 	 *            History of my group
 	 */
 	public void requestDataDownload(String downloadDataPK) throws MalformedURLException {
+		long start = System.currentTimeMillis();
+		
 		isDownloading = true;
 		ui.getMainScene().showProgressBar();
 		
@@ -133,6 +135,8 @@ public class DownloadData {
 
 					FileTransferable fileTransferable = new FileTransferable(fileList);
 					ClipboardController.writeClipboard(fileTransferable);
+					long end = System.currentTimeMillis();
+					System.out.println("걸린 시간  : " + (end-start));
 					
 					ui.getProgressBarScene().completeProgress();
 					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, "0");
@@ -165,6 +169,8 @@ public class DownloadData {
 					}
 					FileTransferable multipleFileTransferable = new FileTransferable(multipleFileList);
 					ClipboardController.writeClipboard(multipleFileTransferable);
+					long end2 = System.currentTimeMillis();
+					System.out.println("걸린 시간  : " + (end2-start));
 					
 					ui.getProgressBarScene().completeProgress();
 					downloadInfoMsg.add(Message.DOWNLOAD_END_TIME_BEFORE_COMPRESS, Long.toString(endTimeAfterCompress));
