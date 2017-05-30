@@ -51,6 +51,7 @@ public class Contents {
 			this.contentsValue = "Image";
 		} else if (contentsType.equals(Contents.TYPE_MULTIPLE_FILE)) {
 			// [TODO] 파일 목록 ?
+			this.contentsValue = "Multiple File";
 		} else {
 			this.contentsValue = contentsValue;
 		}

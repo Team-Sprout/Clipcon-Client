@@ -95,8 +95,6 @@ public class MultipleFileCompress {
 
 		/// case: SourceFile is not a directory
 		else {
-			UploadData.multipartFileSize += file.length() + ", ";
-			
 			BufferedInputStream bis = null;
 			
 			try {

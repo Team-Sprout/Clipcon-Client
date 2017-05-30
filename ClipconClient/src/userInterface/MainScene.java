@@ -105,12 +105,6 @@ public class MainScene implements Initializable {
 		historyTable.getStylesheets().add("/resources/myhistorytable.css");
 
 		contentsUpload = new ContentsUpload();
-		uploadThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				contentsUpload.upload();
-			}
-		});
 		downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 		
 		startHookProcess();
@@ -260,9 +254,19 @@ public class MainScene implements Initializable {
 				
 				clipboardNotifier.notify(clipboanoti);
 				clipboardNotifier.onNotificationPressedProperty();
-				clipboardNotifier.setOnNotificationPressed(event -> uploadThread.start());
+				clipboardNotifier.setOnNotificationPressed(event -> upload());
 			});
 		}
+	}
+	
+	public void upload() {
+		uploadThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				contentsUpload.upload();
+			}
+		});
+		uploadThread.start();
 	}
 
 	/** Add content in history list */
