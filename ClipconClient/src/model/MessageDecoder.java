@@ -19,7 +19,6 @@ public class MessageDecoder implements Decoder.Text<Message> {
 	}
 
 	public Message decode(String incommingMessage) throws DecodeException {
-		System.out.println("Messages from the server: " + incommingMessage);
 		Message message = new Message().setJson(incommingMessage);
 		return message;
 	}

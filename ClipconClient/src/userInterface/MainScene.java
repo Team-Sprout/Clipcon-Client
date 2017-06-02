@@ -192,9 +192,10 @@ public class MainScene implements Initializable {
 
 				if (contents.getContentsType().equals(Contents.TYPE_STRING))
 					tooltipMsg = contents.getContentsValue() + "\n\nadded : " + contents.getUploadTime();
+				else if (contents.getContentsType().equals(Contents.TYPE_MULTIPLE_FILE))
+					tooltipMsg = contents.getMultipleFileListInfo() + "\n\nsize : " + contents.getContentsConvertedSize() + "\nadded : " + contents.getUploadTime();
 				else
-					tooltipMsg = contents.getContentsValue() + "\n\nsize : " + contents.getContentsConvertedSize()
-							+ "\nadded : " + contents.getUploadTime();
+					tooltipMsg = contents.getContentsValue() + "\n\nsize : " + contents.getContentsConvertedSize() + "\nadded : " + contents.getUploadTime();
 
 				return tooltipMsg;
 			});

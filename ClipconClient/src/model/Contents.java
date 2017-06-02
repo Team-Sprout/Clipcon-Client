@@ -35,12 +35,14 @@ public class Contents {
 	// String Type: String object value, File Type: FileOriginName
 	private String contentsValue;
 	private Image contentsImage;
+	
+	private String multipleFileListInfo;
 
 	private StringProperty typeProperty;
 	private StringProperty uploaderProperty;
 
 	/** Constructor */
-	public Contents(String contentsType, long contentsSize, String contentsPKName, String uploadUserName, String uploadTime, String contentsValue, Image contentsImage) {
+	public Contents(String contentsType, long contentsSize, String contentsPKName, String uploadUserName, String uploadTime, String contentsValue, Image contentsImage, String multipleFileListInfo) {
 		this.contentsType = contentsType;
 		this.contentsSize = contentsSize;
 		this.contentsConvertedSize = convertContentsSize(contentsSize);
@@ -49,13 +51,12 @@ public class Contents {
 		this.uploadTime = uploadTime;
 		if (contentsType.equals(Contents.TYPE_IMAGE)) {
 			this.contentsValue = "Image";
-		} else if (contentsType.equals(Contents.TYPE_MULTIPLE_FILE)) {
-			// [TODO] 파일 목록 ?
-			this.contentsValue = "Multiple File";
 		} else {
 			this.contentsValue = contentsValue;
 		}
 		this.contentsImage = contentsImage;
+		
+		this.multipleFileListInfo = multipleFileListInfo;
 		
 		if (contentsType.equals(Contents.TYPE_MULTIPLE_FILE)) {
 			this.typeProperty = new SimpleStringProperty("MULTIPLE\n    FILE");
