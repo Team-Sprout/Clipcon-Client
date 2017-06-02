@@ -19,7 +19,7 @@ public class MultipleFileCompress {
 	private static final int COMPRESSION_LEVEL = 1;
 	private static final int BUFFER_SIZE = 4096;
 	private static final String ZIP_FILE_PATH = MainScene.UPLOAD_TEMP_DIR_LOCATION + File.separator;
-	private static final String ZIP_FILE_NAME = "Default.zip";
+	private static final String ZIP_FILE_NAME = "ClipCon.zip";
 	private static int lastIndex = 0;
 
 	/**
@@ -100,6 +100,7 @@ public class MultipleFileCompress {
 			try {
 				String sFilePath = file.getPath();
 				String zipEntryName = sFilePath.substring(lastIndex + 1, sFilePath.length());
+				UploadData.multipleFileListInfo += zipEntryName + "\n";
 				System.out.println("zipEntry <<sFilePath>>: " + sFilePath);
 				System.out.println("zipEntry <<zipEntryName>>: " + zipEntryName);
 				// String zipEntryName = sFilePath.substring(filePath.length() + 1, sFilePath.length());

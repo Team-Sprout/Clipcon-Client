@@ -67,11 +67,8 @@ public class TrayIconManager {
 		showListener = new ActionListener() {
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						Main.getPrimaryStage().show();
-					}
+				Platform.runLater(() -> {
+					Main.getPrimaryStage().show();
 				});
 			}
 		};
@@ -86,11 +83,8 @@ public class TrayIconManager {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (MouseEvent.MOUSE_PRESSED == 2) {
-					Platform.runLater(new Runnable() {
-						@Override
-						public void run() {
-							Main.getPrimaryStage().show();
-						}
+					Platform.runLater(() -> {
+						Main.getPrimaryStage().show();
 					});
 				}
 			}

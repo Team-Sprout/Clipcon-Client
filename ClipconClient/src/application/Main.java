@@ -15,7 +15,7 @@ public class Main extends Application {
 	private static Stage primaryStage;
 
 //	public static final String SERVER_ADDR = "delf.gonetis.com";
-	public static final String SERVER_ADDR = "223.194.156.14";
+	public static final String SERVER_ADDR = "223.194.152.247";
 
 	public static boolean isInMainScene = false;
 
@@ -37,12 +37,7 @@ public class Main extends Application {
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent t) {
 				if (isInMainScene) {
-					Platform.runLater(new Runnable() {
-						@Override
-						public void run() {
-							Platform.setImplicitExit(false);
-						}
-					});
+					Platform.setImplicitExit(false);
 				} else {
 					System.exit(0);
 				}

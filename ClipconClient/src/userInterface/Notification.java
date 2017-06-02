@@ -103,7 +103,7 @@ public class Notification {
 			// ******************** Initialization
 			// ************************************
 			private void init() {
-				popupLifetime = Duration.millis(5000);
+				popupLifetime = Duration.millis(2000);
 				popupAnimationTime = Duration.millis(500);
 				popups = FXCollections.observableArrayList();
 				isShowing = false;

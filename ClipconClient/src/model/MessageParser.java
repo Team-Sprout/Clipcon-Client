@@ -65,7 +65,13 @@ public class MessageParser {
 			image = new Image(testDecodeMethod(imageString));
 		}
 
-		return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"), m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), image);
+		if (m.get("contentsType").equals(Contents.TYPE_MULTIPLE_FILE)) {
+			return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"), m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), image, m.get("multipleFileListInfo"));
+		}
+		else {
+			return new Contents(m.get("contentsType"), m.getLong("contentsSize"), m.get("contentsPKName"), m.get("uploadUserName"), m.get("uploadTime"), m.get("contentsValue"), image, null);
+		}
+		
 	}
 
 	/**

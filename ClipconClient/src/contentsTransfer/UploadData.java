@@ -20,6 +20,8 @@ public class UploadData {
 	private String groupPK = null;
 	
 	private UserInterface ui = UserInterface.getIntance();
+	
+	public static String multipleFileListInfo = "";
 
 	/** Constructor
 	 * setting userName and groupPK. */
@@ -78,7 +80,9 @@ public class UploadData {
 			else {
 				try {
 					File uploadRootDir = new File(MainScene.UPLOAD_TEMP_DIR_LOCATION);
+					multipleFileListInfo = "";
 					String zipFileFillPath = MultipleFileCompress.compress(fileFullPathList);
+					multipart.addFormField("multipleFileListInfo", multipleFileListInfo);
 					
 					File uploadZipFile = new File(zipFileFillPath);
 					multipart.addFilePart("multipartFileData", uploadZipFile);

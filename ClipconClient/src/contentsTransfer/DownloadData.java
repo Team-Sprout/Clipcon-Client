@@ -214,8 +214,8 @@ public class DownloadData {
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
 			int bytesRead = -1;
-			byte[] buffer = new byte[CHUNKSIZE];
-			//byte[] buffer = new byte[0xFFFF]; // 65536
+			//byte[] buffer = new byte[CHUNKSIZE];
+			byte[] buffer = new byte[0xFFFF]; // 65536
 
 			while ((bytesRead = inputStream.read(buffer)) != -1) {
 				byteArrayOutputStream.write(buffer, 0, bytesRead);
@@ -253,8 +253,8 @@ public class DownloadData {
 			FileOutputStream fileOutputStream = new FileOutputStream(saveFileFullPath);
 
 			int bytesRead = -1;
-			byte[] buffer = new byte[CHUNKSIZE];
-			//byte[] buffer = new byte[0xFFFF]; // 65536
+			//byte[] buffer = new byte[CHUNKSIZE];
+			byte[] buffer = new byte[0xFFFF]; // 65536
 
 			while ((bytesRead = inputStream.read(buffer)) != -1) {
 				fileOutputStream.write(buffer, 0, bytesRead);
