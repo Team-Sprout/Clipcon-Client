@@ -21,12 +21,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import lombok.Getter;
-import lombok.Setter;
 import model.Message;
 
-@Getter
-@Setter
 public class GroupJoinScene implements Initializable{
 
 	private UserInterface ui = UserInterface.getIntance();

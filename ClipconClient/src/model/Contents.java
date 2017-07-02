@@ -7,14 +7,8 @@ import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @Getter
-@Setter
-@ToString
-@NoArgsConstructor
 @AllArgsConstructor
 public class Contents {
 	public final static String TYPE_STRING = "STRING";
