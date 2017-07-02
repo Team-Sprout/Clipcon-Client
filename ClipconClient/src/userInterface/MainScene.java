@@ -45,12 +45,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import lombok.Getter;
-import lombok.Setter;
 import model.Contents;
 import model.User;
 
-@Getter
-@Setter
 public class MainScene implements Initializable {
 
 	private UserInterface ui = UserInterface.getIntance();
@@ -67,24 +64,26 @@ public class MainScene implements Initializable {
 	@FXML private Button exitBtn, settingBtn, groupKeyCopyBtn, nicknameChangeBtn;
 	@FXML private Text nicknameText, groupKeyText;
 
-	private Endpoint endpoint = Endpoint.getIntance();
-	
 	private Stage SettingStage;
 	private Stage nicknameChangeStage;
 	private Stage progressBarStage;
 	
+	@Getter
 	private ObservableList<User> groupParticipantList;
+	@Getter
+	private ObservableList<Contents> historyList;
+	
 	private ContentsUpload contentsUpload;
 	private Thread uploadThread;
 	private DownloadData downloader;
 	private Thread downloadThread;
 
-	private ObservableList<Contents> historyList;
-
 	private Notification.ClipboadNotifier clipboardNotifier;
 	private Notification.UploadNotifier uploadNotifier;
 
 	private hookManager.GlobalKeyboardHook hook;
+	
+	private ClipboardController clipboardController;
 
 	// directory location for uploading and downloading file
 	public static final String UPLOAD_TEMP_DIR_LOCATION = "C:\\Program Files\\ClipconUpload";

@@ -9,11 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.text.Text;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class ProgressBarScene implements Initializable {
 	
 	private UserInterface ui = UserInterface.getIntance();

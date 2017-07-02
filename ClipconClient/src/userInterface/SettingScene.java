@@ -9,11 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class SettingScene implements Initializable {
 	
 	private UserInterface ui = UserInterface.getIntance();

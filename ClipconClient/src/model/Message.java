@@ -4,13 +4,11 @@ import org.json.JSONObject;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Setter
-@Getter
 @NoArgsConstructor
 public class Message {
 	private String type;
+	@Getter
 	private JSONObject json;
 
 	public Message setJson(String string) {

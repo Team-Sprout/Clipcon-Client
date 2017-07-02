@@ -3,14 +3,10 @@ package userInterface;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.websocket.EncodeException;
 
 import controller.Endpoint;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -19,12 +15,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import lombok.Getter;
-import lombok.Setter;
 import model.Message;
 
-@Getter
-@Setter
 public class NicknameChangeScene implements Initializable {
 	
 	private UserInterface ui = UserInterface.getIntance();

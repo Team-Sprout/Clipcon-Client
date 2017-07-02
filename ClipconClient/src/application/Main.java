@@ -15,7 +15,7 @@ public class Main extends Application {
 	private static Stage primaryStage;
 
 //	public static final String SERVER_ADDR = "delf.gonetis.com";
-	public static final String SERVER_ADDR = "223.194.152.247";
+	public static final String SERVER_ADDR = "183.102.91.193";
 
 	public static boolean isInMainScene = false;
 
