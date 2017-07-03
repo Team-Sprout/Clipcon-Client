@@ -23,6 +23,7 @@ import javax.imageio.ImageIO;
 import application.Main;
 import controller.ClipboardController;
 import controller.Endpoint;
+import javafx.application.Platform;
 import model.Contents;
 import model.FileTransferable;
 import model.History;
@@ -35,7 +36,6 @@ public class DownloadData {
 	public final static String SERVER_URL = "http://" + Main.SERVER_ADDR + ":8080/websocketServerModule";
 	public final static String SERVER_SERVLET = "/DownloadServlet";
 
-	private static final int CHUNKSIZE = 4096;
 	private final String charset = "UTF-8";
 	private HttpURLConnection httpConn;
 
@@ -63,9 +63,9 @@ public class DownloadData {
 	 *            History of my group
 	 */
 	public void requestDataDownload(String downloadDataPK) throws MalformedURLException {
-		long start = System.currentTimeMillis();
-		
-		isDownloading = true;
+		Platform.runLater(() -> {
+			isDownloading = true;
+		});
 		ui.getMainScene().showProgressBar();
 		
 		History myhistory = Endpoint.user.getGroup().getHistory();
@@ -93,13 +93,10 @@ public class DownloadData {
 				switch (contentsType) {
 				case Contents.TYPE_STRING:
 					// Get String Object in Response Body
-					
 					String stringData = downloadStringData(httpConn.getInputStream());
 
 					StringSelection stringTransferable = new StringSelection(stringData);
 					ClipboardController.writeClipboard(stringTransferable);
-					
-					ui.getProgressBarScene().completeProgress();
 					break;
 
 				case Contents.TYPE_IMAGE:
@@ -108,8 +105,6 @@ public class DownloadData {
 
 					ImageTransferable imageTransferable = new ImageTransferable(imageData);
 					ClipboardController.writeClipboard(imageTransferable);
-					
-					ui.getProgressBarScene().completeProgress();
 					break;
 
 				case Contents.TYPE_FILE:
@@ -122,10 +117,6 @@ public class DownloadData {
 
 					FileTransferable fileTransferable = new FileTransferable(fileList);
 					ClipboardController.writeClipboard(fileTransferable);
-					long end = System.currentTimeMillis();
-					System.out.println("걸린 시간  : " + (end-start));
-					
-					ui.getProgressBarScene().completeProgress();
 					break;
 
 				case Contents.TYPE_MULTIPLE_FILE:
@@ -150,16 +141,14 @@ public class DownloadData {
 					}
 					FileTransferable multipleFileTransferable = new FileTransferable(multipleFileList);
 					ClipboardController.writeClipboard(multipleFileTransferable);
-					long end2 = System.currentTimeMillis();
-					System.out.println("걸린 시간  : " + (end2-start));
-					
-					ui.getProgressBarScene().completeProgress();
 					break;
 
 				default:
 					break;
 				}
 
+				ui.getProgressBarScene().completeProgress();
+				
 			} else {
 				throw new IOException("Server returned non-OK status: " + status);
 			}

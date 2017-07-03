@@ -8,8 +8,10 @@ import controller.Endpoint;
 
 public class ContentsUpload {
 	 public static UploadData uploader;
+	 public static boolean isUpload = false;
 	 
 	 public void upload() {
+		 isUpload = true;
 		 uploader = new UploadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 		 
 		 Object clipboardData = ClipboardController.readClipboard();

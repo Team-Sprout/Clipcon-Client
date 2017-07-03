@@ -19,6 +19,10 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import javafx.application.Platform;
+import userInterface.FailDialog;
+import userInterface.UserInterface;
+
 /**
  * This utility class provides an abstraction layer for sending multipart HTTP
  * POST requests to a web server.
@@ -31,6 +35,9 @@ public class MultipartUtility {
 	private String charset;
 	private OutputStream outputStream;
 	private PrintWriter writer;
+	private UserInterface ui;
+	
+	public static boolean outOfMemoryException = false;
 
 	/**
 	 * This constructor initializes a new HTTP POST request with content type is
@@ -42,6 +49,7 @@ public class MultipartUtility {
 	 */
 	public MultipartUtility(String requestURL, String charset) throws IOException {
 		this.charset = charset;
+		ui = UserInterface.getIntance();
 
 		// creates a unique boundary based on time stamp
 		boundary = "===" + System.currentTimeMillis() + "===";
@@ -124,6 +132,7 @@ public class MultipartUtility {
 	* @throws IOException
 	*/
 	public void addFilePart(String fieldName, File uploadFile) throws IOException {
+		outOfMemoryException = false;
 		String fileName = uploadFile.getName();
 
 		writer.append("--" + boundary).append(LINE_FEED);
@@ -139,7 +148,16 @@ public class MultipartUtility {
 		byte[] buffer = new byte[CHUNKSIZE];
 
 		while ((bytesRead = inputStream.read(buffer)) != -1) {
-			outputStream.write(buffer, 0, bytesRead);
+			try {
+				outputStream.write(buffer, 0, bytesRead);
+			} catch (OutOfMemoryError e) {
+				outOfMemoryException = true;
+				Platform.runLater(() -> {
+					FailDialog.show("전송 가능한 용량을 초과하였습니다.");
+				});
+				ui.getMainScene().closeProgressBarStage();
+				return;
+			}
 		}
 		outputStream.flush();
 		inputStream.close();
