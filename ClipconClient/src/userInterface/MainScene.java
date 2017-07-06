@@ -41,6 +41,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
@@ -83,8 +84,6 @@ public class MainScene implements Initializable {
 
 	private hookManager.GlobalKeyboardHook hook;
 	
-	private ClipboardController clipboardController;
-
 	// directory location for uploading and downloading file
 	public static final String UPLOAD_TEMP_DIR_LOCATION = "C:\\Program Files\\ClipconUpload";
 	public static final String DOWNLOAD_TEMP_DIR_LOCATION = "C:\\Program Files\\ClipconDownload";
@@ -110,13 +109,14 @@ public class MainScene implements Initializable {
 		createDirectory();
 
 		clipboardNotifier = NotifierBuilder.clipboardNotiBuild();
-		clipboardNotifier.setNotificationOwner(Main.getPrimaryStage());
+//		clipboardNotifier.setNotificationOwner(Main.getPrimaryStage());
 		uploadNotifier = NotifierBuilder.uploadNotibuild();
-		uploadNotifier.setNotificationOwner(Main.getPrimaryStage());
+//		uploadNotifier.setNotificationOwner(Main.getPrimaryStage());
 
 		groupParticipantList = FXCollections.observableArrayList();
 		historyList = FXCollections.observableArrayList();
 
+		exitBtn.setTooltip(new Tooltip("Exit"));
 		exitBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -124,6 +124,7 @@ public class MainScene implements Initializable {
 			}
 		});
 		
+		settingBtn.setTooltip(new Tooltip("Setting"));
 		settingBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -145,6 +146,7 @@ public class MainScene implements Initializable {
 			}
 		});
 
+		groupKeyCopyBtn.setTooltip(new Tooltip("Copy"));
 		groupKeyCopyBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -152,6 +154,7 @@ public class MainScene implements Initializable {
 			}
 		});
 		
+		nicknameChangeBtn.setTooltip(new Tooltip("Change"));
 		nicknameChangeBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -179,7 +182,7 @@ public class MainScene implements Initializable {
 			public void handle(MouseEvent event) {
 				if (event.getClickCount() > 1) {
 					if (historyTable.getSelectionModel().getSelectedItem() != null)
-						getSelectedContentsInClipboard(historyTable.getSelectionModel().getSelectedItem());
+						getContentsInClipboard(historyTable.getSelectionModel().getSelectedItem());
 				}
 			}
 		});
@@ -353,36 +356,18 @@ public class MainScene implements Initializable {
 	
 				uploadNotifier.notify(uploadnoti);
 				uploadNotifier.onNotificationPressedProperty();
-				uploadNotifier.setOnNotificationPressed(event -> getSelectedContentsInClipboard(content));
+				uploadNotifier.setOnNotificationPressed(event -> getContentsInClipboard(content));
 			} 
 			else if(content.getUploadUserName().equals(Endpoint.user.getName())) {
+				ContentsUpload.isUpload = false;
 				ui.getProgressBarScene().completeProgress();
 			}
 		});
 	}
 
-	/** get Recently Contents In Clipboard */
-	public void getRecentlyContentsInClipboard(Contents content) {
-		try {
-			String downloadDataPK = content.getContentsPKName(); // recently Contents PK
-			downloader.requestDataDownload(downloadDataPK);
-			
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
-			closeProgressBarStage();
-			
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
-		}
-	}
-	
-	/** get Selected Contents In Clipboard */
-	public void getSelectedContentsInClipboard(Contents content) {
-			String downloadDataPK = content.getContentsPKName(); // recently Contents PK
+	/** get Selected or Recently Contents In Clipboard */
+	public void getContentsInClipboard(Contents content) {
+			String downloadDataPK = content.getContentsPKName(); // Selected or Recently Contents PK
 			
 			downloadThread = new Thread(new Runnable() {
 				@Override
@@ -501,14 +486,25 @@ public class MainScene implements Initializable {
 		hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
 			/* Upload HotKey */
 			public void onGlobalUploadHotkeysPressed() {
-				contentsUpload.upload();
+//				if (ContentsUpload.isUpload) {
+//					Platform.runLater(() -> {
+//						FailDialog.show("업로드 중인 파일이 있습니다. 잠시 후에 시도하세요.");
+//					});
+//					return;
+//				}
+				if (clipboardNotifier.getIsShowing()) {
+					Platform.runLater(() -> {
+						clipboardNotifier.hidePopUp();
+					});
+				}
+				upload();
 			}
 
 			/* Download HotKey */
 			public void onGlobalDownloadHotkeysPressed() {
 				if(historyList.size() > 0) {
 					Contents content = historyList.get(0);
-					getRecentlyContentsInClipboard(content);
+					getContentsInClipboard(content);
 				}
 			}
 		});
@@ -524,11 +520,13 @@ public class MainScene implements Initializable {
 				
 				progressBarStage.initStyle(StageStyle.TRANSPARENT);
 				progressBarStage.setScene(scene);
-				progressBarStage.initOwner(Main.getPrimaryStage());
+				//progressBarStage.initOwner(Main.getPrimaryStage());
 				progressBarStage.initModality(Modality.WINDOW_MODAL);
 				progressBarStage.show();
-				progressBarStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth()/2 - progressBarStage.getWidth()/2);
-				progressBarStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight()/2 - progressBarStage.getHeight()/2);
+				//progressBarStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth()/2 - progressBarStage.getWidth()/2);
+				//progressBarStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight()/2 - progressBarStage.getHeight()/2);
+				progressBarStage.setX(Screen.getPrimary().getBounds().getWidth() - progressBarStage.getWidth() - 10);
+				progressBarStage.setY(Screen.getPrimary().getBounds().getHeight() - progressBarStage.getHeight() - 50);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -98,7 +98,9 @@ public class UploadData {
 				}
 			}
 			
-			multipart.finish();
+			if(!MultipartUtility.outOfMemoryException) {
+				multipart.finish();
+			}
 			
 		} catch (IOException ex) {
 			System.err.println(ex);

@@ -241,6 +241,7 @@ public class Notification {
 	        	POPUP.hide();
                 popups.remove(POPUP);
                 timeline.stop();
+                stage.close();
                 isShowing = false;
 	        }
 

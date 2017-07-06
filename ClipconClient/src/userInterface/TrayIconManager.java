@@ -5,11 +5,13 @@ import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
-import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URL;
+
+import javax.swing.ImageIcon;
 
 import application.Main;
 import javafx.application.Platform;
@@ -18,6 +20,8 @@ public class TrayIconManager {
 
 	private final SystemTray systemTray = SystemTray.getSystemTray(); // 시스템트레이 얻어옴
 
+	private URL trayIconImageURL;
+	private ImageIcon trayIconImageIcon;
 	private Image trayIconImage; // 트레이아이콘 이미지
 	private PopupMenu trayIconMenu; // 트레이아이콘 우클릭 메뉴
 	private MenuItem menuItem; // 트레이아이콘 우클릭 메뉴 항목
@@ -28,7 +32,9 @@ public class TrayIconManager {
 	private ActionListener showListener;
 
 	public TrayIconManager() {
-		trayIconImage = Toolkit.getDefaultToolkit().getImage("src/resources/trayIcon.png"); // 트레이아이콘 이미지
+		trayIconImageURL = Main.class.getResource("/resources/trayIcon.png");
+		trayIconImageIcon = new ImageIcon(trayIconImageURL); // 트레이아이콘 이미지
+		trayIconImage = trayIconImageIcon.getImage();
 		trayIconMenu = new PopupMenu();
 		trayIcon = new TrayIcon(trayIconImage, "ClipCon", trayIconMenu);
 	}
