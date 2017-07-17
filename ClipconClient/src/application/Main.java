@@ -1,6 +1,15 @@
 package application;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+
+import javax.websocket.EncodeException;
+
 import controller.ClipboardController;
+import controller.Endpoint;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -9,19 +18,48 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import model.Message;
 import userInterface.FailDialog;
 import userInterface.TrayIconManager;
 
 public class Main extends Application {
 	private static Stage primaryStage;
 
-	public static final String SERVER_ADDR = "delf.gonetis.com";
-//	public static final String SERVER_ADDR = "113.198.84.52";
+//	public static final String SERVER_ADDR = "delf.gonetis.com";
+	public static final String SERVER_ADDR = "223.194.152.192";
 
+	public static final String LOCK_FILE_LOCATION = System.getProperty("user.dir") + File.separator + "ClipCon.lock";
+	private File lockFile = new File(Main.LOCK_FILE_LOCATION);
+	
 	public static boolean isInMainScene = false;
+	
+	private Endpoint endpoint = Endpoint.getInstance();
+	
+	// dll load
+	static {       
+		try {
+//			System.loadLibrary("KeyHooking");
+			System.load(System.getProperty("user.dir") + File.separator + "keyHooking.dll");
+		} catch (UnsatisfiedLinkError e) {
+			FailDialog.show("dll load error");
+		}
+	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		
+		@SuppressWarnings("resource")
+		FileChannel channel = new RandomAccessFile(lockFile, "rw").getChannel();
+		
+		// try lock
+		FileLock lock = channel.tryLock();
+
+		// already obtain lock in other JVM
+		if (lock == null) {
+			channel.close();
+			System.exit(0);
+		}
+		
 		setPrimaryStage(primaryStage);
 
 		TrayIconManager tray = new TrayIconManager();
@@ -33,7 +71,7 @@ public class Main extends Application {
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
 		primaryStage.setAlwaysOnTop(false);
-		primaryStage.setResizable(false);
+		primaryStage.setResizable(true);
 		primaryStage.show();
 
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -41,17 +79,17 @@ public class Main extends Application {
 				if (isInMainScene) {
 					Platform.setImplicitExit(false);
 				} else {
+					Message exitProgramMsg = new Message().setType(Message.REQUEST_EXIT_PROGRAM);
+					try {
+						endpoint.sendMessage(exitProgramMsg);
+					} catch (IOException | EncodeException e) {
+						e.printStackTrace();
+					}
 					System.exit(0);
 				}
 			}
 		});
-
-		try {
-			System.loadLibrary("KeyHooking");
-		} catch (UnsatisfiedLinkError e) {
-			FailDialog.show("dll load error");
-		}
-
+		
 		Thread clipboardMonitorThread = new Thread(new Runnable() {
 			@Override
 			public void run() {

@@ -7,14 +7,19 @@ import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
+import javax.websocket.EncodeException;
 
 import application.Main;
+import controller.Endpoint;
 import javafx.application.Platform;
+import model.Message;
 
 public class TrayIconManager {
 
@@ -30,6 +35,8 @@ public class TrayIconManager {
 
 	private ActionListener closeListener;
 	private ActionListener showListener;
+	
+	private Endpoint endpoint = Endpoint.getInstance();
 
 	public TrayIconManager() {
 		trayIconImageURL = Main.class.getResource("/resources/trayIcon.png");
@@ -66,6 +73,12 @@ public class TrayIconManager {
 		closeListener = new ActionListener() {
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
+				Message exitProgramMsg = new Message().setType(Message.REQUEST_EXIT_PROGRAM);
+				try {
+					endpoint.sendMessage(exitProgramMsg);
+				} catch (IOException | EncodeException e1) {
+					e1.printStackTrace();
+				}
 				System.exit(0);
 			}
 		};
@@ -78,48 +91,18 @@ public class TrayIconManager {
 				});
 			}
 		};
-		
-		mouseListener = new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				
-			}
 
-			@Override
+		
+		/* 트레이 아이콘 마우스 리스너 */
+		mouseListener = new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-				if (MouseEvent.MOUSE_PRESSED == 2) {
+				if (e.getClickCount() == 2) { // 트레이 아이콘을 더블 클릭하면
 					Platform.runLater(() -> {
 						Main.getPrimaryStage().show();
 					});
 				}
 			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
-
 		};
-		
-		/* 트레이 아이콘 마우스 리스너 */
-		// mouseListener = new MouseAdapter() {
-		// public void mousePressed(MouseEvent e) {
-		// if (e.getClickCount() == 2) { // 트레이 아이콘을 더블 클릭하면
-		// stage.show(); // stage를 보여줌
-		// }
-		// }
-		// };
 	}
 
 	/** 트레이아이콘 우클릭 메뉴 설정 */

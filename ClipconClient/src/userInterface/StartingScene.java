@@ -22,11 +22,11 @@ import model.Message;
 
 public class StartingScene implements Initializable {
 
-	private UserInterface ui = UserInterface.getIntance();
+	private UserInterface ui = UserInterface.getInstance();
 
 	@FXML private Button createBtn, joinBtn;
 
-	private Endpoint endpoint = Endpoint.getIntance();
+	private Endpoint endpoint = Endpoint.getInstance();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -39,7 +39,6 @@ public class StartingScene implements Initializable {
 				// send REQUEST_REQUEST_CREATE_GROUP Messgae to server
 				Message createGroupMsg = new Message().setType(Message.REQUEST_CREATE_GROUP);
 				try {
-					endpoint = Endpoint.getIntance();
 					endpoint.sendMessage(createGroupMsg);
 				} catch (IOException | EncodeException e) {
 					e.printStackTrace();
