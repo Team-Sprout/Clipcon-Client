@@ -8,6 +8,7 @@ import java.util.logging.Handler;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.BufferedSink;
+import userInterface.UserInterface;
 
 public class ProgressRequestBody extends RequestBody {
 	private File mFile;
@@ -15,6 +16,8 @@ public class ProgressRequestBody extends RequestBody {
 //	private UploadCallbacks mListener;
 
 	private static final int DEFAULT_BUFFER_SIZE = 2048;
+	
+	private UserInterface ui = UserInterface.getInstance();
 
 //	public interface UploadCallbacks {
 //		void onProgressUpdate(int percentage);
@@ -58,7 +61,9 @@ public class ProgressRequestBody extends RequestBody {
 
 				// update progress on UI thread
 				// handler.post(new ProgressUpdater(uploaded, fileLength));
-				System.out.println((int) (100 * uploaded / fileLength));
+				double progressValue = (100 * uploaded / fileLength);
+				//System.out.println((int) progressValue);
+				ui.getProgressBarScene().setProgeress(progressValue, uploaded, fileLength);
 
 				uploaded += read;
 				sink.write(buffer, 0, read);
