@@ -25,7 +25,8 @@ import userInterface.TrayIconManager;
 public class Main extends Application {
 	private static Stage primaryStage;
 
-//	public static final String SERVER_ADDR = "delf.gonetis.com";
+
+//	public static final String SERVER_AD/DR = "delf.gonetis.com";
 	public static final String SERVER_ADDR = "223.194.152.192";
 
 	public static final String LOCK_FILE_LOCATION = System.getProperty("user.dir") + File.separator + "ClipCon.lock";
