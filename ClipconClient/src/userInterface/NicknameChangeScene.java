@@ -19,12 +19,12 @@ import model.Message;
 
 public class NicknameChangeScene implements Initializable {
 	
-	private UserInterface ui = UserInterface.getIntance();
+	private UserInterface ui = UserInterface.getInstance();
 
 	@FXML private TextField nicknameTF;
 	@FXML private Button OkBtn, XBtn;
 	
-	private Endpoint endpoint = Endpoint.getIntance();
+	private Endpoint endpoint = Endpoint.getInstance();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -72,7 +72,6 @@ public class NicknameChangeScene implements Initializable {
 		changeNicknameMsg.add(Message.CHANGE_NAME, nickname);
 		
 		try {
-			endpoint = Endpoint.getIntance();
 			endpoint.sendMessage(changeNicknameMsg);
 		} catch (IOException | EncodeException e) {
 			e.printStackTrace();

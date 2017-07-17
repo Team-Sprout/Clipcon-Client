@@ -34,7 +34,7 @@ public class Endpoint {
 
 	public static User user;
 
-	public static Endpoint getIntance() {
+	public static Endpoint getInstance() {
 		try {
 			if (uniqueEndpoint == null) {
 				uniqueEndpoint = new Endpoint();
@@ -49,7 +49,7 @@ public class Endpoint {
 	public Endpoint() throws DeploymentException, IOException, URISyntaxException {
 		URI uRI = new URI(uri);
 		ContainerProvider.getWebSocketContainer().connectToServer(this, uRI);
-		ui = UserInterface.getIntance();
+		ui = UserInterface.getInstance();
 	}
 
 	@OnOpen

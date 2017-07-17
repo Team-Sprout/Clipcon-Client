@@ -156,7 +156,7 @@ public class ClipboardController {
 
 	private static final class WindowProc implements WinUser.WindowProc {
 		
-		private UserInterface ui = UserInterface.getIntance();
+		private UserInterface ui = UserInterface.getInstance();
 
 		private HWND nextViewer;
 

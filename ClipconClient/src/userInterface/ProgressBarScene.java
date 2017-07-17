@@ -12,7 +12,7 @@ import javafx.scene.text.Text;
 
 public class ProgressBarScene implements Initializable {
 	
-	private UserInterface ui = UserInterface.getIntance();
+	private UserInterface ui = UserInterface.getInstance();
 
 	@FXML private Text text;
 	@FXML private ProgressBar progressBar ;

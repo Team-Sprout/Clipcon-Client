@@ -25,12 +25,12 @@ import model.Message;
 
 public class GroupJoinScene implements Initializable{
 
-	private UserInterface ui = UserInterface.getIntance();
+	private UserInterface ui = UserInterface.getInstance();
 
 	@FXML private TextField groupKey;
 	@FXML private Button confirmBtn, XBtn;
 	
-	private Endpoint endpoint = Endpoint.getIntance();
+	private Endpoint endpoint = Endpoint.getInstance();
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {

@@ -15,7 +15,7 @@ public class UserInterface {
 
 	private static UserInterface uniqueUserInterface;
 
-	public static UserInterface getIntance() {
+	public static UserInterface getInstance() {
 		if (uniqueUserInterface == null) {
 			uniqueUserInterface = new UserInterface();
 		}
