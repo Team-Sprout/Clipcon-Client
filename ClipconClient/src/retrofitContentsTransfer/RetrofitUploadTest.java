@@ -22,7 +22,7 @@ public class RetrofitUploadTest {
 	private String userName = null;
 	private String groupPK = null;
 
-	private UserInterface ui = UserInterface.getIntance();
+	private UserInterface ui = UserInterface.getInstance();
 
 	public static String multipleFileListInfo = "";
 
@@ -32,7 +32,7 @@ public class RetrofitUploadTest {
 		this.userName = userName;
 		this.groupPK = groupPK;
 
-		ui.getMainScene().showProgressBar();
+//		ui.getMainScene().showProgressBar();
 	}
 
 	// public void uploadFile(URI fileUri)
