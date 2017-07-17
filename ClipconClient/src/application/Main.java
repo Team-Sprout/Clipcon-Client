@@ -15,8 +15,9 @@ import userInterface.TrayIconManager;
 public class Main extends Application {
 	private static Stage primaryStage;
 
-	public static final String SERVER_ADDR = "delf.gonetis.com";
-//	public static final String SERVER_ADDR = "113.198.84.52";
+//	public static final String SERVER_AD/DR = "delf.gonetis.com";
+//	public static final String SERVER_ADDR = "223.194.157.88";
+	public static final String SERVER_ADDR = "223.194.152.192";
 
 	public static boolean isInMainScene = false;
 
