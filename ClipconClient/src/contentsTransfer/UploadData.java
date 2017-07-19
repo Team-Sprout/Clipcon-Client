@@ -11,16 +11,19 @@ import userInterface.UserInterface;
 
 public class UploadData {
 
-	public final static String SERVER_URL = "http://" + Main.SERVER_ADDR + ":8080/websocketServerModule";
-	public final static String SERVER_SERVLET = "/UploadServlet";
+	private final String PROTOCOL = "http://";
+	private final String CONTEXT_ROOT = "websocketServerModule";
+	private final String SERVER_URL = PROTOCOL + Main.SERVER_URI_PART + CONTEXT_ROOT;
+
+	private final String SERVER_SERVLET = "/UploadServlet";
 
 	private String charset = "UTF-8";
 
 	private String userName = null;
 	private String groupPK = null;
-	
+
 	private UserInterface ui = UserInterface.getIntance();
-	
+
 	public static String multipleFileListInfo = "";
 
 	/** Constructor
@@ -28,7 +31,7 @@ public class UploadData {
 	public UploadData(String userName, String groupPK) {
 		this.userName = userName;
 		this.groupPK = groupPK;
-		
+
 		ui.getMainScene().showProgressBar();
 	}
 
@@ -40,7 +43,7 @@ public class UploadData {
 
 			multipart.addFormField("stringData", stringData);
 			multipart.finish();
-			
+
 		} catch (IOException ex) {
 			System.err.println(ex);
 		}
@@ -83,7 +86,7 @@ public class UploadData {
 					multipleFileListInfo = "";
 					String zipFileFillPath = MultipleFileCompress.compress(fileFullPathList);
 					multipart.addFormField("multipleFileListInfo", multipleFileListInfo);
-					
+
 					File uploadZipFile = new File(zipFileFillPath);
 					multipart.addFilePart("multipartFileData", uploadZipFile);
 
@@ -92,16 +95,16 @@ public class UploadData {
 						for (int i = 0; i < uploadRootDir.listFiles().length; i++)
 							uploadRootDir.listFiles()[i].delete();
 					}
-					
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
-			
-			if(!MultipartUtility.outOfMemoryException) {
+
+			if (!MultipartUtility.outOfMemoryException) {
 				multipart.finish();
 			}
-			
+
 		} catch (IOException ex) {
 			System.err.println(ex);
 		}

@@ -36,7 +36,7 @@ public class RetrofitUploadTest {
 	}
 
 	// public void uploadFile(URI fileUri)
-	public void uploadFile(ArrayList<String> fileFullPathList) {
+	public void uploadMultipartData(ArrayList<String> fileFullPathList) {
 
 		// creates a unique boundary based on time stamp
 		// String boundary = "===" + System.currentTimeMillis() + "===";
@@ -50,8 +50,6 @@ public class RetrofitUploadTest {
 		// MultipartBody.Part is used to send also the actual file name
 		// MultipartBody.Part file = MultipartBody.Part.createFormData("fileData", originalFile.getName(), filePart);
 
-		
-		
 		/* test */
 		// ProgressRequestBody progressFilePart = ProgressRequestBody.create(MediaType.parse("multipart/form-data"), originalFile);
 		ProgressRequestBody progressFilePart = new ProgressRequestBody(originalFile);
@@ -69,7 +67,7 @@ public class RetrofitUploadTest {
 		RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
 
 		// finally, execute the request
-		Call<ResponseBody> call = retrofitInterface.uploadFile(username, grouppk, file);
+		Call<ResponseBody> call = retrofitInterface.uploadMultipartData(username, grouppk, file);
 		call.enqueue(new Callback<ResponseBody>() {
 			@Override
 			public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

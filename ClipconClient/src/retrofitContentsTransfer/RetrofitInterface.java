@@ -1,5 +1,7 @@
 package retrofitContentsTransfer;
 
+import java.util.Map;
+
 import application.Main;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -10,20 +12,25 @@ import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
-import retrofit2.http.Url;
+import retrofit2.http.QueryMap;
+import retrofit2.http.Streaming;
 
 public interface RetrofitInterface {
 	// Path: [Protocol]://[URL]/[Resource Path]
-	public static final String BASE_URL = "http://" + Main.SERVER_ADDR + ":8080/websocketServerModule/";
+	public final String PROTOCOL = "http://";
+	public final String CONTEXT_ROOT = "websocketServerModule";
+
+	public static final String BASE_URL = PROTOCOL + Main.SERVER_URI_PART + CONTEXT_ROOT + "/";
 
 	/** upload */
 	@Multipart
 	@Headers({ "User-Agent: pcProgram" })
 	@POST("UploadServlet")
-	Call<ResponseBody> uploadFile(@Part("userName") RequestBody username, @Part("groupPK") RequestBody grouppk, @Part MultipartBody.Part file);
+	Call<ResponseBody> uploadMultipartData(@Part("userName") RequestBody username, @Part("groupPK") RequestBody grouppk, @Part MultipartBody.Part file);
 
 	/** download */
+	@Streaming
+	@Headers({ "User-Agent: pcProgram" })
 	@GET("DownloadServlet")
-	@Headers({ "User-Agent: pcProgram", "Cache-Control: max-age=640000" })
-	Call<ResponseBody> downloadFileWithDynamicUrlSync(@Url String fileUrl);
+	Call<ResponseBody> requestDataDownload2(@QueryMap Map<String, String> parameters);
 }

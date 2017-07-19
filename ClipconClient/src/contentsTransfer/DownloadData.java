@@ -33,8 +33,11 @@ import userInterface.UserInterface;
 
 public class DownloadData {
 
-	public final static String SERVER_URL = "http://" + Main.SERVER_ADDR + ":8080/websocketServerModule";
-	public final static String SERVER_SERVLET = "/DownloadServlet";
+	private final String PROTOCOL = "http://";
+	private final String CONTEXT_ROOT = "websocketServerModule";
+	private final String SERVER_URL = PROTOCOL + Main.SERVER_URI_PART + CONTEXT_ROOT;
+
+	private final String SERVER_SERVLET = "/DownloadServlet";
 
 	private final String charset = "UTF-8";
 	private HttpURLConnection httpConn;
@@ -43,10 +46,10 @@ public class DownloadData {
 	private String groupPK = null;
 
 	private Contents requestContents; // Contents Info to download
-	
+
 	public static boolean isDownloading = false;
 	private UserInterface ui = UserInterface.getIntance();
-	
+
 	/** Constructor
 	 * Setting userName and groupPK */
 	public DownloadData(String userName, String groupPK) {
@@ -67,7 +70,7 @@ public class DownloadData {
 			isDownloading = true;
 		});
 		ui.getMainScene().showProgressBar();
-		
+
 		History myhistory = Endpoint.user.getGroup().getHistory();
 		// Retrieving Contents from My History
 		requestContents = myhistory.getContentsByPK(downloadDataPK);
@@ -148,11 +151,11 @@ public class DownloadData {
 				}
 
 				ui.getProgressBarScene().completeProgress();
-				
+
 			} else {
 				throw new IOException("Server returned non-OK status: " + status);
 			}
-			
+
 			isDownloading = false;
 			httpConn.disconnect();
 
@@ -203,7 +206,7 @@ public class DownloadData {
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
 			int bytesRead = -1;
-			//byte[] buffer = new byte[CHUNKSIZE];
+			// byte[] buffer = new byte[CHUNKSIZE];
 			byte[] buffer = new byte[0xFFFF]; // 65536
 
 			while ((bytesRead = inputStream.read(buffer)) != -1) {
@@ -242,7 +245,7 @@ public class DownloadData {
 			FileOutputStream fileOutputStream = new FileOutputStream(saveFileFullPath);
 
 			int bytesRead = -1;
-			//byte[] buffer = new byte[CHUNKSIZE];
+			// byte[] buffer = new byte[CHUNKSIZE];
 			byte[] buffer = new byte[0xFFFF]; // 65536
 
 			while ((bytesRead = inputStream.read(buffer)) != -1) {

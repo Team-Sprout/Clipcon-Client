@@ -26,7 +26,9 @@ import userInterface.UserInterface;
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
 public class Endpoint {
 
-	private String uri = "ws://" + Main.SERVER_ADDR + ":8080/websocketServerModule/ServerEndpoint";
+	private final String PROTOCOL = "ws://";
+	private final String CONTEXT_ROOT = "websocketServerModule/ServerEndpoint";
+	private final String uri = PROTOCOL + Main.SERVER_URI_PART + CONTEXT_ROOT;
 
 	private Session session = null;
 	private static Endpoint uniqueEndpoint;
@@ -78,22 +80,22 @@ public class Endpoint {
 				break;
 			}
 			break;
-			
+
 		case Message.RESPONSE_CHANGE_NAME:
 			switch (message.get(Message.RESULT)) {
 			case Message.CONFIRM:
 				String changeName = message.get(Message.CHANGE_NAME);
-				
+
 				user.setName(changeName);
 				user.getGroup().getUserList().get(0).setName(changeName);
 				user.getGroup().getUserList().get(0).setNameProperty(new SimpleStringProperty(changeName));
-				
+
 				ui.getMainScene().closeNicknameChangeStage();
 				ui.getMainScene().initGroupParticipantList(); // UI list initialization
 				break;
 			}
 			break;
-			
+
 		case Message.RESPONSE_JOIN_GROUP:
 			switch (message.get(Message.RESULT)) {
 			case Message.CONFIRM:
@@ -109,7 +111,7 @@ public class Endpoint {
 
 				ui.getMainScene().initGroupParticipantList(); // UI list initialization
 				break;
-				
+
 			case Message.REJECT:
 				ui.getGroupJoinScene().failGroupJoin(); // UI list initialization
 				break;
@@ -126,7 +128,7 @@ public class Endpoint {
 			ui.getMainScene().showStartingView(); // show StartingView
 			user = null;
 			break;
-			
+
 		case Message.NOTI_ADD_PARTICIPANT: // receive a message when another user enters the group and updates the UI
 			User newParticipant = new User(message.get(Message.PARTICIPANT_NAME));
 
@@ -134,18 +136,18 @@ public class Endpoint {
 			ui.getMainScene().getGroupParticipantList().add(newParticipant);
 			ui.getMainScene().addGroupParticipantList(); // update UI list
 			break;
-			
+
 		case Message.NOTI_CHANGE_NAME:
 			String name = message.get(Message.NAME);
 			String changeName = message.get(Message.CHANGE_NAME);
-			
-			for(int i=0; i<user.getGroup().getUserList().size(); i++) {
-				if(user.getGroup().getUserList().get(i).getName().equals(name)) {
+
+			for (int i = 0; i < user.getGroup().getUserList().size(); i++) {
+				if (user.getGroup().getUserList().get(i).getName().equals(name)) {
 					user.getGroup().getUserList().remove(i);
 					user.getGroup().getUserList().add(i, new User(changeName));
 				}
 			}
-			
+
 			ui.getMainScene().initGroupParticipantList(); // UI list initialization
 			break;
 
@@ -157,7 +159,7 @@ public class Endpoint {
 					break;
 				}
 			}
-			
+
 			ui.getMainScene().initGroupParticipantList(); // update UI list
 			break;
 
@@ -168,7 +170,7 @@ public class Endpoint {
 
 			ui.getMainScene().getHistoryList().add(0, contents);
 			ui.getMainScene().addContentsInHistory(); // update UI list
-			
+
 			if (contents.getUploadUserName().equals(Endpoint.user.getName())) {
 				try {
 					Thread.sleep(1000);
@@ -178,7 +180,7 @@ public class Endpoint {
 				ui.getMainScene().closeProgressBarStage();
 			}
 			break;
-			
+
 		default:
 			break;
 		}

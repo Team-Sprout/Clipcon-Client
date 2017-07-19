@@ -48,55 +48,65 @@ import javafx.util.Callback;
 import lombok.Getter;
 import model.Contents;
 import model.User;
+import retrofitContentsTransfer.RetrofitDownloadTest;
 
 public class MainScene implements Initializable {
 
 	private UserInterface ui = UserInterface.getIntance();
 
-	@FXML private JFXTabPane tabPane;
+	@FXML
+	private JFXTabPane tabPane;
 
-	@FXML private TableView<User>  groupParticipantTable;
-	@FXML private TableColumn<User, String> groupPartiNicknameColumn;
+	@FXML
+	private TableView<User> groupParticipantTable;
+	@FXML
+	private TableColumn<User, String> groupPartiNicknameColumn;
 
-	@FXML private TableView<Contents> historyTable;
-	@FXML private TableColumn<Contents, String> typeColumn, uploaderColumn;
-	@FXML private TableColumn<Contents, Object> contentsColumn;
+	@FXML
+	private TableView<Contents> historyTable;
+	@FXML
+	private TableColumn<Contents, String> typeColumn, uploaderColumn;
+	@FXML
+	private TableColumn<Contents, Object> contentsColumn;
 
-	@FXML private Button exitBtn, settingBtn, groupKeyCopyBtn, nicknameChangeBtn;
-	@FXML private Text nicknameText, groupKeyText;
+	@FXML
+	private Button exitBtn, settingBtn, groupKeyCopyBtn, nicknameChangeBtn;
+	@FXML
+	private Text nicknameText, groupKeyText;
 
 	private Stage SettingStage;
 	private Stage nicknameChangeStage;
 	private Stage progressBarStage;
-	
+
 	@Getter
 	private ObservableList<User> groupParticipantList;
 	@Getter
 	private ObservableList<Contents> historyList;
-	
+
 	private ContentsUpload contentsUpload;
 	private Thread uploadThread;
 	private DownloadData downloader;
+	private RetrofitDownloadTest downloader2;
 	private Thread downloadThread;
 
 	private Notification.ClipboadNotifier clipboardNotifier;
 	private Notification.UploadNotifier uploadNotifier;
 
 	private hookManager.GlobalKeyboardHook hook;
-	
+
 	// directory location for uploading and downloading file
 	public static final String UPLOAD_TEMP_DIR_LOCATION = "C:\\Program Files\\ClipconUpload";
 	public static final String DOWNLOAD_TEMP_DIR_LOCATION = "C:\\Program Files\\ClipconDownload";
-	
+
 	private File dirForUpload = new File(MainScene.UPLOAD_TEMP_DIR_LOCATION);
 	private File dirForDownload = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setMainScene(this);
-		
+
 		Main.isInMainScene = true;
-		
+
 		// UI css setting
 		tabPane.getStylesheets().add("/resources/mytab.css");
 		groupParticipantTable.getStylesheets().add("/resources/myparticipanttable.css");
@@ -104,14 +114,15 @@ public class MainScene implements Initializable {
 
 		contentsUpload = new ContentsUpload();
 		downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
-		
+		downloader2 = new RetrofitDownloadTest(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
+
 		startHookProcess();
 		createDirectory();
 
 		clipboardNotifier = NotifierBuilder.clipboardNotiBuild();
-//		clipboardNotifier.setNotificationOwner(Main.getPrimaryStage());
+		// clipboardNotifier.setNotificationOwner(Main.getPrimaryStage());
 		uploadNotifier = NotifierBuilder.uploadNotibuild();
-//		uploadNotifier.setNotificationOwner(Main.getPrimaryStage());
+		// uploadNotifier.setNotificationOwner(Main.getPrimaryStage());
 
 		groupParticipantList = FXCollections.observableArrayList();
 		historyList = FXCollections.observableArrayList();
@@ -123,7 +134,7 @@ public class MainScene implements Initializable {
 				GroupExitDialog.show("그룹에서 나가며, 히스토리가 모두 삭제됩니다. 계속하시겠습니까?");
 			}
 		});
-		
+
 		settingBtn.setTooltip(new Tooltip("Setting"));
 		settingBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -138,8 +149,8 @@ public class MainScene implements Initializable {
 					SettingStage.initOwner(Main.getPrimaryStage());
 					SettingStage.initModality(Modality.WINDOW_MODAL);
 					SettingStage.show();
-					SettingStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth()/2 - SettingStage.getWidth()/2);
-					SettingStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight()/2 - SettingStage.getHeight()/2);
+					SettingStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth() / 2 - SettingStage.getWidth() / 2);
+					SettingStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight() / 2 - SettingStage.getHeight() / 2);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -153,7 +164,7 @@ public class MainScene implements Initializable {
 				ClipboardController.writeClipboard(new StringSelection(Endpoint.user.getGroup().getPrimaryKey()));
 			}
 		});
-		
+
 		nicknameChangeBtn.setTooltip(new Tooltip("Change"));
 		nicknameChangeBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -168,8 +179,8 @@ public class MainScene implements Initializable {
 					nicknameChangeStage.initOwner(Main.getPrimaryStage());
 					nicknameChangeStage.initModality(Modality.WINDOW_MODAL);
 					nicknameChangeStage.show();
-					nicknameChangeStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth()/2 - nicknameChangeStage.getWidth()/2);
-					nicknameChangeStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight()/2 - nicknameChangeStage.getHeight()/2);
+					nicknameChangeStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth() / 2 - nicknameChangeStage.getWidth() / 2);
+					nicknameChangeStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight() / 2 - nicknameChangeStage.getHeight() / 2);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -212,7 +223,7 @@ public class MainScene implements Initializable {
 
 			nicknameText.setText(Endpoint.user.getName());
 			groupKeyText.setText(Endpoint.user.getGroup().getPrimaryKey());
-			
+
 			for (int i = 0; i < Endpoint.user.getGroup().getUserList().size(); i++) {
 				groupParticipantList.add(Endpoint.user.getGroup().getUserList().get(i));
 			}
@@ -247,21 +258,21 @@ public class MainScene implements Initializable {
 	}
 
 	public void showClipboardChangeNoti() {
-		if(SettingScene.clipboardMonitorNotiFlag) {
+		if (SettingScene.clipboardMonitorNotiFlag) {
 			Platform.runLater(() -> {
 				Notification clipboanoti = NotificationBuilder.create().build();
-		
+
 				if (clipboardNotifier.getIsShowing()) {
 					clipboardNotifier.hidePopUp();
 				}
-				
+
 				clipboardNotifier.notify(clipboanoti);
 				clipboardNotifier.onNotificationPressedProperty();
 				clipboardNotifier.setOnNotificationPressed(event -> upload());
 			});
 		}
 	}
-	
+
 	public void upload() {
 		uploadThread = new Thread(new Runnable() {
 			@Override
@@ -276,9 +287,9 @@ public class MainScene implements Initializable {
 	public void addContentsInHistory() {
 		Platform.runLater(() -> {
 			historyTable.setItems(historyList);
-	
+
 			Contents content = historyList.get(0);
-	
+
 			// Contents column setting
 			contentsColumn.setCellValueFactory(new ContentsValueFactory());
 			contentsColumn.setCellFactory(new Callback<TableColumn<Contents, Object>, TableCell<Contents, Object>>() {
@@ -287,7 +298,7 @@ public class MainScene implements Initializable {
 					return new ContentsValueCell();
 				}
 			});
-	
+
 			// Type column setting
 			typeColumn.setCellValueFactory(cellData -> cellData.getValue().getTypeProperty());
 			typeColumn.setCellFactory(new Callback<TableColumn<Contents, String>, TableCell<Contents, String>>() {
@@ -305,7 +316,7 @@ public class MainScene implements Initializable {
 					return tc;
 				}
 			});
-	
+
 			// Uploader column setting
 			uploaderColumn.setCellValueFactory(cellData -> cellData.getValue().getUploaderProperty());
 			uploaderColumn.setCellFactory(new Callback<TableColumn<Contents, String>, TableCell<Contents, String>>() {
@@ -323,15 +334,15 @@ public class MainScene implements Initializable {
 					return tc;
 				}
 			});
-	
+
 			// Upload notification setting
-			
+
 			if (!content.getUploadUserName().equals(Endpoint.user.getName()) && SettingScene.uploadNotiFlag) {
 				Notification uploadnoti;
-	
+
 				String notiTitle = null;
 				String notiMsg = null;
-	
+
 				if (content.getContentsType().equals(Contents.TYPE_STRING)) {
 					notiTitle = "String from " + content.getUploadUserName();
 					if (content.getContentsValue().length() > 30) {
@@ -353,12 +364,11 @@ public class MainScene implements Initializable {
 					}
 					uploadnoti = NotificationBuilder.create().title(notiTitle).message(notiMsg).build();
 				}
-	
+
 				uploadNotifier.notify(uploadnoti);
 				uploadNotifier.onNotificationPressedProperty();
 				uploadNotifier.setOnNotificationPressed(event -> getContentsInClipboard(content));
-			} 
-			else if(content.getUploadUserName().equals(Endpoint.user.getName())) {
+			} else if (content.getUploadUserName().equals(Endpoint.user.getName())) {
 				ContentsUpload.isUpload = false;
 				ui.getProgressBarScene().completeProgress();
 			}
@@ -367,31 +377,32 @@ public class MainScene implements Initializable {
 
 	/** get Selected or Recently Contents In Clipboard */
 	public void getContentsInClipboard(Contents content) {
-			String downloadDataPK = content.getContentsPKName(); // Selected or Recently Contents PK
-			
-			downloadThread = new Thread(new Runnable() {
-				@Override
-				public void run() {
+		String downloadDataPK = content.getContentsPKName(); // Selected or Recently Contents PK
+
+		downloadThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					// downloader.requestDataDownload(downloadDataPK);
+					downloader2.requestDataDownload(downloadDataPK);
+
 					try {
-						downloader.requestDataDownload(downloadDataPK);
-						
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						
-						closeProgressBarStage();
-						
-					} catch (MalformedURLException e) {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
+
+					closeProgressBarStage();
+
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
 				}
-			});
-			downloadThread.start();
-			
+			}
+		});
+		downloadThread.start();
+
 	}
-	
+
 	/** Define toolTip class */
 	public class TooltipTableRow<T> extends TableRow<T> {
 
@@ -447,19 +458,19 @@ public class MainScene implements Initializable {
 				} else if (item instanceof Image) {
 					setText(null);
 					ImageView imageView = new ImageView((Image) item);
-					
+
 					double width = ((Image) item).getWidth();
 					double height = ((Image) item).getHeight();
 					double x = 0;
-					double y = height/4;
-					
+					double y = height / 4;
+
 					// define crop in image coordinates:
-					Rectangle2D croppedPortion = new Rectangle2D(x, y, width, height/3);
+					Rectangle2D croppedPortion = new Rectangle2D(x, y, width, height / 3);
 
 					imageView.setViewport(croppedPortion);
 					imageView.setFitWidth(180);
 					imageView.setFitHeight(50);
-					//imageView.setPreserveRatio(true);
+					// imageView.setPreserveRatio(true);
 					imageView.setSmooth(true);
 					setGraphic(imageView);
 				} else {
@@ -469,7 +480,7 @@ public class MainScene implements Initializable {
 			}
 		}
 	}
-	
+
 	/** Start key Hooking */
 	public void startHookProcess() {
 		int uploadVitrualKey = KeyEvent.VK_C;
@@ -486,12 +497,12 @@ public class MainScene implements Initializable {
 		hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
 			/* Upload HotKey */
 			public void onGlobalUploadHotkeysPressed() {
-//				if (ContentsUpload.isUpload) {
-//					Platform.runLater(() -> {
-//						FailDialog.show("업로드 중인 파일이 있습니다. 잠시 후에 시도하세요.");
-//					});
-//					return;
-//				}
+				// if (ContentsUpload.isUpload) {
+				// Platform.runLater(() -> {
+				// FailDialog.show("업로드 중인 파일이 있습니다. 잠시 후에 시도하세요.");
+				// });
+				// return;
+				// }
 				if (clipboardNotifier.getIsShowing()) {
 					Platform.runLater(() -> {
 						clipboardNotifier.hidePopUp();
@@ -502,14 +513,14 @@ public class MainScene implements Initializable {
 
 			/* Download HotKey */
 			public void onGlobalDownloadHotkeysPressed() {
-				if(historyList.size() > 0) {
+				if (historyList.size() > 0) {
 					Contents content = historyList.get(0);
 					getContentsInClipboard(content);
 				}
 			}
 		});
 	}
-	
+
 	public void showProgressBar() {
 		Platform.runLater(() -> {
 			try {
@@ -517,14 +528,14 @@ public class MainScene implements Initializable {
 				Scene scene = new Scene(toProgressBar);
 				scene.getStylesheets().add("resources/myprogressbar.css");
 				progressBarStage = new Stage();
-				
+
 				progressBarStage.initStyle(StageStyle.TRANSPARENT);
 				progressBarStage.setScene(scene);
-				//progressBarStage.initOwner(Main.getPrimaryStage());
+				// progressBarStage.initOwner(Main.getPrimaryStage());
 				progressBarStage.initModality(Modality.WINDOW_MODAL);
 				progressBarStage.show();
-				//progressBarStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth()/2 - progressBarStage.getWidth()/2);
-				//progressBarStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight()/2 - progressBarStage.getHeight()/2);
+				// progressBarStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth()/2 - progressBarStage.getWidth()/2);
+				// progressBarStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight()/2 - progressBarStage.getHeight()/2);
 				progressBarStage.setX(Screen.getPrimary().getBounds().getWidth() - progressBarStage.getWidth() - 10);
 				progressBarStage.setY(Screen.getPrimary().getBounds().getHeight() - progressBarStage.getHeight() - 50);
 			} catch (Exception e) {
@@ -532,27 +543,28 @@ public class MainScene implements Initializable {
 			}
 		});
 	}
-	
+
 	/** Show starting view */
 	public void showStartingView() {
 		ui.setMainScene(null);
 		Main.isInMainScene = false;
-		
+
 		hook.stopHook();
 		clipboardNotifier = null;
 		uploadNotifier = null;
 		contentsUpload = null;
 		uploadThread = null;
 		downloader = null;
+		downloader2 = null;
 		downloadThread = null;
 		removeDirectory();
-		
+
 		Platform.runLater(() -> {
 			try {
 				Parent goBack = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
 				Scene scene = new Scene(goBack);
 				Stage backStage = Main.getPrimaryStage();
-	
+
 				backStage.setScene(scene);
 				backStage.show();
 			} catch (Exception e) {
@@ -560,25 +572,25 @@ public class MainScene implements Initializable {
 			}
 		});
 	}
-	
+
 	public void closeProgressBarStage() {
 		Platform.runLater(() -> {
 			progressBarStage.close();
 		});
 	}
-	
+
 	public void closeNicknameChangeStage() {
 		Platform.runLater(() -> {
 			nicknameChangeStage.close();
 		});
 	}
-	
+
 	public void closeSettingStage() {
 		Platform.runLater(() -> {
 			SettingStage.close();
 		});
 	}
-	
+
 	/**
 	 * Create a temporary directory to save the imageFile, file when downloading
 	 * from server to save Zip file when uploading multiple file
@@ -594,7 +606,7 @@ public class MainScene implements Initializable {
 			dirForDownload.mkdir(); // Create Directory
 		}
 	}
-	
+
 	private void removeDirectory() {
 		dirForUpload.delete();
 		dirForDownload.delete();
