@@ -12,7 +12,7 @@ import javafx.scene.control.CheckBox;
 
 public class SettingScene implements Initializable {
 	
-	private UserInterface ui = UserInterface.getIntance();
+	private UserInterface ui = UserInterface.getInstance();
 	
 	@FXML private CheckBox clipboardMonitorNotiCB, uploadNotiCB;
 	@FXML private Button XBtn;

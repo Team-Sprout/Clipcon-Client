@@ -27,6 +27,8 @@ public class RetrofitUploadTest {
 
 	// private String charset = "UTF-8";
 
+	private UserInterface ui = UserInterface.getInstance();
+
 	public static String multipleFileListInfo = "";
 
 	// create Retrofit instance
@@ -44,7 +46,7 @@ public class RetrofitUploadTest {
 		this.userName = userName;
 		this.groupPK = groupPK;
 
-		ui.getMainScene().showProgressBar();
+//		ui.getMainScene().showProgressBar();
 	}
 
 	/** Upload String Data */

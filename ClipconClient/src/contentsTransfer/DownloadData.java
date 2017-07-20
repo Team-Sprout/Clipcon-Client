@@ -48,6 +48,7 @@ public class DownloadData {
 	private Contents requestContents; // Contents Info to download
 
 	public static boolean isDownloading = false;
+
 	private UserInterface ui = UserInterface.getIntance();
 
 	/** Constructor
