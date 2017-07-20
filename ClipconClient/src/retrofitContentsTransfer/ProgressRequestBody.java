@@ -3,15 +3,21 @@ package retrofitContentsTransfer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.logging.Handler;
 
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.BufferedSink;
 import userInterface.UserInterface;
 
+@NoArgsConstructor
 public class ProgressRequestBody extends RequestBody {
+	@Setter
 	private File mFile;
+
+	private final int CHUNKSIZE = 0xFFFF; // 65536
+
 	private String mPath;
 //	private UploadCallbacks mListener;
 
@@ -33,10 +39,10 @@ public class ProgressRequestBody extends RequestBody {
 	public ProgressRequestBody(final File file) {
 		mFile = file;
 	}
-
+  
 	@Override
 	public MediaType contentType() {
-		// i want to upload only images
+		// [TODO] change -- i want to upload only images
 		return MediaType.parse("image/*");
 	}
 
@@ -48,17 +54,15 @@ public class ProgressRequestBody extends RequestBody {
 	@Override
 	public void writeTo(BufferedSink sink) throws IOException {
 		long fileLength = mFile.length();
-		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+		byte[] buffer = new byte[CHUNKSIZE];
 		FileInputStream in = new FileInputStream(mFile);
 		long uploaded = 0;
 
-		
-		System.out.println("[ProgressRequestBody] writeTo");
 		try {
 			int read;
-			// Handler handler = new Handler(Looper.getMainLooper());
-			while ((read = in.read(buffer)) != -1) {
 
+			// [TODO] doy_ Apply to ui
+			while ((read = in.read(buffer)) != -1) {
 				// update progress on UI thread
 				// handler.post(new ProgressUpdater(uploaded, fileLength));
 				double progressValue = (100 * uploaded / fileLength);
@@ -73,18 +77,4 @@ public class ProgressRequestBody extends RequestBody {
 		}
 	}
 
-	// private class ProgressUpdater implements Runnable {
-	// private long mUploaded;
-	// private long mTotal;
-	//
-	// public ProgressUpdater(long uploaded, long total) {
-	// mUploaded = uploaded;
-	// mTotal = total;
-	// }
-	//
-	// @Override
-	// public void run() {
-	// mListener.onProgressUpdate((int) (100 * mUploaded / mTotal));
-	// }
-	// }
 }

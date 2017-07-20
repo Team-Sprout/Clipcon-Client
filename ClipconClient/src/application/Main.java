@@ -25,8 +25,11 @@ import userInterface.TrayIconManager;
 public class Main extends Application {
 	private static Stage primaryStage;
 
-//	public static final String SERVER_ADDR = "delf.gonetis.com";
-	public static final String SERVER_ADDR = "223.194.152.192";
+	public static final String SERVER_PORT = "80";
+	// public static final String SERVER_AD/DR = "delf.gonetis.com";
+	public static final String SERVER_ADDR = "113.198.84.53";
+
+	public static final String SERVER_URI_PART = SERVER_ADDR + ":" + SERVER_PORT + "/";
 
 	public static final String LOCK_FILE_LOCATION = System.getProperty("user.dir") + File.separator + "ClipCon.lock";
 	private File lockFile = new File(Main.LOCK_FILE_LOCATION);
