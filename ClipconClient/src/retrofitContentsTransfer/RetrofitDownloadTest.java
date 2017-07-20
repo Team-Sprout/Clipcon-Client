@@ -1,37 +1,51 @@
 package retrofitContentsTransfer;
 
+import java.awt.Image;
+import java.awt.datatransfer.StringSelection;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
+import contentsTransfer.MultipleFileCompress;
 import controller.ClipboardController;
 import controller.Endpoint;
 import javafx.application.Platform;
 import model.Contents;
 import model.FileTransferable;
 import model.History;
+import model.ImageTransferable;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import userInterface.MainScene;
 import userInterface.UserInterface;
 
 public class RetrofitDownloadTest {
-
-	// private String charset = "UTF-8";
+	
+	private UserInterface ui = UserInterface.getIntance();
 
 	private String userName = null;
 	private String groupPK = null;
 	private Contents requestContents; // Contents Info to download
-
-	private UserInterface ui = UserInterface.getIntance();
+	
+	private final int CHUNKSIZE = 0xFFFF; // 65536
+	private String charset = "UTF-8";
 
 	public static boolean isDownloading = false;
 
@@ -56,8 +70,8 @@ public class RetrofitDownloadTest {
 		});
 		ui.getMainScene().showProgressBar();
 
+		// retrieving Contents from My History
 		History myhistory = Endpoint.user.getGroup().getHistory();
-		// Retrieving Contents from My History
 		requestContents = myhistory.getContentsByPK(downloadDataPK);
 		String contentsType = requestContents.getContentsType();
 
@@ -69,44 +83,37 @@ public class RetrofitDownloadTest {
 
 		// create Retrofit instance
 		Retrofit.Builder builder = new Retrofit.Builder().baseUrl(RetrofitInterface.BASE_URL).addConverterFactory(GsonConverterFactory.create());
-		// Retrofit.Builder builder = new Retrofit.Builder().baseUrl(RetrofitInterface.BASE_URL);
 		Retrofit retrofit = builder.build();
 
-		// todo get client & call object for the request
+		// call object for the request
 		RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
-		Call<ResponseBody> call = retrofitInterface.requestDataDownload2(parameters);
-		call.enqueue(new Callback<ResponseBody>() {
+		Call<ResponseBody> call = retrofitInterface.requestFileDataDownload(parameters);
 
+		call.enqueue(new Callback<ResponseBody>() {
 			@Override
-			public void onResponse(Call<ResponseBody> call, final retrofit2.Response<ResponseBody> response) {
+			public void onResponse(Call<ResponseBody> call, final Response<ResponseBody> response) {
 
 				if (response.isSuccessful()) {
 					switch (contentsType) {
 					case Contents.TYPE_STRING:
 						// Get String Object in Response Body
+						String stringData = downloadStringData(response.body().byteStream());
 
-						System.out.println("TYPE_STRING");
-						// String stringData = downloadStringData(httpConn.getInputStream());
-						//
-						// StringSelection stringTransferable = new StringSelection(stringData);
-						// ClipboardController.writeClipboard(stringTransferable);
+						StringSelection stringTransferable = new StringSelection(stringData);
+						ClipboardController.writeClipboard(stringTransferable);
 						break;
 
 					case Contents.TYPE_IMAGE:
 						// Get Image Object in Response Body
+						Image imageData = downloadCapturedImageData(response.body().byteStream());
 
-						System.out.println("TYPE_IMAGE");
-						//
-						// Image imageData = downloadCapturedImageData(httpConn.getInputStream());
-						//
-						// ImageTransferable imageTransferable = new ImageTransferable(imageData);
-						// ClipboardController.writeClipboard(imageTransferable);
+						ImageTransferable imageTransferable = new ImageTransferable(imageData);
+						ClipboardController.writeClipboard(imageTransferable);
 						break;
 
 					case Contents.TYPE_FILE:
 						String fileOriginName = requestContents.getContentsValue();
 						// Save Real File(filename: fileOriginName) to Clipcon Folder Get Image Object in Response Body
-
 						File fileData = saveFileDataToDisk(response.body(), fileOriginName);
 
 						ArrayList<File> fileList = new ArrayList<File>();
@@ -114,33 +121,32 @@ public class RetrofitDownloadTest {
 
 						FileTransferable fileTransferable = new FileTransferable(fileList);
 						ClipboardController.writeClipboard(fileTransferable);
+
 						break;
 
 					case Contents.TYPE_MULTIPLE_FILE:
+						String multipleFileOriginName = requestContents.getContentsValue();
+						// Save Real ZIP File(filename: fileOriginName) to Clipcon Folder
+						File multipleFile = saveFileDataToDisk(response.body(), multipleFileOriginName);
 
-						System.out.println("TYPE_MULTIPLE_FILE");
+						File outputUnZipFile = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
+						ArrayList<File> multipleFileList = new ArrayList<File>();
+						File[] multipleFiles = null;
 
-						// String multipleFileOriginName = requestContents.getContentsValue();
-						// // Save Real ZIP File(filename: fileOriginName) to Clipcon Folder
-						// File multipleFile = downloadFileData(httpConn.getInputStream(), multipleFileOriginName);
-						//
-						// File outputUnZipFile = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
-						// ArrayList<File> multipleFileList = new ArrayList<File>();
-						// File[] multipleFiles = null;
-						//
-						// try {
-						// MultipleFileCompress.unzip(multipleFile, outputUnZipFile, false);
-						// multipleFile.delete(); // Delete Real ZIP File
-						// multipleFiles = outputUnZipFile.listFiles();
-						//
-						// for (int j = 0; j < multipleFiles.length; j++) {
-						// multipleFileList.add(multipleFiles[j]);
-						// }
-						// } catch (Exception e) {
-						// e.printStackTrace();
-						// }
-						// FileTransferable multipleFileTransferable = new FileTransferable(multipleFileList);
-						// ClipboardController.writeClipboard(multipleFileTransferable);
+						try {
+							MultipleFileCompress.unzip(multipleFile, outputUnZipFile, false);
+							multipleFile.delete(); // Delete Real ZIP File
+							multipleFiles = outputUnZipFile.listFiles();
+
+							for (int j = 0; j < multipleFiles.length; j++) {
+								multipleFileList.add(multipleFiles[j]);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						FileTransferable multipleFileTransferable = new FileTransferable(multipleFileList);
+						ClipboardController.writeClipboard(multipleFileTransferable);
+
 						break;
 
 					default:
@@ -160,6 +166,71 @@ public class RetrofitDownloadTest {
 		});
 	}
 
+	/** Download String Data */
+	private String downloadStringData(InputStream inputStream) {
+		BufferedReader bufferedReader;
+		StringBuilder stringBuilder = null;
+
+		try {
+			bufferedReader = new BufferedReader(new InputStreamReader(inputStream, charset));
+
+			stringBuilder = new StringBuilder();
+			String line = null;
+
+			try {
+				while ((line = bufferedReader.readLine()) != null) {
+					stringBuilder.append(line + "\n");
+				}
+				inputStream.close();
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+
+		String deleteNewLineString = stringBuilder.toString();
+		deleteNewLineString = deleteNewLineString.substring(0, deleteNewLineString.length() - 2);  // \n\n 제거
+
+		return deleteNewLineString;
+	}
+
+	/**
+	 * Download Captured Image Data
+	 * Change to Image object from file form of Image data
+	 */
+	private Image downloadCapturedImageData(InputStream inputStream) {
+		byte[] imageInByte = null;
+		BufferedImage bImageFromConvert = null;
+
+		try {
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+			int bytesRead = -1;
+			byte[] buffer = new byte[CHUNKSIZE]; // 65536
+
+			while ((bytesRead = inputStream.read(buffer)) != -1) {
+				byteArrayOutputStream.write(buffer, 0, bytesRead);
+			}
+
+			byteArrayOutputStream.flush();
+			imageInByte = byteArrayOutputStream.toByteArray();
+
+			inputStream.close();
+
+			// convert byte array back to BufferedImage
+			ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(imageInByte);
+			bImageFromConvert = ImageIO.read(byteArrayInputStream);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Image ImageData = (Image) bImageFromConvert;
+
+		return ImageData;
+	}
+
 	/** Download File Data to Temporary folder
 	 * @return File object */
 	private File saveFileDataToDisk(ResponseBody body, String fileName) {
@@ -177,10 +248,9 @@ public class RetrofitDownloadTest {
 				FileOutputStream fileOutputStream = new FileOutputStream(saveFileFullPath);
 
 				int bytesRead = -1;
-				// byte[] buffer = new byte[CHUNKSIZE];
-				byte[] buffer = new byte[0xFFFF]; // 65536
+				byte[] buffer = new byte[CHUNKSIZE]; // 65536
 
-				/* progress when saving file to disk */
+				// progress when saving file to disk
 				long fileSize = body.contentLength();
 				long fileSizeDownloaded = 0;
 
@@ -190,6 +260,7 @@ public class RetrofitDownloadTest {
 					fileOutputStream.write(buffer, 0, bytesRead);
 					fileSizeDownloaded += bytesRead;
 
+					// [TODO] doy_ Apply to ui
 					System.out.println((int) (100 * fileSizeDownloaded / fileSize));
 
 					if (bytesRead == -1) {

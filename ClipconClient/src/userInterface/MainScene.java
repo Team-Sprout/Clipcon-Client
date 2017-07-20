@@ -113,7 +113,7 @@ public class MainScene implements Initializable {
 		historyTable.getStylesheets().add("/resources/myhistorytable.css");
 
 		contentsUpload = new ContentsUpload();
-		downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
+		// downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 		downloader2 = new RetrofitDownloadTest(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 
 		startHookProcess();

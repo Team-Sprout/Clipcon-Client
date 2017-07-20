@@ -16,21 +16,33 @@ import retrofit2.http.QueryMap;
 import retrofit2.http.Streaming;
 
 public interface RetrofitInterface {
-	// Path: [Protocol]://[URL]/[Resource Path]
 	public final String PROTOCOL = "http://";
 	public final String CONTEXT_ROOT = "websocketServerModule";
 
+	// Path: [Protocol]://[URL]/[Resource Path]
 	public static final String BASE_URL = PROTOCOL + Main.SERVER_URI_PART + CONTEXT_ROOT + "/";
 
-	/** upload */
+	/** upload string data */
 	@Multipart
 	@Headers({ "User-Agent: pcProgram" })
 	@POST("UploadServlet")
-	Call<ResponseBody> uploadMultipartData(@Part("userName") RequestBody username, @Part("groupPK") RequestBody grouppk, @Part MultipartBody.Part file);
+	Call<ResponseBody> requestStringDataUpload(@Part("userName") RequestBody username, @Part("groupPK") RequestBody grouppk, @Part("stringData") RequestBody stringdata);
+
+	/** upload file data */
+	@Multipart
+	@Headers({ "User-Agent: pcProgram" })
+	@POST("UploadServlet")
+	Call<ResponseBody> requestFileDataUpload(@Part("userName") RequestBody username, @Part("groupPK") RequestBody grouppk, @Part MultipartBody.Part file);
+
+	/** upload multipart file data */
+	@Multipart
+	@Headers({ "User-Agent: pcProgram" })
+	@POST("UploadServlet")
+	Call<ResponseBody> requestFileDataUpload(@Part("userName") RequestBody username, @Part("groupPK") RequestBody grouppk, @Part("multipleFileListInfo") RequestBody multiplefileListInfo, @Part MultipartBody.Part file);
 
 	/** download */
 	@Streaming
 	@Headers({ "User-Agent: pcProgram" })
 	@GET("DownloadServlet")
-	Call<ResponseBody> requestDataDownload2(@QueryMap Map<String, String> parameters);
+	Call<ResponseBody> requestFileDataDownload(@QueryMap Map<String, String> parameters);
 }

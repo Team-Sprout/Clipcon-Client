@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import contentsTransfer.MultipleFileCompress;
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -14,17 +15,28 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import userInterface.MainScene;
 import userInterface.UserInterface;
 
 public class RetrofitUploadTest {
-	// private String charset = "UTF-8";
+
+	private UserInterface ui = UserInterface.getIntance();
 
 	private String userName = null;
 	private String groupPK = null;
 
-	private UserInterface ui = UserInterface.getIntance();
+	// private String charset = "UTF-8";
 
 	public static String multipleFileListInfo = "";
+
+	// create Retrofit instance
+	public Retrofit.Builder builder = new Retrofit.Builder().baseUrl(RetrofitInterface.BASE_URL).addConverterFactory(GsonConverterFactory.create());
+	public Retrofit retrofit = builder.build();
+
+	// get client & call object for the request
+	public RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
+
+	public Call<ResponseBody> call = null;
 
 	/** Constructor
 	 * setting userName and groupPK. */
@@ -35,43 +47,94 @@ public class RetrofitUploadTest {
 		ui.getMainScene().showProgressBar();
 	}
 
-	// public void uploadFile(URI fileUri)
-	public void uploadMultipartData(ArrayList<String> fileFullPathList) {
+	/** Upload String Data */
+	public void uploadStringData(String stringData) {
 
-		// creates a unique boundary based on time stamp
-		// String boundary = "===" + System.currentTimeMillis() + "===";
-		// RequestBody descriptionPart = RequestBody.create(MultipartBody.FORM, boundary);
-		// System.out.println("boundary: " + boundary);
+		// add another part within the multipart request
+		RequestBody username = RequestBody.create(MediaType.parse("text/plain"), userName);
+		RequestBody grouppk = RequestBody.create(MediaType.parse("text/plain"), groupPK);
+		RequestBody stringdata = RequestBody.create(MediaType.parse("text/plain"), stringData);
+
+		call = retrofitInterface.requestStringDataUpload(username, grouppk, stringdata);
+		callResult(call);
+	}
+
+	// /** Upload Captured Image Data in Clipboard */
+	// public void uploadCapturedImageData(Image capturedImageData) {
+	// try {
+	// MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
+	// setCommonParameter(multipart);
+	//
+	// multipart.addImagePart("imageData", capturedImageData);
+	// multipart.finish();
+	//
+	// } catch (IOException ex) {
+	// System.err.println(ex);
+	// }
+	// }
+
+	/** Upload File Data
+	 * 
+	 * @param fileFullPathLis - file path from clipboard
+	 */
+	public void uploadMultipartData(ArrayList<String> fileFullPathList) {
 
 		// create uploading file
 		File originalFile = new File(fileFullPathList.get(0));
-		// create RequestBody instance from file
-		// RequestBody filePart = RequestBody.create(MediaType.parse("multipart/form-data"), originalFile);
-		// MultipartBody.Part is used to send also the actual file name
-		// MultipartBody.Part file = MultipartBody.Part.createFormData("fileData", originalFile.getName(), filePart);
-
-		/* test */
-		// ProgressRequestBody progressFilePart = ProgressRequestBody.create(MediaType.parse("multipart/form-data"), originalFile);
-		ProgressRequestBody progressFilePart = new ProgressRequestBody(originalFile);
-		MultipartBody.Part file = MultipartBody.Part.createFormData("fileData", originalFile.getName(), progressFilePart);
 
 		// add another part within the multipart request
 		RequestBody username = RequestBody.create(MediaType.parse("text/plain"), userName);
 		RequestBody grouppk = RequestBody.create(MediaType.parse("text/plain"), groupPK);
 
-		// create Retrofit instance
-		Retrofit.Builder builder = new Retrofit.Builder().baseUrl(RetrofitInterface.BASE_URL).addConverterFactory(GsonConverterFactory.create());
-		Retrofit retrofit = builder.build();
+		// create RequestBody instance (from file)
+		ProgressRequestBody progressFilePart = new ProgressRequestBody();
 
-		// get client & call object for the request
-		RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
+		/* case: Single file data(not a folder) */
+		if (fileFullPathList.size() == 1 && originalFile.isFile()) {
+			progressFilePart.setMFile(originalFile);
+			MultipartBody.Part file = MultipartBody.Part.createFormData("fileData", originalFile.getName(), progressFilePart);
 
-		// finally, execute the request
-		Call<ResponseBody> call = retrofitInterface.uploadMultipartData(username, grouppk, file);
+			// finally, execute the request
+			call = retrofitInterface.requestFileDataUpload(username, grouppk, file);
+		}
+		/* case: Multiple file data, One or more folders */
+		else {
+			try {
+				File uploadRootDir = new File(MainScene.UPLOAD_TEMP_DIR_LOCATION);
+
+				// Delete child files that already exist after uploading
+				if (uploadRootDir.listFiles().length != 0) {
+					for (int i = 0; i < uploadRootDir.listFiles().length; i++)
+						uploadRootDir.listFiles()[i].delete();
+				}
+
+				multipleFileListInfo = "";
+
+				String zipFileFillPath = MultipleFileCompress.compress(fileFullPathList);
+				File uploadZipFile = new File(zipFileFillPath);
+
+				progressFilePart.setMFile(uploadZipFile);
+				MultipartBody.Part multipartFile = MultipartBody.Part.createFormData("multipartFileData", uploadZipFile.getName(), progressFilePart);
+
+				// finally, execute the request
+				RequestBody multiplefileListInfo = RequestBody.create(MediaType.parse("text/plain"), multipleFileListInfo);
+				call = retrofitInterface.requestFileDataUpload(username, grouppk, multiplefileListInfo, multipartFile);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		callResult(call);
+	}
+
+	/** logging method- check for a successful response */
+	public void callResult(Call<ResponseBody> call) {
 		call.enqueue(new Callback<ResponseBody>() {
 			@Override
 			public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-				// TODO Auto-generated method stub
+				/* logging code */
+				System.out.println("Upload onResponse");
 				System.out.println("----- response toString -----\n" + response.toString());
 
 				Headers headers = response.headers();
@@ -87,7 +150,6 @@ public class RetrofitUploadTest {
 
 			@Override
 			public void onFailure(Call<ResponseBody> call, Throwable arg1) {
-				// TODO Auto-generated method stub
 				System.out.println("Upload onFailure");
 			}
 		});

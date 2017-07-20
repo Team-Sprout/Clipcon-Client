@@ -21,6 +21,7 @@ public class ContentsUpload {
 
 		if (clipboardData instanceof String) {
 			// uploader.uploadStringData((String) clipboardData);
+			uploader2.uploadStringData((String) clipboardData);
 		} else if (clipboardData instanceof Image) {
 			// uploader.uploadCapturedImageData((Image) clipboardData);
 		} else if (clipboardData instanceof ArrayList<?>) {
