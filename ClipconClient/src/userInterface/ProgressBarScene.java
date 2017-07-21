@@ -4,12 +4,12 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ResourceBundle;
 
-import contentsTransfer.DownloadData;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.text.Text;
+import retrofitContentsTransfer.RetrofitDownloadTest;
 
 public class ProgressBarScene implements Initializable {
 	
@@ -22,23 +22,29 @@ public class ProgressBarScene implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setProgressBarScene(this);
 		
-		if(DownloadData.isDownloading) {
+		if(RetrofitDownloadTest.isDownloading) {
 			text.setText("Downloading");
 		}
 		
 		progressBar.setProgress(0);
 	}
 	
-	public void setProgeress(double value, long uploaded, long fileLength) {
-		double uploadedMB = ((uploaded / 1024.0) / 1024.0);
+	public void setProgeress(double value, long onGoing, long fileLength) {
+		double onGoingMB = ((onGoing / 1024.0) / 1024.0);
 		double fileLengthMB = ((fileLength / 1024.0) / 1024.0);
 		
 		DecimalFormat dec = new DecimalFormat("0.0");
 		
+		String progress = (int)value + "% (" + dec.format(onGoingMB) + " / " + dec.format(fileLengthMB) + " MB)";
+		
 		Platform.runLater(() -> {
-			text.setText("Uploading " + (int)value + "% (" + dec.format(uploadedMB) + " / " + dec.format(fileLengthMB) + " MB)");
+			if(!RetrofitDownloadTest.isDownloading)
+				text.setText("Uploading " + progress);
+			else
+				text.setText("Downloading " + progress);
+			
 			progressBar.setProgress(value*0.01);
-        });
+		});
 	}
 	
 	public void completeProgress() {

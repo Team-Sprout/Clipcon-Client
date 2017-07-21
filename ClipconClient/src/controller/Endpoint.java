@@ -172,11 +172,6 @@ public class Endpoint {
 			ui.getMainScene().addContentsInHistory(); // update UI list
 
 			if (contents.getUploadUserName().equals(Endpoint.user.getName())) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 				ui.getMainScene().closeProgressBarStage();
 			}
 			break;

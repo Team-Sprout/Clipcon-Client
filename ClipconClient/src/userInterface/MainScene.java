@@ -370,7 +370,6 @@ public class MainScene implements Initializable {
 				uploadNotifier.onNotificationPressedProperty();
 				uploadNotifier.setOnNotificationPressed(event -> getContentsInClipboard(content));
 			} else if (content.getUploadUserName().equals(Endpoint.user.getName())) {
-				ContentsUpload.isUpload = false;
 				ui.getProgressBarScene().completeProgress();
 			}
 		});
@@ -386,14 +385,6 @@ public class MainScene implements Initializable {
 				try {
 					// downloader.requestDataDownload(downloadDataPK);
 					downloader2.requestDataDownload(downloadDataPK);
-
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-
-					closeProgressBarStage();
 
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
@@ -574,6 +565,12 @@ public class MainScene implements Initializable {
 	}
 
 	public void closeProgressBarStage() {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		Platform.runLater(() -> {
 			progressBarStage.close();
 		});

@@ -22,7 +22,6 @@ import javax.imageio.ImageIO;
 import contentsTransfer.MultipleFileCompress;
 import controller.ClipboardController;
 import controller.Endpoint;
-import javafx.application.Platform;
 import model.Contents;
 import model.FileTransferable;
 import model.History;
@@ -38,7 +37,7 @@ import userInterface.UserInterface;
 
 public class RetrofitDownloadTest {
 	
-	private UserInterface ui = UserInterface.getIntance();
+	private UserInterface ui = UserInterface.getInstance();
 
 	private String userName = null;
 	private String groupPK = null;
@@ -65,9 +64,7 @@ public class RetrofitDownloadTest {
 	 *            History of my group
 	 */
 	public void requestDataDownload(String downloadDataPK) throws MalformedURLException {
-		Platform.runLater(() -> {
-			isDownloading = true;
-		});
+		isDownloading = true;
 		ui.getMainScene().showProgressBar();
 
 		// retrieving Contents from My History
@@ -154,6 +151,8 @@ public class RetrofitDownloadTest {
 					}
 
 					ui.getProgressBarScene().completeProgress();
+					ui.getMainScene().closeProgressBarStage();
+					isDownloading = false;
 				}
 			}
 
@@ -260,8 +259,9 @@ public class RetrofitDownloadTest {
 					fileOutputStream.write(buffer, 0, bytesRead);
 					fileSizeDownloaded += bytesRead;
 
-					// [TODO] doy_ Apply to ui
-					System.out.println((int) (100 * fileSizeDownloaded / fileSize));
+					double progressValue = (100 * fileSizeDownloaded / fileSize);
+					//System.out.println((int) progressValue);
+					ui.getProgressBarScene().setProgeress(progressValue, fileSizeDownloaded, fileSize);
 
 					if (bytesRead == -1) {
 						break;
