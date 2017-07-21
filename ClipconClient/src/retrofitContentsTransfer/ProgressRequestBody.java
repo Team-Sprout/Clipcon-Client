@@ -15,30 +15,9 @@ import userInterface.UserInterface;
 public class ProgressRequestBody extends RequestBody {
 	@Setter
 	private File mFile;
-
 	private final int CHUNKSIZE = 0xFFFF; // 65536
 
-	private String mPath;
-//	private UploadCallbacks mListener;
-
-	private static final int DEFAULT_BUFFER_SIZE = 2048;
-	
 	private UserInterface ui = UserInterface.getInstance();
-
-//	public interface UploadCallbacks {
-//		void onProgressUpdate(int percentage);
-//		void onError();
-//		void onFinish();
-//	}
-//
-//	public ProgressRequestBody(final File file, final UploadCallbacks listener) {
-//		mFile = file;
-//		mListener = listener;
-//	}
-	
-	public ProgressRequestBody(final File file) {
-		mFile = file;
-	}
   
 	@Override
 	public MediaType contentType() {
@@ -61,10 +40,10 @@ public class ProgressRequestBody extends RequestBody {
 		try {
 			int read;
 
-			// [TODO] doy_ Apply to ui
 			while ((read = in.read(buffer)) != -1) {
 				// update progress on UI thread
 				// handler.post(new ProgressUpdater(uploaded, fileLength));
+				
 				double progressValue = (100 * uploaded / fileLength);
 				//System.out.println((int) progressValue);
 				ui.getProgressBarScene().setProgeress(progressValue, uploaded, fileLength);

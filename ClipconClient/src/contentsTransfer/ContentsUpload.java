@@ -10,10 +10,8 @@ import retrofitContentsTransfer.RetrofitUploadTest;
 public class ContentsUpload {
 	public static UploadData uploader;
 	public static RetrofitUploadTest uploader2;
-	public static boolean isUpload = false;
 
 	public void upload() {
-		isUpload = true;
 		// uploader = new UploadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 		uploader2 = new RetrofitUploadTest(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 

@@ -22,7 +22,7 @@ public class UploadData {
 	private String userName = null;
 	private String groupPK = null;
 
-	private UserInterface ui = UserInterface.getIntance();
+	private UserInterface ui = UserInterface.getInstance();
 
 	public static String multipleFileListInfo = "";
 

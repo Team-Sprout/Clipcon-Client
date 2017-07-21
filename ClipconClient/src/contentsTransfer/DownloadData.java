@@ -49,7 +49,7 @@ public class DownloadData {
 
 	public static boolean isDownloading = false;
 
-	private UserInterface ui = UserInterface.getIntance();
+	private UserInterface ui = UserInterface.getInstance();
 
 	/** Constructor
 	 * Setting userName and groupPK */
