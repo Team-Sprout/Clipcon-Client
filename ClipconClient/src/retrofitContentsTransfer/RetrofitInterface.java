@@ -15,7 +15,9 @@ import retrofit2.http.Part;
 import retrofit2.http.QueryMap;
 import retrofit2.http.Streaming;
 
+/** http protocol message */
 public interface RetrofitInterface {
+	
 	public final String PROTOCOL = "http://";
 	public final String CONTEXT_ROOT = "websocketServerModule";
 
