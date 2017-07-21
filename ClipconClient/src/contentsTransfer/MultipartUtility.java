@@ -49,7 +49,7 @@ public class MultipartUtility {
 	 */
 	public MultipartUtility(String requestURL, String charset) throws IOException {
 		this.charset = charset;
-		ui = UserInterface.getIntance();
+		ui = UserInterface.getInstance();
 
 		// creates a unique boundary based on time stamp
 		boundary = "===" + System.currentTimeMillis() + "===";

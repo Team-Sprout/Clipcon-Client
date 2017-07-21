@@ -23,7 +23,7 @@ import model.Message;
 
 public class GroupExitDialog extends Stage {
 	
-	private Endpoint endpoint = Endpoint.getIntance();
+	private Endpoint endpoint = Endpoint.getInstance();
  
     private static Label label;
     private static GroupExitDialog popup;
@@ -54,7 +54,6 @@ public class GroupExitDialog extends Stage {
 				exitGroupMsg.add(Message.GROUP_PK, Endpoint.user.getGroup().getPrimaryKey());
 				exitGroupMsg.add(Message.NAME, Endpoint.user.getName());
 				try {
-					endpoint = Endpoint.getIntance();
 					endpoint.sendMessage(exitGroupMsg);
 				} catch (IOException | EncodeException e) {
 					e.printStackTrace();

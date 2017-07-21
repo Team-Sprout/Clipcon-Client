@@ -51,7 +51,7 @@ import retrofitContentsTransfer.RetrofitDownloadData;
 
 public class MainScene implements Initializable {
 
-	private UserInterface ui = UserInterface.getIntance();
+	private UserInterface ui = UserInterface.getInstance();
 
 	@FXML
 	private JFXTabPane tabPane;
@@ -94,9 +94,10 @@ public class MainScene implements Initializable {
 	private hookManager.GlobalKeyboardHook hook;
 
 	// directory location for uploading and downloading file
-	public static final String UPLOAD_TEMP_DIR_LOCATION = "C:\\Program Files\\ClipconUpload";
-	public static final String DOWNLOAD_TEMP_DIR_LOCATION = "C:\\Program Files\\ClipconDownload";
 
+	public static final String UPLOAD_TEMP_DIR_LOCATION = System.getProperty("user.dir") + File.separator + "ClipconUpload";
+	public static final String DOWNLOAD_TEMP_DIR_LOCATION = System.getProperty("user.dir") + File.separator + "ClipconDownload";
+	
 	private File dirForUpload = new File(MainScene.UPLOAD_TEMP_DIR_LOCATION);
 	private File dirForDownload = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 
@@ -425,7 +426,6 @@ public class MainScene implements Initializable {
 
 	/** Define content column value class */
 	public class ContentsValueFactory implements Callback<TableColumn.CellDataFeatures<Contents, Object>, ObservableValue<Object>> {
-		@SuppressWarnings("unchecked")
 		@Override
 		public ObservableValue<Object> call(TableColumn.CellDataFeatures<Contents, Object> data) {
 			Object value = null;

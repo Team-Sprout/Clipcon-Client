@@ -1,14 +1,8 @@
 package retrofitContentsTransfer;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import javax.imageio.ImageIO;
 
 import contentsTransfer.MultipleFileCompress;
 import okhttp3.Headers;
@@ -24,14 +18,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import userInterface.MainScene;
 import userInterface.UserInterface;
 
-public class RetrofitUploadData {
-
-	private UserInterface ui = UserInterface.getInstance();
+public class RetrofitUploadTest {
 
 	private String userName = null;
 	private String groupPK = null;
 
 	// private String charset = "UTF-8";
+
+	private UserInterface ui = UserInterface.getInstance();
 
 	public static String multipleFileListInfo = "";
 
@@ -46,11 +40,11 @@ public class RetrofitUploadData {
 
 	/** Constructor
 	 * setting userName and groupPK. */
-	public RetrofitUploadData(String userName, String groupPK) {
+	public RetrofitUploadTest(String userName, String groupPK) {
 		this.userName = userName;
 		this.groupPK = groupPK;
 
-		ui.getMainScene().showProgressBar();
+//		ui.getMainScene().showProgressBar();
 	}
 
 	/** Upload String Data */
@@ -65,35 +59,19 @@ public class RetrofitUploadData {
 		callResult(call);
 	}
 
-	/** Upload Captured Image Data in Clipboard */
-	public void uploadCapturedImageData(Image capturedImageData) {
-
-		// add another part within the multipart request
-		RequestBody username = RequestBody.create(MediaType.parse("text/plain"), userName);
-		RequestBody grouppk = RequestBody.create(MediaType.parse("text/plain"), groupPK);
-
-		BufferedImage originalImage = (BufferedImage) capturedImageData;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		try {
-
-			ImageIO.write(originalImage, "png", baos);
-
-			baos.flush();
-			byte[] imageInByte = baos.toByteArray();
-			baos.close();
-
-			// RequestBody imagedata = RequestBody.create(MediaType.parse("image/png"), imageInByte);
-			RequestBody imagedata = RequestBody.create(MediaType.parse("application/octet-stream"), imageInByte);
-
-			call = retrofitInterface.requestImageDataUpload(username, grouppk, imagedata);
-			callResult(call);
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	// /** Upload Captured Image Data in Clipboard */
+	// public void uploadCapturedImageData(Image capturedImageData) {
+	// try {
+	// MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
+	// setCommonParameter(multipart);
+	//
+	// multipart.addImagePart("imageData", capturedImageData);
+	// multipart.finish();
+	//
+	// } catch (IOException ex) {
+	// System.err.println(ex);
+	// }
+	// }
 
 	/** Upload File Data
 	 * 
