@@ -28,6 +28,12 @@ public interface RetrofitInterface {
 	@POST("UploadServlet")
 	Call<ResponseBody> requestStringDataUpload(@Part("userName") RequestBody username, @Part("groupPK") RequestBody grouppk, @Part("stringData") RequestBody stringdata);
 
+	/** upload captured image data */
+	@Multipart
+	@Headers({ "User-Agent: pcProgram", "Content-Transfer-Encoding: binary" })
+	@POST("UploadServlet")
+	Call<ResponseBody> requestImageDataUpload(@Part("userName") RequestBody username, @Part("groupPK") RequestBody grouppk, @Part("imageData") RequestBody imagedata);
+	
 	/** upload file data */
 	@Multipart
 	@Headers({ "User-Agent: pcProgram" })

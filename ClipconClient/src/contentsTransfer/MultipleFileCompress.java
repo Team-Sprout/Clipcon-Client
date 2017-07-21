@@ -10,7 +10,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import retrofitContentsTransfer.RetrofitUploadTest;
+import retrofitContentsTransfer.RetrofitUploadData;
 import userInterface.MainScene;
 
 //import com.sun.jna.platform.FileUtils;
@@ -102,7 +102,7 @@ public class MultipleFileCompress {
 				String sFilePath = file.getPath();
 				String zipEntryName = sFilePath.substring(lastIndex + 1, sFilePath.length());
 				UploadData.multipleFileListInfo += zipEntryName + "\n";
-				RetrofitUploadTest.multipleFileListInfo += zipEntryName + "\n";
+				RetrofitUploadData.multipleFileListInfo += zipEntryName + "\n";
 				System.out.println("zipEntry <<sFilePath>>: " + sFilePath);
 				System.out.println("zipEntry <<zipEntryName>>: " + zipEntryName);
 				// String zipEntryName = sFilePath.substring(filePath.length() + 1, sFilePath.length());

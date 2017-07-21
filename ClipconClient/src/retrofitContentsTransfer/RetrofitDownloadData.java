@@ -36,7 +36,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import userInterface.MainScene;
 import userInterface.UserInterface;
 
-public class RetrofitDownloadTest {
+public class RetrofitDownloadData {
 	
 	private UserInterface ui = UserInterface.getIntance();
 
@@ -51,7 +51,7 @@ public class RetrofitDownloadTest {
 
 	/** Constructor
 	 * setting userName and groupPK. */
-	public RetrofitDownloadTest(String userName, String groupPK) {
+	public RetrofitDownloadData(String userName, String groupPK) {
 		this.userName = userName;
 		this.groupPK = groupPK;
 	}

@@ -13,7 +13,6 @@ import com.jfoenix.controls.JFXTabPane;
 
 import application.Main;
 import contentsTransfer.ContentsUpload;
-import contentsTransfer.DownloadData;
 import controller.ClipboardController;
 import controller.Endpoint;
 import javafx.application.Platform;
@@ -48,7 +47,7 @@ import javafx.util.Callback;
 import lombok.Getter;
 import model.Contents;
 import model.User;
-import retrofitContentsTransfer.RetrofitDownloadTest;
+import retrofitContentsTransfer.RetrofitDownloadData;
 
 public class MainScene implements Initializable {
 
@@ -85,8 +84,8 @@ public class MainScene implements Initializable {
 
 	private ContentsUpload contentsUpload;
 	private Thread uploadThread;
-	private DownloadData downloader;
-	private RetrofitDownloadTest downloader2;
+	// private DownloadData downloader;
+	private RetrofitDownloadData downloader2;
 	private Thread downloadThread;
 
 	private Notification.ClipboadNotifier clipboardNotifier;
@@ -114,7 +113,7 @@ public class MainScene implements Initializable {
 
 		contentsUpload = new ContentsUpload();
 		// downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
-		downloader2 = new RetrofitDownloadTest(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
+		downloader2 = new RetrofitDownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 
 		startHookProcess();
 		createDirectory();
@@ -554,7 +553,7 @@ public class MainScene implements Initializable {
 		uploadNotifier = null;
 		contentsUpload = null;
 		uploadThread = null;
-		downloader = null;
+		// downloader = null;
 		downloader2 = null;
 		downloadThread = null;
 		removeDirectory();
