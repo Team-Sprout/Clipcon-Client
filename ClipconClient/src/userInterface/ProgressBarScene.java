@@ -9,7 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.text.Text;
-import retrofitContentsTransfer.RetrofitDownloadTest;
+import retrofitContentsTransfer.RetrofitDownloadData;
 
 public class ProgressBarScene implements Initializable {
 	
@@ -22,7 +22,7 @@ public class ProgressBarScene implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setProgressBarScene(this);
 		
-		if(RetrofitDownloadTest.isDownloading) {
+		if(RetrofitDownloadData.isDownloading) {
 			text.setText("Downloading");
 		}
 		
@@ -38,7 +38,7 @@ public class ProgressBarScene implements Initializable {
 		String progress = (int)value + "% (" + dec.format(onGoingMB) + " / " + dec.format(fileLengthMB) + " MB)";
 		
 		Platform.runLater(() -> {
-			if(!RetrofitDownloadTest.isDownloading)
+			if(!RetrofitDownloadData.isDownloading)
 				text.setText("Uploading " + progress);
 			else
 				text.setText("Downloading " + progress);

@@ -12,8 +12,6 @@ import java.util.function.Function;
 import com.jfoenix.controls.JFXTabPane;
 
 import application.Main;
-import contentsTransfer.ContentsUpload;
-import contentsTransfer.DownloadData;
 import controller.ClipboardController;
 import controller.Endpoint;
 import javafx.application.Platform;
@@ -48,7 +46,8 @@ import javafx.util.Callback;
 import lombok.Getter;
 import model.Contents;
 import model.User;
-import retrofitContentsTransfer.RetrofitDownloadTest;
+import retrofitContentsTransfer.ContentsUpload;
+import retrofitContentsTransfer.RetrofitDownloadData;
 
 public class MainScene implements Initializable {
 
@@ -85,8 +84,7 @@ public class MainScene implements Initializable {
 
 	private ContentsUpload contentsUpload;
 	private Thread uploadThread;
-	private DownloadData downloader;
-	private RetrofitDownloadTest downloader2;
+	private RetrofitDownloadData downloader;
 	private Thread downloadThread;
 
 	private Notification.ClipboadNotifier clipboardNotifier;
@@ -98,7 +96,7 @@ public class MainScene implements Initializable {
 
 	public static final String UPLOAD_TEMP_DIR_LOCATION = System.getProperty("user.dir") + File.separator + "ClipconUpload";
 	public static final String DOWNLOAD_TEMP_DIR_LOCATION = System.getProperty("user.dir") + File.separator + "ClipconDownload";
-	
+
 	private File dirForUpload = new File(MainScene.UPLOAD_TEMP_DIR_LOCATION);
 	private File dirForDownload = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 
@@ -114,8 +112,7 @@ public class MainScene implements Initializable {
 		historyTable.getStylesheets().add("/resources/myhistorytable.css");
 
 		contentsUpload = new ContentsUpload();
-		// downloader = new DownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
-		downloader2 = new RetrofitDownloadTest(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
+		downloader = new RetrofitDownloadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 
 		startHookProcess();
 		createDirectory();
@@ -383,8 +380,7 @@ public class MainScene implements Initializable {
 			@Override
 			public void run() {
 				try {
-					// downloader.requestDataDownload(downloadDataPK);
-					downloader2.requestDataDownload(downloadDataPK);
+					downloader.requestDataDownload(downloadDataPK);
 
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
@@ -546,7 +542,6 @@ public class MainScene implements Initializable {
 		contentsUpload = null;
 		uploadThread = null;
 		downloader = null;
-		downloader2 = null;
 		downloadThread = null;
 		removeDirectory();
 
@@ -570,7 +565,7 @@ public class MainScene implements Initializable {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 		Platform.runLater(() -> {
 			progressBarStage.close();
 		});

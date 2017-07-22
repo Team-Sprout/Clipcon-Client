@@ -18,11 +18,14 @@ public class ProgressRequestBody extends RequestBody {
 	private final int CHUNKSIZE = 0xFFFF; // 65536
 
 	private UserInterface ui = UserInterface.getInstance();
-  
+
 	@Override
 	public MediaType contentType() {
-		// [TODO] change -- i want to upload only images
-		return MediaType.parse("image/*");
+		// The default content type for each part is 'text / plain' -> error
+		// return MediaType.parse("multipart/mixed");
+
+		return MediaType.parse("multipart/form-data");
+		// return MediaType.parse("application/octet-stream");
 	}
 
 	@Override
@@ -40,12 +43,12 @@ public class ProgressRequestBody extends RequestBody {
 		try {
 			int read;
 
+			/* update progress on UI thread */
 			while ((read = in.read(buffer)) != -1) {
-				// update progress on UI thread
 				// handler.post(new ProgressUpdater(uploaded, fileLength));
-				
+
 				double progressValue = (100 * uploaded / fileLength);
-				//System.out.println((int) progressValue);
+				// System.out.println((int) progressValue);
 				ui.getProgressBarScene().setProgeress(progressValue, uploaded, fileLength);
 
 				uploaded += read;

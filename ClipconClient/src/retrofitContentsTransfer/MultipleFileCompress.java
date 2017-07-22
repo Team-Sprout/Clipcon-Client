@@ -1,4 +1,4 @@
-package contentsTransfer;
+package retrofitContentsTransfer;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -10,11 +10,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import retrofitContentsTransfer.RetrofitUploadTest;
 import userInterface.MainScene;
-
-//import com.sun.jna.platform.FileUtils;
-//import org.apache.commons.io.FileUtils;
 
 public class MultipleFileCompress {
 	private static final int COMPRESSION_LEVEL = 1;
@@ -97,12 +93,11 @@ public class MultipleFileCompress {
 		/// case: SourceFile is not a directory
 		else {
 			BufferedInputStream bis = null;
-			
+
 			try {
 				String sFilePath = file.getPath();
 				String zipEntryName = sFilePath.substring(lastIndex + 1, sFilePath.length());
-				UploadData.multipleFileListInfo += zipEntryName + "\n";
-				RetrofitUploadTest.multipleFileListInfo += zipEntryName + "\n";
+				RetrofitUploadData.multipleFileListInfo += zipEntryName + "\n";
 				System.out.println("zipEntry <<sFilePath>>: " + sFilePath);
 				System.out.println("zipEntry <<zipEntryName>>: " + zipEntryName);
 				// String zipEntryName = sFilePath.substring(filePath.length() + 1, sFilePath.length());

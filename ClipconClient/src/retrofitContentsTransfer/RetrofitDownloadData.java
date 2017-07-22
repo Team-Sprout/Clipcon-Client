@@ -19,7 +19,6 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import contentsTransfer.MultipleFileCompress;
 import controller.ClipboardController;
 import controller.Endpoint;
 import model.Contents;
@@ -35,14 +34,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import userInterface.MainScene;
 import userInterface.UserInterface;
 
-public class RetrofitDownloadTest {
-	
+public class RetrofitDownloadData {
+
 	private UserInterface ui = UserInterface.getInstance();
 
 	private String userName = null;
 	private String groupPK = null;
 	private Contents requestContents; // Contents Info to download
-	
+
 	private final int CHUNKSIZE = 0xFFFF; // 65536
 	private String charset = "UTF-8";
 
@@ -50,7 +49,7 @@ public class RetrofitDownloadTest {
 
 	/** Constructor
 	 * setting userName and groupPK. */
-	public RetrofitDownloadTest(String userName, String groupPK) {
+	public RetrofitDownloadData(String userName, String groupPK) {
 		this.userName = userName;
 		this.groupPK = groupPK;
 	}
@@ -190,7 +189,7 @@ public class RetrofitDownloadTest {
 		}
 
 		String deleteNewLineString = stringBuilder.toString();
-		deleteNewLineString = deleteNewLineString.substring(0, deleteNewLineString.length() - 2);  // \n\n 제거
+		deleteNewLineString = deleteNewLineString.substring(0, deleteNewLineString.length() - 2); // \n\n �젣嫄�
 
 		return deleteNewLineString;
 	}
@@ -260,7 +259,7 @@ public class RetrofitDownloadTest {
 					fileSizeDownloaded += bytesRead;
 
 					double progressValue = (100 * fileSizeDownloaded / fileSize);
-					//System.out.println((int) progressValue);
+					// System.out.println((int) progressValue);
 					ui.getProgressBarScene().setProgeress(progressValue, fileSizeDownloaded, fileSize);
 
 					if (bytesRead == -1) {
