@@ -33,15 +33,15 @@ public class Main extends Application {
 
 	public static final String LOCK_FILE_LOCATION = System.getProperty("user.dir") + File.separator + "ClipCon.lock";
 	private File lockFile = new File(Main.LOCK_FILE_LOCATION);
-	
+
 	public static boolean isInMainScene = false;
-	
+
 	private Endpoint endpoint = Endpoint.getInstance();
-	
-	// dll load
-	static {       
+
+	/* dll load */
+	static {
 		try {
-//			System.loadLibrary("KeyHooking");
+			// System.loadLibrary("KeyHooking");
 			System.load(System.getProperty("user.dir") + File.separator + "keyHooking.dll");
 		} catch (UnsatisfiedLinkError e) {
 			FailDialog.show("dll load error");
@@ -50,10 +50,10 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		
+
 		@SuppressWarnings("resource")
 		FileChannel channel = new RandomAccessFile(lockFile, "rw").getChannel();
-		
+
 		// try lock
 		FileLock lock = channel.tryLock();
 
@@ -62,7 +62,7 @@ public class Main extends Application {
 			channel.close();
 			System.exit(0);
 		}
-		
+
 		setPrimaryStage(primaryStage);
 
 		TrayIconManager tray = new TrayIconManager();
@@ -92,7 +92,7 @@ public class Main extends Application {
 				}
 			}
 		});
-		
+
 		Thread clipboardMonitorThread = new Thread(new Runnable() {
 			@Override
 			public void run() {

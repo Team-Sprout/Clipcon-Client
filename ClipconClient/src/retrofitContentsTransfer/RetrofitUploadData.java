@@ -1,10 +1,15 @@
 package retrofitContentsTransfer;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import contentsTransfer.MultipleFileCompress;
+import javax.imageio.ImageIO;
+
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -18,7 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import userInterface.MainScene;
 import userInterface.UserInterface;
 
-public class RetrofitUploadTest {
+public class RetrofitUploadData {
 
 	private UserInterface ui = UserInterface.getInstance();
 
@@ -40,7 +45,7 @@ public class RetrofitUploadTest {
 
 	/** Constructor
 	 * setting userName and groupPK. */
-	public RetrofitUploadTest(String userName, String groupPK) {
+	public RetrofitUploadData(String userName, String groupPK) {
 		this.userName = userName;
 		this.groupPK = groupPK;
 
@@ -54,24 +59,44 @@ public class RetrofitUploadTest {
 		RequestBody username = RequestBody.create(MediaType.parse("text/plain"), userName);
 		RequestBody grouppk = RequestBody.create(MediaType.parse("text/plain"), groupPK);
 		RequestBody stringdata = RequestBody.create(MediaType.parse("text/plain"), stringData);
+		
+		System.out.println("[uploadMultipartData] username: " + username.toString() + "// " + userName);
 
 		call = retrofitInterface.requestStringDataUpload(username, grouppk, stringdata);
 		callResult(call);
 	}
 
-	// /** Upload Captured Image Data in Clipboard */
-	// public void uploadCapturedImageData(Image capturedImageData) {
-	// try {
-	// MultipartUtility multipart = new MultipartUtility(SERVER_URL + SERVER_SERVLET, charset);
-	// setCommonParameter(multipart);
-	//
-	// multipart.addImagePart("imageData", capturedImageData);
-	// multipart.finish();
-	//
-	// } catch (IOException ex) {
-	// System.err.println(ex);
-	// }
-	// }
+	/** Upload Captured Image Data in Clipboard */
+	public void uploadCapturedImageData(Image capturedImageData) {
+
+		// add another part within the multipart request
+		RequestBody username = RequestBody.create(MediaType.parse("text/plain"), userName);
+		RequestBody grouppk = RequestBody.create(MediaType.parse("text/plain"), groupPK);
+
+		System.out.println("[uploadMultipartData] username: " + username.toString() + "// " + userName);
+		
+		BufferedImage originalImage = (BufferedImage) capturedImageData;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		try {
+
+			ImageIO.write(originalImage, "png", baos);
+
+			baos.flush();
+			byte[] imageInByte = baos.toByteArray();
+			baos.close();
+
+			// RequestBody imagedata = RequestBody.create(MediaType.parse("image/png"), imageInByte);
+			RequestBody imagedata = RequestBody.create(MediaType.parse("application/octet-stream"), imageInByte);
+
+			call = retrofitInterface.requestImageDataUpload(username, grouppk, imagedata);
+			callResult(call);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/** Upload File Data
 	 * 
@@ -85,6 +110,8 @@ public class RetrofitUploadTest {
 		// add another part within the multipart request
 		RequestBody username = RequestBody.create(MediaType.parse("text/plain"), userName);
 		RequestBody grouppk = RequestBody.create(MediaType.parse("text/plain"), groupPK);
+		
+		System.out.println("[uploadMultipartData] username: " + username.toString() + "// " + userName);
 
 		// create RequestBody instance (from file)
 		ProgressRequestBody progressFilePart = new ProgressRequestBody();
