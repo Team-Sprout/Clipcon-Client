@@ -544,6 +544,9 @@ public class Notification {
 					POPUP.hide();
 	                popups.remove(POPUP);
 	                timeline.stop();
+	                if(popups.size() == 1) {
+	                	stage.close();
+	                }
 				}));
 				
 				if (stage.isShowing()) {

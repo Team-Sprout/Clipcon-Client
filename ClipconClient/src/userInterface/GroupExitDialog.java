@@ -51,8 +51,6 @@ public class GroupExitDialog extends Stage {
                 
 				// Send REQUEST_EXIT_GROUP Message To Server
 				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
-				exitGroupMsg.add(Message.GROUP_PK, Endpoint.user.getGroup().getPrimaryKey());
-				exitGroupMsg.add(Message.NAME, Endpoint.user.getName());
 				try {
 					endpoint.sendMessage(exitGroupMsg);
 				} catch (IOException | EncodeException e) {

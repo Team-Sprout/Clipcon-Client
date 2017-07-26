@@ -26,8 +26,8 @@ public class Main extends Application {
 	private static Stage primaryStage;
 
 	public static final String SERVER_PORT = "80";
-//	public static final String SERVER_ADDR = "113.198.84.53";
-	public static final String SERVER_ADDR = "223.194.157.88";
+	public static final String SERVER_ADDR = "113.198.84.53";
+//	public static final String SERVER_ADDR = "223.194.157.88";
 
 	public static final String SERVER_URI_PART = SERVER_ADDR + ":" + SERVER_PORT + "/";
 
@@ -83,6 +83,8 @@ public class Main extends Application {
 					Platform.setImplicitExit(false);
 				} else {
 					Message exitProgramMsg = new Message().setType(Message.REQUEST_EXIT_PROGRAM);
+//					exitProgramMsg.add(Message.GROUP_PK, Endpoint.user.getGroup().getPrimaryKey());
+//					exitProgramMsg.add(Message.NAME, Endpoint.user.getName());
 					try {
 						endpoint.sendMessage(exitProgramMsg);
 					} catch (IOException | EncodeException e) {
