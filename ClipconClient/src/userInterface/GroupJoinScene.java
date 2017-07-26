@@ -96,8 +96,10 @@ public class GroupJoinScene implements Initializable{
 	}
 	
 	public void failGroupJoin() {
-		FailDialog.show("유효하지 않는 Group Key 입니다. 다시 입력하세요.");
-		groupKey.setText("");
+		Platform.runLater(() -> {
+			FailDialog.show("유효하지 않는 Group Key 입니다. 다시 입력하세요.");
+			groupKey.setText("");
+		});
 	}
 	
 	public void showMainView() {
