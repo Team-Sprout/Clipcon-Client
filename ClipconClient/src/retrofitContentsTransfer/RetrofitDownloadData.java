@@ -32,6 +32,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import userInterface.MainScene;
+import userInterface.ProgressBarScene;
 import userInterface.UserInterface;
 
 public class RetrofitDownloadData {
@@ -88,7 +89,9 @@ public class RetrofitDownloadData {
 		call.enqueue(new Callback<ResponseBody>() {
 			@Override
 			public void onResponse(Call<ResponseBody> call, final Response<ResponseBody> response) {
-
+				
+				int progressBarIndex = ProgressBarScene.getIndex();
+				
 				if (response.isSuccessful()) {
 					switch (contentsType) {
 					case Contents.TYPE_STRING:
@@ -110,7 +113,7 @@ public class RetrofitDownloadData {
 					case Contents.TYPE_FILE:
 						String fileOriginName = requestContents.getContentsValue();
 						// Save Real File(filename: fileOriginName) to Clipcon Folder Get Image Object in Response Body
-						File fileData = saveFileDataToDisk(response.body(), fileOriginName);
+						File fileData = saveFileDataToDisk(response.body(), fileOriginName, progressBarIndex);
 
 						ArrayList<File> fileList = new ArrayList<File>();
 						fileList.add(fileData);
@@ -123,7 +126,7 @@ public class RetrofitDownloadData {
 					case Contents.TYPE_MULTIPLE_FILE:
 						String multipleFileOriginName = requestContents.getContentsValue();
 						// Save Real ZIP File(filename: fileOriginName) to Clipcon Folder
-						File multipleFile = saveFileDataToDisk(response.body(), multipleFileOriginName);
+						File multipleFile = saveFileDataToDisk(response.body(), multipleFileOriginName, progressBarIndex);
 
 						File outputUnZipFile = new File(MainScene.DOWNLOAD_TEMP_DIR_LOCATION);
 						ArrayList<File> multipleFileList = new ArrayList<File>();
@@ -149,8 +152,8 @@ public class RetrofitDownloadData {
 						break;
 					}
 
-					ui.getProgressBarScene().completeProgress();
-					ui.getMainScene().closeProgressBarStage();
+					ui.getProgressBarScene().completeProgress(progressBarIndex);
+					ui.getMainScene().closeProgressBarStage(progressBarIndex);
 					isDownloading = false;
 				}
 			}
@@ -231,7 +234,7 @@ public class RetrofitDownloadData {
 
 	/** Download File Data to Temporary folder
 	 * @return File object */
-	private File saveFileDataToDisk(ResponseBody body, String fileName) {
+	private File saveFileDataToDisk(ResponseBody body, String fileName, int progressBarIndex) {
 		try {
 			String saveFileFullPath = MainScene.DOWNLOAD_TEMP_DIR_LOCATION + File.separator + fileName;
 			File fileData;
@@ -260,13 +263,14 @@ public class RetrofitDownloadData {
 
 					double progressValue = (100 * fileSizeDownloaded / fileSize);
 					// System.out.println((int) progressValue);
-					ui.getProgressBarScene().setProgeress(progressValue, fileSizeDownloaded, fileSize);
+					ui.getProgressBarScene().setProgeress(progressBarIndex, progressValue, fileSizeDownloaded, fileSize, true);
 
 					if (bytesRead == -1) {
 						break;
 					}
 				}
 
+				
 				fileOutputStream.flush();
 				fileOutputStream.close();
 

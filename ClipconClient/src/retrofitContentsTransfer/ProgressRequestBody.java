@@ -9,6 +9,7 @@ import lombok.Setter;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.BufferedSink;
+import userInterface.ProgressBarScene;
 import userInterface.UserInterface;
 
 @NoArgsConstructor
@@ -35,6 +36,7 @@ public class ProgressRequestBody extends RequestBody {
 
 	@Override
 	public void writeTo(BufferedSink sink) throws IOException {
+		int progressBarIndex = ProgressBarScene.getIndex();
 		long fileLength = mFile.length();
 		byte[] buffer = new byte[CHUNKSIZE];
 		FileInputStream in = new FileInputStream(mFile);
@@ -49,13 +51,15 @@ public class ProgressRequestBody extends RequestBody {
 
 				double progressValue = (100 * uploaded / fileLength);
 				// System.out.println((int) progressValue);
-				ui.getProgressBarScene().setProgeress(progressValue, uploaded, fileLength);
+				ui.getProgressBarScene().setProgeress(progressBarIndex, progressValue, uploaded, fileLength, false);
 
 				uploaded += read;
 				sink.write(buffer, 0, read);
 			}
 		} finally {
 			in.close();
+			ui.getProgressBarScene().completeProgress(progressBarIndex);
+			ui.getMainScene().closeProgressBarStage(progressBarIndex);
 		}
 	}
 

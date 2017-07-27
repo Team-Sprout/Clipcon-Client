@@ -41,7 +41,6 @@ public class Main extends Application {
 	/* dll load */
 	static {
 		try {
-			// System.loadLibrary("KeyHooking");
 			System.load(System.getProperty("user.dir") + File.separator + "keyHooking.dll");
 		} catch (UnsatisfiedLinkError e) {
 			FailDialog.show("dll load error");
@@ -83,8 +82,6 @@ public class Main extends Application {
 					Platform.setImplicitExit(false);
 				} else {
 					Message exitProgramMsg = new Message().setType(Message.REQUEST_EXIT_PROGRAM);
-//					exitProgramMsg.add(Message.GROUP_PK, Endpoint.user.getGroup().getPrimaryKey());
-//					exitProgramMsg.add(Message.NAME, Endpoint.user.getName());
 					try {
 						endpoint.sendMessage(exitProgramMsg);
 					} catch (IOException | EncodeException e) {

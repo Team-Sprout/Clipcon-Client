@@ -16,9 +16,6 @@
 
 package userInterface;
 
-import java.util.HashMap;
-
-import javafx.beans.property.Property;
 import lombok.NoArgsConstructor;
 
 
@@ -30,7 +27,6 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class NotifierBuilder<B extends NotifierBuilder<B>> {
-    private HashMap<String, Property> properties = new HashMap<>();
     
     public final static Notification.ClipboadNotifier clipboardNotiBuild() {
     	new NotifierBuilder();
