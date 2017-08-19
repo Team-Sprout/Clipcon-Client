@@ -346,7 +346,7 @@ public class Notification {
 			};
 
 			public void fireNotificationEvent(final NotificationEvent EVENT) {
-				final EventType TYPE = EVENT.getEventType();
+				final EventType<?> TYPE = EVENT.getEventType();
 				final EventHandler<NotificationEvent> HANDLER;
 				if (NotificationEvent.NOTIFICATION_PRESSED == TYPE) {
 					HANDLER = getOnNotificationPressed();
@@ -366,8 +366,6 @@ public class Notification {
 		public enum UploadNotifier {
 			INSTANCE;
 			
-			private static final double ICON_WIDTH = 24;
-			private static final double ICON_HEIGHT = 24;
 			private static double width = 270;
 			private static double height = 90;
 			private static double offsetX = 0;
@@ -527,7 +525,6 @@ public class Notification {
 					fireNotificationEvent(new NotificationEvent(NOTIFICATION, UploadNotifier.this, POPUP, NotificationEvent.NOTIFICATION_PRESSED));
 					POPUP.hide();
 	                popups.remove(POPUP);
-	                //timeline.stop();
 				}));            
 				popups.add(POPUP);
 				
@@ -661,7 +658,7 @@ public class Notification {
 			};
 			
 			public void fireNotificationEvent(final NotificationEvent EVENT) {
-				final EventType TYPE = EVENT.getEventType();
+				final EventType<?> TYPE = EVENT.getEventType();
 				final EventHandler<NotificationEvent> HANDLER;
 				if (NotificationEvent.NOTIFICATION_PRESSED == TYPE) {
 					HANDLER = getOnNotificationPressed();

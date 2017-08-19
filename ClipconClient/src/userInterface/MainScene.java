@@ -76,6 +76,8 @@ public class MainScene implements Initializable {
 	private Stage SettingStage;
 	private Stage nicknameChangeStage;
 	private Stage progressBarStage;
+	@Getter
+	private Stage [] progressBarStageArray = new Stage[10];
 
 	@Getter
 	private ObservableList<User> groupParticipantList;
@@ -366,8 +368,6 @@ public class MainScene implements Initializable {
 				uploadNotifier.notify(uploadnoti);
 				uploadNotifier.onNotificationPressedProperty();
 				uploadNotifier.setOnNotificationPressed(event -> getContentsInClipboard(content));
-			} else if (content.getUploadUserName().equals(Endpoint.user.getName())) {
-				ui.getProgressBarScene().completeProgress();
 			}
 		});
 	}
@@ -484,12 +484,6 @@ public class MainScene implements Initializable {
 		hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
 			/* Upload HotKey */
 			public void onGlobalUploadHotkeysPressed() {
-				// if (ContentsUpload.isUpload) {
-				// Platform.runLater(() -> {
-				// FailDialog.show("업로드 중인 파일이 있습니다. 잠시 후에 시도하세요.");
-				// });
-				// return;
-				// }
 				if (clipboardNotifier.getIsShowing()) {
 					Platform.runLater(() -> {
 						clipboardNotifier.hidePopUp();
@@ -515,16 +509,20 @@ public class MainScene implements Initializable {
 				Scene scene = new Scene(toProgressBar);
 				scene.getStylesheets().add("resources/myprogressbar.css");
 				progressBarStage = new Stage();
+				
+				int progressBarIndex = ProgressBarScene.getIndex();
 
 				progressBarStage.initStyle(StageStyle.TRANSPARENT);
 				progressBarStage.setScene(scene);
-				// progressBarStage.initOwner(Main.getPrimaryStage());
+				//progressBarStage.initOwner(Main.getPrimaryStage());
 				progressBarStage.initModality(Modality.WINDOW_MODAL);
 				progressBarStage.show();
 				// progressBarStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth()/2 - progressBarStage.getWidth()/2);
 				// progressBarStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight()/2 - progressBarStage.getHeight()/2);
 				progressBarStage.setX(Screen.getPrimary().getBounds().getWidth() - progressBarStage.getWidth() - 10);
-				progressBarStage.setY(Screen.getPrimary().getBounds().getHeight() - progressBarStage.getHeight() - 50);
+				progressBarStage.setY(Screen.getPrimary().getBounds().getHeight() - progressBarStage.getHeight() - 50 - progressBarIndex * 55);
+				
+				progressBarStageArray[progressBarIndex] = progressBarStage;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -559,16 +557,26 @@ public class MainScene implements Initializable {
 		});
 	}
 
-	public void closeProgressBarStage() {
+	public void closeProgressBarStage(int index) {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		System.out.println("closeProgressBarStage index : " + index);
 
 		Platform.runLater(() -> {
-			progressBarStage.close();
+			progressBarStageArray[index].close();
+			
+			ProgressBarScene.setNumber(ProgressBarScene.getNumber() - 1);
+			if(ProgressBarScene.getIndex() == 0) {
+				ProgressBarScene.setNumber(-1);
+			}
+			
+			progressBarStageArray[index] = null;
 		});
+		
 	}
 
 	public void closeNicknameChangeStage() {
