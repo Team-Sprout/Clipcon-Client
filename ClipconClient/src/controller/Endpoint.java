@@ -63,6 +63,17 @@ public class Endpoint {
 	public void onMessage(Message message) {
 		System.out.println("message type: " + message.get(Message.TYPE));
 		switch (message.get(Message.TYPE)) {
+		case Message.RESPONSE_CONFIRM_VERSION:
+			switch (message.get(Message.RESULT)) {
+			case Message.CONFIRM:
+				break;
+				
+			case Message.REJECT:
+				// [TODO] show download URL
+				break;
+			}
+			break;
+		
 		case Message.RESPONSE_CREATE_GROUP:
 			switch (message.get(Message.RESULT)) {
 			case Message.CONFIRM:

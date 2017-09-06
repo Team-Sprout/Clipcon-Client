@@ -21,7 +21,6 @@ public class ContentsUpload {
 			uploader.uploadCapturedImageData((Image) clipboardData);
 		} else if (clipboardData instanceof ArrayList<?>) {
 			uploader.uploadMultipartData((ArrayList<String>) clipboardData);
-
 		}
 	}
 }

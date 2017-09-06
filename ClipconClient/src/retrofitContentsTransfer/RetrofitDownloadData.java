@@ -151,11 +151,11 @@ public class RetrofitDownloadData {
 					default:
 						break;
 					}
-
-					ui.getProgressBarScene().completeProgress(progressBarIndex);
-					ui.getMainScene().closeProgressBarStage(progressBarIndex);
-					isDownloading = false;
 				}
+				
+				ui.getProgressBarScene().completeProgress(progressBarIndex);
+				ui.getMainScene().closeProgressBarStage(progressBarIndex);
+				isDownloading = false;
 			}
 
 			@Override

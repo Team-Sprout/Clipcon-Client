@@ -514,7 +514,9 @@ public class MainScene implements Initializable {
 
 				progressBarStage.initStyle(StageStyle.TRANSPARENT);
 				progressBarStage.setScene(scene);
-				//progressBarStage.initOwner(Main.getPrimaryStage());
+//				if(ProgressBarScene.getNumber() > 1) {
+//					progressBarStage.initOwner(progressBarStageArray[progressBarIndex]);
+//				}
 				progressBarStage.initModality(Modality.WINDOW_MODAL);
 				progressBarStage.show();
 				// progressBarStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth()/2 - progressBarStage.getWidth()/2);
@@ -564,8 +566,6 @@ public class MainScene implements Initializable {
 			e.printStackTrace();
 		}
 		
-		System.out.println("closeProgressBarStage index : " + index);
-
 		Platform.runLater(() -> {
 			progressBarStageArray[index].close();
 			
@@ -573,7 +573,6 @@ public class MainScene implements Initializable {
 			if(ProgressBarScene.getIndex() == 0) {
 				ProgressBarScene.setNumber(-1);
 			}
-			
 			progressBarStageArray[index] = null;
 		});
 		
