@@ -21,6 +21,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import userInterface.MainScene;
+import userInterface.ProgressBarScene;
 import userInterface.UserInterface;
 
 public class RetrofitUploadData {
@@ -64,6 +65,10 @@ public class RetrofitUploadData {
 
 		call = retrofitInterface.requestStringDataUpload(username, grouppk, stringdata);
 		callResult(call);
+		
+		int progressBarIndex = ProgressBarScene.getIndex();
+		ui.getProgressBarScene().completeProgress(progressBarIndex);
+		ui.getMainScene().closeProgressBarStage(progressBarIndex);
 	}
 
 	/** Upload Captured Image Data in Clipboard */
@@ -96,6 +101,10 @@ public class RetrofitUploadData {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		int progressBarIndex = ProgressBarScene.getIndex();
+		ui.getProgressBarScene().completeProgress(progressBarIndex);
+		ui.getMainScene().closeProgressBarStage(progressBarIndex);
 	}
 
 	/** Upload File Data

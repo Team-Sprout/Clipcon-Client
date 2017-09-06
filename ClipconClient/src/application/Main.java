@@ -27,9 +27,10 @@ public class Main extends Application {
 
 	public static final String SERVER_PORT = "80";
 	public static final String SERVER_ADDR = "113.198.84.53";
-//	public static final String SERVER_ADDR = "223.194.157.88";
 
 	public static final String SERVER_URI_PART = SERVER_ADDR + ":" + SERVER_PORT + "/";
+	
+	public final String CLIPCON_VERSION = "1.1";
 
 	public static final String LOCK_FILE_LOCATION = System.getProperty("user.dir") + File.separator + "ClipCon.lock";
 	private File lockFile = new File(Main.LOCK_FILE_LOCATION);
@@ -49,6 +50,15 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		
+//		Message confirmVersionMsg = new Message().setType(Message.REQUEST_CONFIRM_VERSION);
+//		confirmVersionMsg.add(Message.CLIPCON_VERSION, CLIPCON_VERSION);
+//		
+//		try {
+//			endpoint.sendMessage(confirmVersionMsg);
+//		} catch (IOException | EncodeException e) {
+//			e.printStackTrace();
+//		}
 		
 		@SuppressWarnings("resource")
 		FileChannel channel = new RandomAccessFile(lockFile, "rw").getChannel();
