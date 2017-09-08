@@ -51,4 +51,10 @@ public interface RetrofitInterface {
 	@Headers({ "User-Agent: pcProgram" })
 	@GET("DownloadServlet")
 	Call<ResponseBody> requestFileDataDownload(@QueryMap Map<String, String> parameters);
+	
+	/** send bug messgae */
+	@Multipart
+	@Headers({ "User-Agent: pcProgram" })
+	@POST("BugReportServlet")
+	Call<ResponseBody> sendBugMessage(@Part("bugMessage") RequestBody bugMessage);
 }
