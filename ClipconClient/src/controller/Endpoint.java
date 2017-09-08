@@ -52,6 +52,7 @@ public class Endpoint {
 		URI uRI = new URI(uri);
 		ContainerProvider.getWebSocketContainer().connectToServer(this, uRI);
 		ui = UserInterface.getInstance();
+		new PingPong().start();
 	}
 
 	@OnOpen
@@ -67,13 +68,13 @@ public class Endpoint {
 			switch (message.get(Message.RESULT)) {
 			case Message.CONFIRM:
 				break;
-				
+
 			case Message.REJECT:
 				// [TODO] show download URL
 				break;
 			}
 			break;
-		
+
 		case Message.RESPONSE_CREATE_GROUP:
 			switch (message.get(Message.RESULT)) {
 			case Message.CONFIRM:
@@ -183,7 +184,10 @@ public class Endpoint {
 			ui.getMainScene().addContentsInHistory(); // update UI list
 
 			break;
-
+			
+		case Message.PONG:
+			break;
+			
 		default:
 			break;
 		}
@@ -199,4 +203,22 @@ public class Endpoint {
 		// TODO [delf] How to handle when a session is lost
 	}
 
+	class PingPong extends Thread {
+		@Override
+		public void run() {
+			while (true) {
+				try {
+					Thread.sleep(3 * 1000);
+					sendMessage(new Message().setType(Message.PING));
+
+				} catch (InterruptedException e) {
+					System.out.println("[ERROR] Pingping thread - InterruptedException");
+				} catch (IOException e) {
+					System.out.println("[ERROR] Pingping thread - IOException");
+				} catch (EncodeException e) {
+					System.out.println("[ERROR] Pingping thread - EncodeException");
+				}
+			}
+		}
+	}
 }
