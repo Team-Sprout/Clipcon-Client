@@ -25,8 +25,9 @@ import userInterface.TrayIconManager;
 public class Main extends Application {
 	private static Stage primaryStage;
 
-	public static final String SERVER_PORT = "80";
-	public static final String SERVER_ADDR = "113.198.84.53";
+	public static final String SERVER_PORT = "8080";
+	// public static final String SERVER_ADDR = "113.198.84.53";
+	public static final String SERVER_ADDR = "delf.gonetis.com";
 
 	public static final String SERVER_URI_PART = SERVER_ADDR + ":" + SERVER_PORT + "/";
 	
