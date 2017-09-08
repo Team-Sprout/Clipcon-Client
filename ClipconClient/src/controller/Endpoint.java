@@ -22,14 +22,14 @@ import model.MessageDecoder;
 import model.MessageEncoder;
 import model.MessageParser;
 import model.User;
-import userInterface.plainDialog;
+import userInterface.PlainDialog;
 import userInterface.UserInterface;
 
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
 public class Endpoint {
 
 	private final String PROTOCOL = "ws://";
-	private final String CONTEXT_ROOT = "websocketServerModule/ServerEndpoint";
+	private final String CONTEXT_ROOT = "globalclipboard/ServerEndpoint";
 	private final String uri = PROTOCOL + Main.SERVER_URI_PART + CONTEXT_ROOT;
 
 	private Session session = null;
@@ -70,7 +70,7 @@ public class Endpoint {
 			switch (message.get(Message.RESULT)) {
 			case Message.REJECT:
 				Platform.runLater(() -> {
-					plainDialog.show("Download updated version!! http://113.198.84.53/websocketServerModule/download");
+					PlainDialog.show("you have to download update version http://113.198.84.53/globalclipboard/download");
 				});
 				break;
 			}
@@ -211,7 +211,7 @@ public class Endpoint {
 		public void run() {
 			while (true) {
 				try {
-					Thread.sleep(3 * 1000);
+					Thread.sleep(3 * 60 * 1000);
 					sendMessage(new Message().setType(Message.PING));
 
 				} catch (InterruptedException e) {

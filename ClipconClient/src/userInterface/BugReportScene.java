@@ -58,7 +58,7 @@ public class BugReportScene implements Initializable {
 	}
 	
 	public void notInputBugMessage() {
-		plainDialog.show("Bug Message를 입력하세요.");
+		PlainDialog.show("Bug Message를 입력하세요.");
 	}
 	
 	public void sendBugMessage(String bugMessage) {
@@ -77,14 +77,14 @@ public class BugReportScene implements Initializable {
 			public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 				ui.getMainScene().closeBugReportStage();
 				Platform.runLater(() -> {
-					plainDialog.show("Bug Message 전송 성공");
+					PlainDialog.show("Bug Message 전송 성공");
 				});
 			}
 
 			@Override
 			public void onFailure(Call<ResponseBody> call, Throwable arg1) {
 				Platform.runLater(() -> {
-					plainDialog.show("Bug Message 전송 실패");
+					PlainDialog.show("Bug Message 전송 실패");
 				});
 			}
 		});
