@@ -64,7 +64,7 @@ public class NicknameChangeScene implements Initializable {
 	}
 	
 	public void notInputNickname() {
-		FailDialog.show("변경할 Nickname 을 입력하세요.");
+		plainDialog.show("변경할 Nickname 을 입력하세요.");
 	}
 	
 	public void sendNicknameChangeMessage(String nickname) {

@@ -19,7 +19,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import model.Message;
-import userInterface.FailDialog;
+import userInterface.plainDialog;
 import userInterface.TrayIconManager;
 
 public class Main extends Application {
@@ -27,6 +27,7 @@ public class Main extends Application {
 
 	public static final String SERVER_PORT = "80";
 	public static final String SERVER_ADDR = "113.198.84.53";
+//	public static final String SERVER_ADDR = "223.194.156.74";
 
 	public static final String SERVER_URI_PART = SERVER_ADDR + ":" + SERVER_PORT + "/";
 	
@@ -44,21 +45,22 @@ public class Main extends Application {
 		try {
 			System.load(System.getProperty("user.dir") + File.separator + "keyHooking.dll");
 		} catch (UnsatisfiedLinkError e) {
-			FailDialog.show("dll load error");
+			plainDialog.show("dll load error");
 		}
 	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		
-//		Message confirmVersionMsg = new Message().setType(Message.REQUEST_CONFIRM_VERSION);
-//		confirmVersionMsg.add(Message.CLIPCON_VERSION, CLIPCON_VERSION);
-//		
-//		try {
-//			endpoint.sendMessage(confirmVersionMsg);
-//		} catch (IOException | EncodeException e) {
-//			e.printStackTrace();
-//		}
+		// version check
+		Message confirmVersionMsg = new Message().setType(Message.REQUEST_CONFIRM_VERSION);
+		confirmVersionMsg.add(Message.CLIPCON_VERSION, CLIPCON_VERSION);
+		
+		try {
+			endpoint.sendMessage(confirmVersionMsg);
+		} catch (IOException | EncodeException e) {
+			e.printStackTrace();
+		}
 		
 		@SuppressWarnings("resource")
 		FileChannel channel = new RandomAccessFile(lockFile, "rw").getChannel();

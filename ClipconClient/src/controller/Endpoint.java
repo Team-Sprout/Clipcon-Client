@@ -14,6 +14,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 
 import application.Main;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import model.Contents;
 import model.Message;
@@ -21,6 +22,7 @@ import model.MessageDecoder;
 import model.MessageEncoder;
 import model.MessageParser;
 import model.User;
+import userInterface.plainDialog;
 import userInterface.UserInterface;
 
 @ClientEndpoint(decoders = { MessageDecoder.class }, encoders = { MessageEncoder.class })
@@ -65,11 +67,10 @@ public class Endpoint {
 		switch (message.get(Message.TYPE)) {
 		case Message.RESPONSE_CONFIRM_VERSION:
 			switch (message.get(Message.RESULT)) {
-			case Message.CONFIRM:
-				break;
-				
 			case Message.REJECT:
-				// [TODO] show download URL
+				Platform.runLater(() -> {
+					plainDialog.show("Download updated version!! http://113.198.84.53/websocketServerModule/download");
+				});
 				break;
 			}
 			break;
@@ -96,6 +97,8 @@ public class Endpoint {
 			switch (message.get(Message.RESULT)) {
 			case Message.CONFIRM:
 				String changeName = message.get(Message.CHANGE_NAME);
+				
+				System.out.println("changeName : " + changeName);
 
 				user.setName(changeName);
 				user.getGroup().getUserList().get(0).setName(changeName);
