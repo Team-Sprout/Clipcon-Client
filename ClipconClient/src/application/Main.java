@@ -44,13 +44,13 @@ public class Main extends Application {
 	private static HostServices hostService;
 
 	/* dll load */
-	static {
-		try {
-			System.load(System.getProperty("user.dir") + File.separator + "keyHooking.dll");
-		} catch (UnsatisfiedLinkError e) {
-			PlainDialog.show("dll load error");
-		}
-	}
+//	static {
+//		try {
+//			System.load(System.getProperty("user.dir") + File.separator + "keyHooking.dll");
+//		} catch (UnsatisfiedLinkError e) {
+//			PlainDialog.show("dll load error");
+//		}
+//	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -77,6 +77,15 @@ public class Main extends Application {
 		if (lock == null) {
 			channel.close();
 			System.exit(0);
+		}
+		
+		try {
+			System.load(System.getProperty("user.dir") + File.separator + "keyHooking.dll");
+		} catch (UnsatisfiedLinkError e) {
+			e.printStackTrace();
+			Platform.runLater(() -> {
+				PlainDialog.show("dll load error");
+			});
 		}
 
 		setPrimaryStage(primaryStage);

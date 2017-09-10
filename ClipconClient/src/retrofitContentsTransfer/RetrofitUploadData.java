@@ -6,11 +6,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
-import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -63,6 +61,12 @@ public class RetrofitUploadData {
 
 		call = retrofitInterface.requestStringDataUpload(username, grouppk, stringdata);
 		callResult(call);
+		
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
 		int progressBarIndex = ProgressBarScene.getIndex();
 		ui.getProgressBarScene().completeProgress(progressBarIndex);
