@@ -15,12 +15,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class plainDialog extends Stage {
+public class PlainDialog extends Stage {
 	
     private static Label label;
-    private static plainDialog popup;
+    private static PlainDialog popup;
  
-    private plainDialog() {
+    private PlainDialog() {
         setResizable(false);
         initStyle(StageStyle.TRANSPARENT);
         initOwner(Main.getPrimaryStage());
@@ -35,7 +35,7 @@ public class plainDialog extends Stage {
         okBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-                plainDialog.this.close();
+                PlainDialog.this.close();
 			}
 		});
         okBtn.getStyleClass().add("button");
@@ -63,7 +63,7 @@ public class plainDialog extends Stage {
  
     public static void show(String msg) {
         if (popup == null) {
-            popup = new plainDialog();
+            popup = new PlainDialog();
         }
  
         label.setText(msg);

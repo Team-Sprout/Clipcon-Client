@@ -6,11 +6,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
-import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -60,11 +58,15 @@ public class RetrofitUploadData {
 		RequestBody username = RequestBody.create(MediaType.parse("text/plain"), userName);
 		RequestBody grouppk = RequestBody.create(MediaType.parse("text/plain"), groupPK);
 		RequestBody stringdata = RequestBody.create(MediaType.parse("text/plain"), stringData);
-		
-		System.out.println("[uploadMultipartData] username: " + username.toString() + "// " + userName);
 
 		call = retrofitInterface.requestStringDataUpload(username, grouppk, stringdata);
 		callResult(call);
+		
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
 		int progressBarIndex = ProgressBarScene.getIndex();
 		ui.getProgressBarScene().completeProgress(progressBarIndex);
@@ -77,8 +79,6 @@ public class RetrofitUploadData {
 		// add another part within the multipart request
 		RequestBody username = RequestBody.create(MediaType.parse("text/plain"), userName);
 		RequestBody grouppk = RequestBody.create(MediaType.parse("text/plain"), groupPK);
-
-		System.out.println("[uploadMultipartData] username: " + username.toString() + "// " + userName);
 		
 		BufferedImage originalImage = (BufferedImage) capturedImageData;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -119,8 +119,6 @@ public class RetrofitUploadData {
 		// add another part within the multipart request
 		RequestBody username = RequestBody.create(MediaType.parse("text/plain"), userName);
 		RequestBody grouppk = RequestBody.create(MediaType.parse("text/plain"), groupPK);
-		
-		System.out.println("[uploadMultipartData] username: " + username.toString() + "// " + userName);
 
 		// create RequestBody instance (from file)
 		ProgressRequestBody progressFilePart = new ProgressRequestBody();
@@ -160,28 +158,16 @@ public class RetrofitUploadData {
 				e.printStackTrace();
 			}
 		}
-
+		
 		callResult(call);
 	}
-
+	
 	/** logging method- check for a successful response */
 	public void callResult(Call<ResponseBody> call) {
 		call.enqueue(new Callback<ResponseBody>() {
 			@Override
 			public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-				/* logging code */
-				System.out.println("Upload onResponse");
-				System.out.println("----- response toString -----\n" + response.toString());
-
-				Headers headers = response.headers();
-				Iterator<String> itr = headers.names().iterator();
-
-				System.out.println("----- response headers -----");
-				while (itr.hasNext()) {
-					String s = itr.next();
-					System.out.println("header: " + s + ", value: " + headers.values(s));
-				}
-				System.out.println("----------------------------");
+				System.out.println("Upload success");
 			}
 
 			@Override

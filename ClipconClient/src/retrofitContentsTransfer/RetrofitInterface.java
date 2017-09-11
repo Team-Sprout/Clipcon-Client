@@ -17,7 +17,7 @@ import retrofit2.http.Streaming;
 
 public interface RetrofitInterface {
 	public final String PROTOCOL = "http://";
-	public final String CONTEXT_ROOT = "websocketServerModule";
+	public final String CONTEXT_ROOT = "globalclipboard";
 
 	// Path: [Protocol]://[URL]/[Resource Path]
 	public static final String BASE_URL = PROTOCOL + Main.SERVER_URI_PART + CONTEXT_ROOT + "/";

@@ -11,6 +11,7 @@ import javax.websocket.EncodeException;
 import controller.ClipboardController;
 import controller.Endpoint;
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -19,7 +20,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import model.Message;
-import userInterface.plainDialog;
+import userInterface.PlainDialog;
 import userInterface.TrayIconManager;
 
 public class Main extends Application {
@@ -39,18 +40,22 @@ public class Main extends Application {
 	public static boolean isInMainScene = false;
 
 	private Endpoint endpoint = Endpoint.getInstance();
+	
+	private static HostServices hostService;
 
 	/* dll load */
-	static {
-		try {
-			System.load(System.getProperty("user.dir") + File.separator + "keyHooking.dll");
-		} catch (UnsatisfiedLinkError e) {
-			plainDialog.show("dll load error");
-		}
-	}
+//	static {
+//		try {
+//			System.load(System.getProperty("user.dir") + File.separator + "keyHooking.dll");
+//		} catch (UnsatisfiedLinkError e) {
+//			PlainDialog.show("dll load error");
+//		}
+//	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		
+		hostService = getHostServices();
 		
 		// version check
 		Message confirmVersionMsg = new Message().setType(Message.REQUEST_CONFIRM_VERSION);
@@ -72,6 +77,15 @@ public class Main extends Application {
 		if (lock == null) {
 			channel.close();
 			System.exit(0);
+		}
+		
+		try {
+			System.load(System.getProperty("user.dir") + File.separator + "keyHooking.dll");
+		} catch (UnsatisfiedLinkError e) {
+			e.printStackTrace();
+			Platform.runLater(() -> {
+				PlainDialog.show("dll load error");
+			});
 		}
 
 		setPrimaryStage(primaryStage);
@@ -120,6 +134,10 @@ public class Main extends Application {
 	static public Stage getPrimaryStage() {
 		return Main.primaryStage;
 	}
+	
+	static public HostServices getHostService() {
+        return Main.hostService ;
+    }
 
 	public static void main(String[] args) {
 		launch(args);
