@@ -56,18 +56,11 @@ public class ProgressRequestBody extends RequestBody {
 
 				double progressValue = (100 * uploaded / fileLength);
 				// System.out.println((int) progressValue);
-				try {
-					ui.getProgressBarScene().setProgeress(progressBarIndex, progressValue, uploaded, fileLength, false);
-				} catch (ArrayIndexOutOfBoundsException e) {
-					System.out.println("여기 예외1");
-					break;
-				}
+				ui.getProgressBarScene().setProgeress(progressBarIndex, progressValue, uploaded, fileLength, false);
 
 				uploaded += read;
 				sink.write(buffer, 0, read);
 			}
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.out.println("여기 예외2");
 		} finally {
 			in.close();
 			if(fileLength < CHUNKSIZE) {
@@ -79,7 +72,6 @@ public class ProgressRequestBody extends RequestBody {
 			}
 			ui.getProgressBarScene().completeProgress(progressBarIndex);
 			ui.getMainScene().closeProgressBarStage(progressBarIndex);
-			System.out.println("여기 닫혀짐");
 		}
 	}
 
