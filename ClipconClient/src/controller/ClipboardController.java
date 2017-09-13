@@ -178,6 +178,7 @@ public class ClipboardController {
 				try {
 					if(Main.isInMainScene) {
 						ui.getMainScene().showClipboardChangeNoti();
+						System.out.println("[delf] clipboard changed - " + Main.getTime());
 					}
 				} catch (IllegalStateException e) { }
 				break;
@@ -207,6 +208,7 @@ public class ClipboardController {
 	}
 
 	public static void clipboardMonitor() {
+		
 		WString windowClass = new WString("MyWindowClass");
 		HMODULE hInst = Kernel32.INSTANCE.GetModuleHandle("");
 		WNDCLASSEX wClass = new WNDCLASSEX();

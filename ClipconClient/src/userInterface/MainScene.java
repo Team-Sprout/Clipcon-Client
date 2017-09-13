@@ -547,6 +547,7 @@ public class MainScene implements Initializable {
 
 				progressBarStage.initStyle(StageStyle.TRANSPARENT);
 				progressBarStage.setScene(scene);
+				progressBarStage.getIcons().add(new javafx.scene.image.Image("resources/Logo.png"));
 //				if(ProgressBarScene.getNumber() > 1) {
 //					progressBarStage.initOwner(progressBarStageArray[progressBarIndex]);
 //				}
