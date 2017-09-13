@@ -124,7 +124,7 @@ public class MainScene implements Initializable {
 		createDirectory();
 
 		clipboardNotifier = NotifierBuilder.clipboardNotiBuild();
-		clipboardNotifier.setNotificationOwner(Main.getPrimaryStage());
+		// clipboardNotifier.setNotificationOwner(Main.getPrimaryStage());
 		uploadNotifier = NotifierBuilder.uploadNotibuild();
 		// uploadNotifier.setNotificationOwner(Main.getPrimaryStage());
 
