@@ -64,7 +64,7 @@ public class Endpoint {
 
 	@OnMessage
 	public void onMessage(Message message) {
-		System.out.println("message type: " + message.get(Message.TYPE));
+		System.out.println("message type: " + message.get(Message.TYPE) + " - " + Main.getTime());
 		switch (message.get(Message.TYPE)) {
 		case Message.RESPONSE_CONFIRM_VERSION:
 			switch (message.get(Message.RESULT)) {

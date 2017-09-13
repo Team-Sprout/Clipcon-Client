@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.websocket.EncodeException;
 
@@ -28,10 +30,11 @@ public class Main extends Application {
 
 	public static final String SERVER_PORT = "80";
 	public static final String SERVER_ADDR = "113.198.84.53";
-//	public static final String SERVER_ADDR = "223.194.156.74";
+	//public static final String SERVER_ADDR = "delf.gonetis.com";
+	// public static final String SERVER_ADDR = "223.194.156.74";
 
 	public static final String SERVER_URI_PART = SERVER_ADDR + ":" + SERVER_PORT + "/";
-	
+
 	public final String CLIPCON_VERSION = "1.1";
 
 	public static final String LOCK_FILE_LOCATION = System.getProperty("user.dir") + File.separator + "ClipCon.lock";
@@ -40,24 +43,24 @@ public class Main extends Application {
 	public static boolean isInMainScene = false;
 
 	private Endpoint endpoint = Endpoint.getInstance();
-	
+
 	private static HostServices hostService;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		
+
 		hostService = getHostServices();
-		
+
 		// version check
 		Message confirmVersionMsg = new Message().setType(Message.REQUEST_CONFIRM_VERSION);
 		confirmVersionMsg.add(Message.CLIPCON_VERSION, CLIPCON_VERSION);
-		
+
 		try {
 			endpoint.sendMessage(confirmVersionMsg);
 		} catch (IOException | EncodeException e) {
 			e.printStackTrace();
 		}
-		
+
 		@SuppressWarnings("resource")
 		FileChannel channel = new RandomAccessFile(lockFile, "rw").getChannel();
 
@@ -69,8 +72,6 @@ public class Main extends Application {
 			channel.close();
 			System.exit(0);
 		}
-		
-		/* dll load */
 		try {
 			System.load(System.getProperty("user.dir") + File.separator + "keyHooking.dll");
 		} catch (UnsatisfiedLinkError e) {
@@ -98,7 +99,8 @@ public class Main extends Application {
 			public void handle(WindowEvent t) {
 				if (isInMainScene) {
 					Platform.setImplicitExit(false);
-				} else {
+				}
+				else {
 					Message exitProgramMsg = new Message().setType(Message.REQUEST_EXIT_PROGRAM);
 					try {
 						endpoint.sendMessage(exitProgramMsg);
@@ -126,12 +128,21 @@ public class Main extends Application {
 	static public Stage getPrimaryStage() {
 		return Main.primaryStage;
 	}
-	
+
 	static public HostServices getHostService() {
-        return Main.hostService ;
-    }
+		return Main.hostService;
+	}
 
 	public static void main(String[] args) {
 		launch(args);
+	}
+	
+	/** for test 17.09.13 
+	 * @return Current Time YYYY-MM-DD HH:MM:SS */
+	public static String getTime() {
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd a hh:mm:ss");
+
+		return sdf.format(date).toString();
 	}
 }
