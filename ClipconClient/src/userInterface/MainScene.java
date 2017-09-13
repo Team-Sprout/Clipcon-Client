@@ -124,7 +124,7 @@ public class MainScene implements Initializable {
 		createDirectory();
 
 		clipboardNotifier = NotifierBuilder.clipboardNotiBuild();
-		// clipboardNotifier.setNotificationOwner(Main.getPrimaryStage());
+		clipboardNotifier.setNotificationOwner(Main.getPrimaryStage());
 		uploadNotifier = NotifierBuilder.uploadNotibuild();
 		// uploadNotifier.setNotificationOwner(Main.getPrimaryStage());
 
@@ -547,6 +547,7 @@ public class MainScene implements Initializable {
 
 				progressBarStage.initStyle(StageStyle.TRANSPARENT);
 				progressBarStage.setScene(scene);
+				progressBarStage.getIcons().add(new javafx.scene.image.Image("resources/Logo.png"));
 //				if(ProgressBarScene.getNumber() > 1) {
 //					progressBarStage.initOwner(progressBarStageArray[progressBarIndex]);
 //				}

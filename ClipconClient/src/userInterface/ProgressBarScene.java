@@ -50,6 +50,19 @@ public class ProgressBarScene implements Initializable {
 		progressBarArray[index].setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 	}
 	
+	public void setIndeterminateProgeress(int index, boolean isDownloading) {
+		Platform.runLater(() -> {
+			try {
+				if(!isDownloading)
+					textArray[index].setText("Uploading");
+				else
+					textArray[index].setText("Downloading");
+			} catch (ArrayIndexOutOfBoundsException e) {
+				System.out.println("인덱스익셉션");
+			}
+		});
+	}
+	
 	public void setProgeress(int index, double value, long onGoing, long fileLength, boolean isDownloading) {
 		double onGoingMB = ((onGoing / 1024.0) / 1024.0);
 		double fileLengthMB = ((fileLength / 1024.0) / 1024.0);
@@ -59,12 +72,16 @@ public class ProgressBarScene implements Initializable {
 		String progress = (int)value + "% (" + dec.format(onGoingMB) + " / " + dec.format(fileLengthMB) + " MB)";
 		
 		Platform.runLater(() -> {
-			if(!isDownloading)
-				textArray[index].setText("Uploading " + progress);
-			else
-				textArray[index].setText("Downloading " + progress);
-			
-			progressBarArray[index].setProgress(value*0.01);
+			try {
+				if(!isDownloading)
+					textArray[index].setText("Uploading " + progress);
+				else
+					textArray[index].setText("Downloading " + progress);
+				
+				progressBarArray[index].setProgress(value*0.01);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				System.out.println("인덱스익셉션");
+			}
 		});
 	}
 	

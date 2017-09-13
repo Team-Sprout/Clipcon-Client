@@ -43,15 +43,6 @@ public class Main extends Application {
 	
 	private static HostServices hostService;
 
-	/* dll load */
-//	static {
-//		try {
-//			System.load(System.getProperty("user.dir") + File.separator + "keyHooking.dll");
-//		} catch (UnsatisfiedLinkError e) {
-//			PlainDialog.show("dll load error");
-//		}
-//	}
-
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		
@@ -79,6 +70,7 @@ public class Main extends Application {
 			System.exit(0);
 		}
 		
+		/* dll load */
 		try {
 			System.load(System.getProperty("user.dir") + File.separator + "keyHooking.dll");
 		} catch (UnsatisfiedLinkError e) {
@@ -98,7 +90,7 @@ public class Main extends Application {
 		Parent root = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
-		primaryStage.setAlwaysOnTop(false);
+//		primaryStage.setAlwaysOnTop(false);
 		primaryStage.setResizable(true);
 		primaryStage.show();
 

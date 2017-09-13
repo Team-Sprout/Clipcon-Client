@@ -41,6 +41,11 @@ public class ProgressRequestBody extends RequestBody {
 		byte[] buffer = new byte[CHUNKSIZE];
 		FileInputStream in = new FileInputStream(mFile);
 		long uploaded = 0;
+		
+		while(progressBarIndex == -1) {
+			progressBarIndex = ProgressBarScene.getIndex();
+			System.out.println("while 문 안 : " + progressBarIndex);
+		}
 
 		try {
 			int read;
@@ -51,13 +56,26 @@ public class ProgressRequestBody extends RequestBody {
 
 				double progressValue = (100 * uploaded / fileLength);
 				// System.out.println((int) progressValue);
-				ui.getProgressBarScene().setProgeress(progressBarIndex, progressValue, uploaded, fileLength, false);
+				System.out.println("writeTo index : " + progressBarIndex);
+				if(fileLength < CHUNKSIZE) {
+					ui.getProgressBarScene().setIndeterminateProgeress(progressBarIndex, false);
+				}
+				else {
+					ui.getProgressBarScene().setProgeress(progressBarIndex, progressValue, uploaded, fileLength, false);
+				}
 
 				uploaded += read;
 				sink.write(buffer, 0, read);
 			}
 		} finally {
 			in.close();
+			if(fileLength < CHUNKSIZE) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 			ui.getProgressBarScene().completeProgress(progressBarIndex);
 			ui.getMainScene().closeProgressBarStage(progressBarIndex);
 		}

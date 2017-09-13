@@ -63,12 +63,16 @@ public class RetrofitUploadData {
 		callResult(call);
 		
 		try {
-			Thread.sleep(200);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		
 		int progressBarIndex = ProgressBarScene.getIndex();
+		while(progressBarIndex == -1) {
+			progressBarIndex = ProgressBarScene.getIndex();
+			System.out.println("while 문 안 : " + progressBarIndex);
+		}
 		ui.getProgressBarScene().completeProgress(progressBarIndex);
 		ui.getMainScene().closeProgressBarStage(progressBarIndex);
 	}
@@ -102,7 +106,17 @@ public class RetrofitUploadData {
 			e.printStackTrace();
 		}
 		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		int progressBarIndex = ProgressBarScene.getIndex();
+		while(progressBarIndex == -1) {
+			progressBarIndex = ProgressBarScene.getIndex();
+			System.out.println("while 문 안 : " + progressBarIndex);
+		}
 		ui.getProgressBarScene().completeProgress(progressBarIndex);
 		ui.getMainScene().closeProgressBarStage(progressBarIndex);
 	}
