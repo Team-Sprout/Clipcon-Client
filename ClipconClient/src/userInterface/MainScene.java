@@ -70,11 +70,11 @@ public class MainScene implements Initializable {
 	private TableColumn<Contents, Object> contentsColumn;
 
 	@FXML
-	private Button bugReportBtn, exitBtn, settingBtn, groupKeyCopyBtn, nicknameChangeBtn;
+	private Button exitBtn, settingBtn, groupKeyCopyBtn, nicknameChangeBtn;
 	@FXML
 	private Text nicknameText, groupKeyText;
 	@FXML
-	private Hyperlink homepageHL;
+	private Hyperlink homepageHL, bugreportHL;
 
 	private Stage BugReportStage;
 	private Stage SettingStage;
@@ -131,27 +131,27 @@ public class MainScene implements Initializable {
 		groupParticipantList = FXCollections.observableArrayList();
 		historyList = FXCollections.observableArrayList();
 		
-		bugReportBtn.setTooltip(new Tooltip("Bug Report"));
-		bugReportBtn.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				try {
-					Parent toBug = FXMLLoader.load(getClass().getResource("/view/BugReportView.fxml"));
-					Scene scene = new Scene(toBug);
-					BugReportStage = new Stage();
-
-					BugReportStage.setScene(scene);
-					BugReportStage.initStyle(StageStyle.TRANSPARENT);
-					BugReportStage.initOwner(Main.getPrimaryStage());
-					BugReportStage.initModality(Modality.WINDOW_MODAL);
-					BugReportStage.show();
-					BugReportStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth() / 2 - BugReportStage.getWidth() / 2);
-					BugReportStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight() / 2 - BugReportStage.getHeight() / 2);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		//bugReportBtn.setTooltip(new Tooltip("Bug Report"));
+//		bugReportBtn.setOnAction(new EventHandler<ActionEvent>() {
+//			@Override
+//			public void handle(ActionEvent event) {
+//				try {
+//					Parent toBug = FXMLLoader.load(getClass().getResource("/view/BugReportView.fxml"));
+//					Scene scene = new Scene(toBug);
+//					BugReportStage = new Stage();
+//
+//					BugReportStage.setScene(scene);
+//					BugReportStage.initStyle(StageStyle.TRANSPARENT);
+//					BugReportStage.initOwner(Main.getPrimaryStage());
+//					BugReportStage.initModality(Modality.WINDOW_MODAL);
+//					BugReportStage.show();
+//					BugReportStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth() / 2 - BugReportStage.getWidth() / 2);
+//					BugReportStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight() / 2 - BugReportStage.getHeight() / 2);
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
 
 		exitBtn.setTooltip(new Tooltip("Exit"));
 		exitBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -217,6 +217,13 @@ public class MainScene implements Initializable {
 		    @Override
 		    public void handle(ActionEvent event) {
 		        Main.getHostService().showDocument("http://113.198.84.53/globalclipboard/download");
+		    }
+		});
+		
+		bugreportHL.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override
+		    public void handle(ActionEvent event) {
+		        Main.getHostService().showDocument("http://113.198.84.53/globalclipboard/bugreport");
 		    }
 		});
 
