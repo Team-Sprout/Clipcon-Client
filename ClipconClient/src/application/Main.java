@@ -68,7 +68,6 @@ public class Main extends Application {
 		} catch (UnsatisfiedLinkError e) {
 			e.printStackTrace();
 			Platform.runLater(() -> {
-//				PlainDialog.show("dll load error");
 				Dialog plainDialog = new PlainDialog("dll load error", true);
 				plainDialog.showAndWait();
 			});
@@ -152,8 +151,7 @@ public class Main extends Application {
 			fileLock();
 			launch(args);
 		} catch (FileNotFoundException e) {
-			System.out.println(System.getProperty("user.dir") + File.separator + "ClipCon.exe");
-			runCommandAsAdmin("\"" + System.getProperty("user.dir") + File.separator + "ClipCon.exe" + "\""); // 이러면되나
+			runCommandAsAdmin("\"" + System.getProperty("user.dir") + File.separator + "ClipCon.exe" + "\"");
 			System.exit(0);
 		}
 	}
