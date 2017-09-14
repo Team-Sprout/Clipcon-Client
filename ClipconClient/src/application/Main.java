@@ -24,6 +24,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import model.Message;
+import userInterface.Dialog;
 import userInterface.PlainDialog;
 import userInterface.TrayIconManager;
 
@@ -49,7 +50,7 @@ public class Main extends Application {
 	private static HostServices hostService;
 
 	@Override
-	public void start(Stage primaryStage) throws Exception { // 이거 실행되는거야?
+	public void start(Stage primaryStage) throws Exception {
 
 		hostService = getHostServices();
 
@@ -67,7 +68,9 @@ public class Main extends Application {
 		} catch (UnsatisfiedLinkError e) {
 			e.printStackTrace();
 			Platform.runLater(() -> {
-				PlainDialog.show("dll load error");
+//				PlainDialog.show("dll load error");
+				Dialog plainDialog = new PlainDialog("dll load error", true);
+				plainDialog.showAndWait();
 			});
 		}
 
@@ -148,7 +151,7 @@ public class Main extends Application {
 		try {
 			fileLock();
 			launch(args);
-		} catch (FileNotFoundException e) { // (1)
+		} catch (FileNotFoundException e) {
 			System.out.println(System.getProperty("user.dir") + File.separator + "ClipCon.exe");
 			runCommandAsAdmin("\"" + System.getProperty("user.dir") + File.separator + "ClipCon.exe" + "\""); // 이러면되나
 			System.exit(0);

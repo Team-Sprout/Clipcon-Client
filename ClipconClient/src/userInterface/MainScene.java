@@ -87,7 +87,9 @@ public class MainScene implements Initializable {
 	private ObservableList<User> groupParticipantList;
 	@Getter
 	private ObservableList<Contents> historyList;
-
+	
+	private Dialog dialog;
+	
 	private ContentsUpload contentsUpload;
 	private Thread uploadThread;
 	private RetrofitDownloadData downloader;
@@ -130,34 +132,13 @@ public class MainScene implements Initializable {
 
 		groupParticipantList = FXCollections.observableArrayList();
 		historyList = FXCollections.observableArrayList();
-		
-		//bugReportBtn.setTooltip(new Tooltip("Bug Report"));
-//		bugReportBtn.setOnAction(new EventHandler<ActionEvent>() {
-//			@Override
-//			public void handle(ActionEvent event) {
-//				try {
-//					Parent toBug = FXMLLoader.load(getClass().getResource("/view/BugReportView.fxml"));
-//					Scene scene = new Scene(toBug);
-//					BugReportStage = new Stage();
-//
-//					BugReportStage.setScene(scene);
-//					BugReportStage.initStyle(StageStyle.TRANSPARENT);
-//					BugReportStage.initOwner(Main.getPrimaryStage());
-//					BugReportStage.initModality(Modality.WINDOW_MODAL);
-//					BugReportStage.show();
-//					BugReportStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth() / 2 - BugReportStage.getWidth() / 2);
-//					BugReportStage.setY(Main.getPrimaryStage().getY() + Main.getPrimaryStage().getHeight() / 2 - BugReportStage.getHeight() / 2);
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
 
 		exitBtn.setTooltip(new Tooltip("Exit"));
 		exitBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				GroupExitDialog.show("그룹에서 나가며, 히스토리가 모두 삭제됩니다. 계속하시겠습니까?");
+				dialog = new GroupExitDialog("그룹에서 나가며, 히스토리가 모두 삭제됩니다. 계속하시겠습니까?");
+				dialog.showAndWait();
 			}
 		});
 
@@ -376,7 +357,6 @@ public class MainScene implements Initializable {
 			});
 
 			// Upload notification setting
-
 			if (!content.getUploadUserName().equals(Endpoint.user.getName()) && SettingScene.uploadNotiFlag) {
 				Notification uploadnoti;
 
@@ -555,9 +535,6 @@ public class MainScene implements Initializable {
 				progressBarStage.initStyle(StageStyle.TRANSPARENT);
 				progressBarStage.setScene(scene);
 				progressBarStage.getIcons().add(new javafx.scene.image.Image("resources/Logo.png"));
-//				if(ProgressBarScene.getNumber() > 1) {
-//					progressBarStage.initOwner(progressBarStageArray[progressBarIndex]);
-//				}
 				progressBarStage.initModality(Modality.WINDOW_MODAL);
 				progressBarStage.show();
 				// progressBarStage.setX(Main.getPrimaryStage().getX() + Main.getPrimaryStage().getWidth()/2 - progressBarStage.getWidth()/2);
