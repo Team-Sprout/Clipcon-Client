@@ -30,6 +30,8 @@ public class GroupJoinScene implements Initializable{
 	@FXML private TextField groupKey;
 	@FXML private Button confirmBtn, XBtn;
 	
+	private Dialog dialog;
+	
 	private Endpoint endpoint = Endpoint.getInstance();
 	
 	@Override
@@ -78,7 +80,8 @@ public class GroupJoinScene implements Initializable{
 	}
 	
 	public void notInputGroupKey() {
-		PlainDialog.show("Group key 를 입력하세요.");
+		dialog = new PlainDialog("Group key 를 입력하세요.", false);
+		dialog.showAndWait();
 	}
 	
 	// send REQUEST_JOIN_GROUP Messgae to server
@@ -97,7 +100,8 @@ public class GroupJoinScene implements Initializable{
 	
 	public void failGroupJoin() {
 		Platform.runLater(() -> {
-			PlainDialog.show("유효하지 않는 Group Key 입니다. 다시 입력하세요.");
+			dialog = new PlainDialog("유효하지 않는 Group Key 입니다. 다시 입력하세요.", false);
+			dialog.showAndWait();
 			groupKey.setText("");
 		});
 	}

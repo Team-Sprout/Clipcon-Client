@@ -24,6 +24,8 @@ public class NicknameChangeScene implements Initializable {
 	@FXML private TextField nicknameTF;
 	@FXML private Button OkBtn, XBtn;
 	
+	private Dialog dialog;
+	
 	private Endpoint endpoint = Endpoint.getInstance();
 
 	@Override
@@ -64,7 +66,8 @@ public class NicknameChangeScene implements Initializable {
 	}
 	
 	public void notInputNickname() {
-		PlainDialog.show("변경할 Nickname 을 입력하세요.");
+		dialog = new PlainDialog("변경할 Nickname 을 입력하세요.", false);
+		dialog.showAndWait();
 	}
 	
 	public void sendNicknameChangeMessage(String nickname) {

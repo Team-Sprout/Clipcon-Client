@@ -22,6 +22,7 @@ import model.MessageDecoder;
 import model.MessageEncoder;
 import model.MessageParser;
 import model.User;
+import userInterface.Dialog;
 import userInterface.PlainDialog;
 import userInterface.UserInterface;
 
@@ -35,6 +36,7 @@ public class Endpoint {
 	private Session session = null;
 	private static Endpoint uniqueEndpoint;
 	private static UserInterface ui;
+	private Dialog dialog;
 
 	public static User user;
 
@@ -70,7 +72,8 @@ public class Endpoint {
 			switch (message.get(Message.RESULT)) {
 			case Message.REJECT:
 				Platform.runLater(() -> {
-					PlainDialog.show("you have to download update version http://113.198.84.53/globalclipboard/download");
+					dialog = new PlainDialog("You have to download update version http://113.198.84.53/globalclipboard/download", false);
+					dialog.showAndWait();
 				});
 				break;
 			}
@@ -191,6 +194,14 @@ public class Endpoint {
 		case Message.PONG:
 			break;
 			
+		case Message.SERVERMSG:
+			String msg = message.get(Message.CONTENTS);
+			Platform.runLater(() -> {
+				Dialog plainDialog = new PlainDialog(msg, false);
+				plainDialog.showAndWait();
+			});
+			break;
+			
 		default:
 			break;
 		}
@@ -203,7 +214,10 @@ public class Endpoint {
 	@OnClose
 	public void onClose() {
 		System.out.println("[on Close]");
-		// TODO [delf] How to handle when a session is lost
+		Platform.runLater(() -> {
+			dialog = new PlainDialog("서버와의 연결이 끊겼습니다.", true);
+			dialog.showAndWait();
+		});
 	}
 
 	class PingPong extends Thread {

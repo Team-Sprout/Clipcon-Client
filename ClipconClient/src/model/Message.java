@@ -97,4 +97,6 @@ public class Message {
 	
 	public final static String PING = "ping";
 	public final static String PONG = "pong";
+	
+	public final static String SERVERMSG = "server message";
 }

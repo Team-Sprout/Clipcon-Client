@@ -1,7 +1,5 @@
 package authority;
 
-import java.io.IOException;
-
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.Kernel32Util;

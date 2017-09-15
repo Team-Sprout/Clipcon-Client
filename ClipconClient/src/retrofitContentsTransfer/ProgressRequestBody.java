@@ -55,8 +55,12 @@ public class ProgressRequestBody extends RequestBody {
 				// handler.post(new ProgressUpdater(uploaded, fileLength));
 
 				double progressValue = (100 * uploaded / fileLength);
-				// System.out.println((int) progressValue);
-				ui.getProgressBarScene().setProgeress(progressBarIndex, progressValue, uploaded, fileLength, false);
+				
+				if(fileLength < CHUNKSIZE) {
+					ui.getProgressBarScene().setIndeterminateProgeress(progressBarIndex, false);
+				} else {
+					ui.getProgressBarScene().setProgeress(progressBarIndex, progressValue, uploaded, fileLength, false);
+				}
 
 				uploaded += read;
 				sink.write(buffer, 0, read);
