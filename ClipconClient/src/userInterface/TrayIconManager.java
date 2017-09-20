@@ -17,21 +17,21 @@ import javax.swing.ImageIcon;
 import javax.websocket.EncodeException;
 
 import application.Main;
-import controller.Endpoint;
 import javafx.application.Platform;
-import model.Message;
+import model.message.Message;
+import server.Endpoint;
 
 public class TrayIconManager {
 
-	private final SystemTray systemTray = SystemTray.getSystemTray(); // 시스템트레이 얻어옴
+	private final SystemTray systemTray = SystemTray.getSystemTray(); // get system tray
 
 	private URL trayIconImageURL;
 	private ImageIcon trayIconImageIcon;
-	private Image trayIconImage; // 트레이아이콘 이미지
-	private PopupMenu trayIconMenu; // 트레이아이콘 우클릭 메뉴
-	private MenuItem menuItem; // 트레이아이콘 우클릭 메뉴 항목
-	private MouseListener mouseListener; // 트레이아이콘 마우스 리스너
-	private TrayIcon trayIcon; // 트레이아이콘
+	private Image trayIconImage;
+	private PopupMenu trayIconMenu;
+	private MenuItem menuItem;
+	private MouseListener mouseListener;
+	private TrayIcon trayIcon;
 
 	private ActionListener closeListener;
 	private ActionListener showListener;
@@ -40,23 +40,23 @@ public class TrayIconManager {
 
 	public TrayIconManager() {
 		trayIconImageURL = Main.class.getResource("/resources/trayIcon.png");
-		trayIconImageIcon = new ImageIcon(trayIconImageURL); // 트레이아이콘 이미지
+		trayIconImageIcon = new ImageIcon(trayIconImageURL);
 		trayIconImage = trayIconImageIcon.getImage();
 		trayIconMenu = new PopupMenu();
 		trayIcon = new TrayIcon(trayIconImage, "ClipCon", trayIconMenu);
 	}
 
-	/** 트레이아이콘을 시스템트레이에 추가 */
+	/** Add tray icon to system tray */
 	public void addTrayIconInSystemTray() {
-		if (SystemTray.isSupported()) { // 시스템 트레이가 지원되면
+		if (SystemTray.isSupported()) {
 			setEventListener();
 			setMenu();
 
 			try {
-				trayIcon.setImageAutoSize(true); // 트레이 아이콘 크기 자동 조절
+				trayIcon.setImageAutoSize(true);
 				trayIcon.addActionListener(showListener);
 				trayIcon.addMouseListener(mouseListener);
-				systemTray.add(trayIcon); // 시스템 트레이에 트레이 아이콘 추가
+				systemTray.add(trayIcon);
 			} catch (AWTException e) {
 				e.printStackTrace();
 			}
@@ -66,7 +66,7 @@ public class TrayIconManager {
 		}
 	}
 
-	/** 트레이아이콘 이벤트 설정 */
+	/** Tray Icon Event Settings */
 	public void setEventListener() {
 
 		// create a action listener to listen for default action executed on the tray icon
@@ -93,10 +93,10 @@ public class TrayIconManager {
 		};
 
 		
-		/* 트레이 아이콘 마우스 리스너 */
+		/* Tray Icon Mouse Listener */
 		mouseListener = new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-				if (e.getClickCount() == 2) { // 트레이 아이콘을 더블 클릭하면
+				if (e.getClickCount() == 2) { // Double-click the tray icon
 					Platform.runLater(() -> {
 						Main.getPrimaryStage().show();
 					});
@@ -105,9 +105,9 @@ public class TrayIconManager {
 		};
 	}
 
-	/** 트레이아이콘 우클릭 메뉴 설정 */
+	/** Tray Icon Right-click Settings */
 	public void setMenu() {
-		menuItem = new MenuItem("Close"); // 프로그램 종료
+		menuItem = new MenuItem("Close"); // program exit
 		menuItem.addActionListener(closeListener);
 
 		trayIconMenu.add(menuItem);

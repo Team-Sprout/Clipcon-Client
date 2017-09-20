@@ -2,6 +2,12 @@ package userInterface;
 
 import lombok.Getter;
 import lombok.Setter;
+import userInterface.scene.GroupJoinScene;
+import userInterface.scene.MainScene;
+import userInterface.scene.NicknameChangeScene;
+import userInterface.scene.ProgressBarScene;
+import userInterface.scene.SettingScene;
+import userInterface.scene.StartingScene;
 
 @Getter
 @Setter
