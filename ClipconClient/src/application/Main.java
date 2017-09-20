@@ -11,9 +11,8 @@ import java.util.Date;
 
 import javax.websocket.EncodeException;
 
+import ClipboardManager.ClipboardController;
 import authority.Elevator;
-import controller.ClipboardController;
-import controller.Endpoint;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
@@ -23,10 +22,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import model.Message;
-import userInterface.Dialog;
-import userInterface.PlainDialog;
+import model.message.Message;
+import server.Endpoint;
 import userInterface.TrayIconManager;
+import userInterface.dialog.Dialog;
+import userInterface.dialog.PlainDialog;
 
 public class Main extends Application {
 	private static Stage primaryStage;
