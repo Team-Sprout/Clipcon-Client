@@ -69,7 +69,7 @@ public class NicknameChangeScene implements Initializable {
 	}
 	
 	public void notInputNickname() {
-		dialog = new PlainDialog("º¯°æÇÒ Nickname À» ÀÔ·ÂÇÏ¼¼¿ä.", false);
+		dialog = new PlainDialog("ë³€ê²½í•  Nickname ì„ ì…ë ¥í•˜ì„¸ìš”.", false);
 		dialog.showAndWait();
 	}
 	
