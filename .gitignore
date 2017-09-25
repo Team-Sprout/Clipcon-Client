@@ -55,3 +55,8 @@ hs_err_pid*
 # clipcon configuration files
 *.lock
 *.fxbuild
+
+# file diretory
+clipconDownload/
+clipconUpload/
+
