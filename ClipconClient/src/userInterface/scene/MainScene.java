@@ -11,8 +11,8 @@ import java.util.function.Function;
 
 import com.jfoenix.controls.JFXTabPane;
 
-import ClipboardManager.ClipboardController;
 import application.Main;
+import clipboardManager.ClipboardController;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
@@ -52,9 +52,9 @@ import transfer.RetrofitDownloadData;
 import userInterface.UserInterface;
 import userInterface.dialog.Dialog;
 import userInterface.dialog.GroupExitDialog;
+import userInterface.notification.ClipboardNotification;
 import userInterface.notification.Notification;
-import userInterface.notification.NotificationBuilder;
-import userInterface.notification.NotifierBuilder;
+import userInterface.notification.UploadNotification;
 
 public class MainScene implements Initializable {
 
@@ -82,7 +82,6 @@ public class MainScene implements Initializable {
 	@FXML
 	private Hyperlink homepageHL, bugreportHL;
 
-	private Stage BugReportStage;
 	private Stage SettingStage;
 	private Stage nicknameChangeStage;
 	private Stage progressBarStage;
@@ -101,8 +100,8 @@ public class MainScene implements Initializable {
 	private RetrofitDownloadData downloader;
 	private Thread downloadThread;
 
-	private Notification.ClipboadNotifier clipboardNotifier;
-	private Notification.UploadNotifier uploadNotifier;
+	private Notification clipboardNotification;
+	private Notification uploadNotification;
 
 	private hookManager.GlobalKeyboardHook hook;
 
@@ -131,9 +130,9 @@ public class MainScene implements Initializable {
 		startHookProcess();
 		createDirectory();
 
-		clipboardNotifier = NotifierBuilder.clipboardNotiBuild();
+		clipboardNotification = new ClipboardNotification();
 		// clipboardNotifier.setNotificationOwner(Main.getPrimaryStage());
-		uploadNotifier = NotifierBuilder.uploadNotibuild();
+//		uploadNotification = new UploadNotification();
 		// uploadNotifier.setNotificationOwner(Main.getPrimaryStage());
 
 		groupParticipantList = FXCollections.observableArrayList();
@@ -287,15 +286,13 @@ public class MainScene implements Initializable {
 	public void showClipboardChangeNoti() {
 		if (SettingScene.clipboardMonitorNotiFlag) {
 			Platform.runLater(() -> {
-				Notification clipboanoti = NotificationBuilder.create().build();
-
-				if (clipboardNotifier.getIsShowing()) {
-					clipboardNotifier.hidePopUp();
+				if (clipboardNotification.getIsShowing()) {
+					clipboardNotification.hidePopUp();
 				}
 
-				clipboardNotifier.notify(clipboanoti);
-				clipboardNotifier.onNotificationPressedProperty();
-				clipboardNotifier.setOnNotificationPressed(event -> upload());
+				clipboardNotification.startNotify();
+				clipboardNotification.onNotificationPressedProperty();
+				clipboardNotification.setOnNotificationPressed(event -> upload());
 			});
 		}
 	}
@@ -364,8 +361,6 @@ public class MainScene implements Initializable {
 
 			// Upload notification setting
 			if (!content.getUploadUserName().equals(Endpoint.user.getName()) && SettingScene.uploadNotiFlag) {
-				Notification uploadnoti;
-
 				String notiTitle = null;
 				String notiMsg = null;
 
@@ -376,11 +371,11 @@ public class MainScene implements Initializable {
 					} else {
 						notiMsg = content.getContentsValue();
 					}
-					uploadnoti = NotificationBuilder.create().title(notiTitle).message(notiMsg).build();
+					uploadNotification = new UploadNotification(notiTitle, notiMsg);
 				} else if (content.getContentsType().equals(Contents.TYPE_IMAGE)) {
 					notiTitle = "Image from " + content.getUploadUserName();
 					Image resizeImg = content.getContentsImage();
-					uploadnoti = NotificationBuilder.create().title(notiTitle).resizeImage(resizeImg).build();
+					uploadNotification = new UploadNotification(notiTitle, resizeImg);
 				} else {
 					notiTitle = "File from " + content.getUploadUserName();
 					if (content.getContentsValue().length() > 30) {
@@ -388,12 +383,12 @@ public class MainScene implements Initializable {
 					} else {
 						notiMsg = content.getContentsValue();
 					}
-					uploadnoti = NotificationBuilder.create().title(notiTitle).message(notiMsg).build();
+					uploadNotification = new UploadNotification(notiTitle, notiMsg);
 				}
 
-				uploadNotifier.notify(uploadnoti);
-				uploadNotifier.onNotificationPressedProperty();
-				uploadNotifier.setOnNotificationPressed(event -> getContentsInClipboard(content));
+				uploadNotification.startNotify();
+				uploadNotification.onNotificationPressedProperty();
+				uploadNotification.setOnNotificationPressed(event -> getContentsInClipboard(content));
 			}
 		});
 	}
@@ -510,9 +505,9 @@ public class MainScene implements Initializable {
 		hook.addGlobalKeyboardListener(new hookManager.GlobalKeyboardListener() {
 			/* Upload HotKey */
 			public void onGlobalUploadHotkeysPressed() {
-				if (clipboardNotifier.getIsShowing()) {
+				if (clipboardNotification.getIsShowing()) {
 					Platform.runLater(() -> {
-						clipboardNotifier.hidePopUp();
+						clipboardNotification.hidePopUp();
 					});
 				}
 				upload();
@@ -561,8 +556,8 @@ public class MainScene implements Initializable {
 		Main.isInMainScene = false;
 
 		hook.stopHook();
-		clipboardNotifier = null;
-		uploadNotifier = null;
+		clipboardNotification = null;
+		uploadNotification = null;
 		contentsUpload = null;
 		uploadThread = null;
 		downloader = null;
@@ -608,12 +603,6 @@ public class MainScene implements Initializable {
 		});
 	}
 	
-	public void closeBugReportStage() {
-		Platform.runLater(() -> {
-			BugReportStage.close();
-		});
-	}
-
 	public void closeSettingStage() {
 		Platform.runLater(() -> {
 			SettingStage.close();

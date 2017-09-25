@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.*?>
 
- <AnchorPane prefHeight="152.0" prefWidth="253.0" style="-fx-background-image: url('/resources/NicknameChangeBackground.png');" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.NicknameChangeScene">
+ <AnchorPane prefHeight="152.0" prefWidth="253.0" style="-fx-background-image: url('/resources/NicknameChangeBackground.png');" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.scene.NicknameChangeScene">
    <children>
      	 <TextField fx:id="nicknameTF" layoutX="18.0" layoutY="46.0" minHeight="10.0" minWidth="100.0" style="-fx-background-color: transparent; -fx-text-fill: #ffffff; -fx-font-size: 10pt;" />
      	 <Button fx:id="OkBtn" layoutX="80.0" layoutY="93.0" minHeight="32" minWidth="91" style="-fx-background-color: transparent; -fx-background-image: url('/resources/OkBtn.png');"/>

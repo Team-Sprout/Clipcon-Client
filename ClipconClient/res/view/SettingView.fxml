@@ -6,7 +6,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.text.*?>
 
- <AnchorPane prefHeight="147.0" prefWidth="291.0" style="-fx-background-image: url('/resources/SettingBackground.png');" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.SettingScene">
+ <AnchorPane prefHeight="147.0" prefWidth="291.0" style="-fx-background-image: url('/resources/SettingBackground.png');" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.scene.SettingScene">
    <children>
 		<CheckBox fx:id="clipboardMonitorNotiCB" layoutX="22.0" layoutY="80.0" mnemonicParsing="false" text="Turn off clipboard monitor notification" onAction="#checkEvent" style="-fx-text-fill: #ffffff;" />
 		<CheckBox fx:id="uploadNotiCB" layoutX="22.0" layoutY="105.0" mnemonicParsing="false" text="Turn off upload notification" onAction="#checkEvent" style="-fx-text-fill: #ffffff;"/>

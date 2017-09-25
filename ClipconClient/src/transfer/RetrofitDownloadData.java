@@ -19,7 +19,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import ClipboardManager.ClipboardController;
+import clipboardManager.ClipboardController;
 import model.Contents;
 import model.History;
 import model.trasferabel.FileTransferable;
