@@ -11,8 +11,8 @@ import java.util.Date;
 
 import javax.websocket.EncodeException;
 
-import ClipboardManager.ClipboardController;
 import authority.Elevator;
+import clipboardManager.ClipboardController;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;

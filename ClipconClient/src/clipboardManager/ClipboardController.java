@@ -1,4 +1,4 @@
-package ClipboardManager;
+package clipboardManager;
 
 import java.awt.HeadlessException;
 import java.awt.Image;

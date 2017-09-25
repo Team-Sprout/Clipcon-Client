@@ -1,4 +1,4 @@
-package ClipboardManager;
+package clipboardManager;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinUser;

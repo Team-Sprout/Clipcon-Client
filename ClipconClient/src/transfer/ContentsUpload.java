@@ -3,7 +3,7 @@ package transfer;
 import java.awt.Image;
 import java.util.ArrayList;
 
-import ClipboardManager.ClipboardController;
+import clipboardManager.ClipboardController;
 import server.Endpoint;
 
 public class ContentsUpload {
