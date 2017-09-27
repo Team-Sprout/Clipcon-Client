@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.websocket.EncodeException;
 
@@ -33,8 +31,6 @@ public class Main extends Application {
 
 	public static final String SERVER_PORT = "80";
 	public static final String SERVER_ADDR = "113.198.84.53";
-	// public static final String SERVER_ADDR = "delf.gonetis.com";
-	// public static final String SERVER_ADDR = "223.194.156.74";
 
 	public static final String SERVER_URI_PART = SERVER_ADDR + ":" + SERVER_PORT + "/";
 
@@ -52,9 +48,10 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
+		// get host service for show document
 		hostService = getHostServices();
 
-		// version check
+		// send version check message to server
 		Message confirmVersionMsg = new Message().setType(Message.REQUEST_CONFIRM_VERSION);
 		confirmVersionMsg.add(Message.CLIPCON_VERSION, CLIPCON_VERSION);
 
@@ -63,6 +60,8 @@ public class Main extends Application {
 		} catch (IOException | EncodeException e) {
 			e.printStackTrace();
 		}
+		
+		// keyHooking.dll load
 		try {
 			System.load(System.getProperty("user.dir") + File.separator + "keyHooking.dll");
 		} catch (UnsatisfiedLinkError e) {
@@ -75,24 +74,27 @@ public class Main extends Application {
 
 		setPrimaryStage(primaryStage);
 
+		// add tray icon
 		TrayIconManager tray = new TrayIconManager();
 		tray.addTrayIconInSystemTray();
 
+		// stage setting
 		primaryStage.setTitle("ClipCon");
 		primaryStage.getIcons().add(new javafx.scene.image.Image("resources/Logo.png"));
 		Parent root = FXMLLoader.load(getClass().getResource("/view/StartingView.fxml"));
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
-		// primaryStage.setAlwaysOnTop(false);
 		primaryStage.setResizable(true);
 		primaryStage.show();
 
+		// stage close event handling
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent t) {
 				if (isInMainScene) {
 					Platform.setImplicitExit(false);
 				}
 				else {
+					// send exit program message to server
 					Message exitProgramMsg = new Message().setType(Message.REQUEST_EXIT_PROGRAM);
 					try {
 						endpoint.sendMessage(exitProgramMsg);
@@ -104,6 +106,7 @@ public class Main extends Application {
 			}
 		});
 
+		// start clipboard monitor thread
 		Thread clipboardMonitorThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -117,14 +120,15 @@ public class Main extends Application {
 		Main.primaryStage = stage;
 	}
 
-	static public Stage getPrimaryStage() {
+	public static Stage getPrimaryStage() {
 		return Main.primaryStage;
 	}
 
-	static public HostServices getHostService() {
+	public static HostServices getHostService() {
 		return Main.hostService;
 	}
 
+	/** write lock file to prevent duplicate execution */
 	@SuppressWarnings("resource")
 	public static void fileLock() throws FileNotFoundException {
 		lockFile = new File(Main.LOCK_FILE_LOCATION);
@@ -145,6 +149,11 @@ public class Main extends Application {
 			// error handle
 		}
 	}
+	
+	/** run a program at CMD */
+	public static void runCommandAsAdmin(String command) {
+		Elevator.executeAsAdmin("c:\\windows\\system32\\cmd.exe", "/C " + command);
+	}
 
 	public static void main(String[] args) {
 		try {
@@ -154,22 +163,5 @@ public class Main extends Application {
 			runCommandAsAdmin("\"" + System.getProperty("user.dir") + File.separator + "ClipCon.exe" + "\"");
 			System.exit(0);
 		}
-	}
-
-	/**
-	 * for test 17.09.13
-	 * 
-	 * @return Current Time YYYY-MM-DD HH:MM:SS
-	 */
-	public static String getTime() {
-		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd a hh:mm:ss");
-
-		return sdf.format(date).toString();
-	}
-
-	/** run a program at CMD */
-	public static void runCommandAsAdmin(String command) {
-		Elevator.executeAsAdmin("c:\\windows\\system32\\cmd.exe", "/C " + command);
 	}
 }

@@ -66,9 +66,8 @@ public class TrayIconManager {
 		}
 	}
 
-	/** Tray Icon Event Settings */
+	/** Tray icon event handling */
 	public void setEventListener() {
-
 		// create a action listener to listen for default action executed on the tray icon
 		closeListener = new ActionListener() {
 			@Override
@@ -93,7 +92,7 @@ public class TrayIconManager {
 		};
 
 		
-		/* Tray Icon Mouse Listener */
+		// Tray icon mouse listener */
 		mouseListener = new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				if (e.getClickCount() == 2) { // Double-click the tray icon
@@ -105,7 +104,7 @@ public class TrayIconManager {
 		};
 	}
 
-	/** Tray Icon Right-click Settings */
+	/** Tray icon right-click event handling */
 	public void setMenu() {
 		menuItem = new MenuItem("Close"); // program exit
 		menuItem.addActionListener(closeListener);

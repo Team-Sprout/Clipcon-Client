@@ -47,8 +47,6 @@ public class RetrofitUploadData {
 	public RetrofitUploadData(String userName, String groupPK) {
 		this.userName = userName;
 		this.groupPK = groupPK;
-
-		ui.getMainScene().showProgressBar();
 	}
 
 	/** Upload String Data */
@@ -61,12 +59,6 @@ public class RetrofitUploadData {
 
 		call = retrofitInterface.requestStringDataUpload(username, grouppk, stringdata);
 		callResult(call);
-		
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		
 		int progressBarIndex = ProgressBarScene.getIndex();
 		while(progressBarIndex == -1) {
@@ -101,16 +93,9 @@ public class RetrofitUploadData {
 			callResult(call);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
+
 		int progressBarIndex = ProgressBarScene.getIndex();
 		while(progressBarIndex == -1) {
 			progressBarIndex = ProgressBarScene.getIndex();

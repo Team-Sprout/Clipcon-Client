@@ -20,13 +20,14 @@ public class GroupExitDialog extends Dialog {
     public GroupExitDialog(String msg) {
     	super(msg);
  
+    	// Yes button event handling
         Button yesBtn = new Button("Yes");
         yesBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
                 GroupExitDialog.this.close();
                 
-				// Send REQUEST_EXIT_GROUP Message To Server
+				// Send exit group message to server
 				Message exitGroupMsg = new Message().setType(Message.REQUEST_EXIT_GROUP);
 				try {
 					endpoint.sendMessage(exitGroupMsg);
@@ -38,6 +39,7 @@ public class GroupExitDialog extends Dialog {
         
         yesBtn.getStyleClass().add("button");
         
+        // No button event handling
         Button noBtn = new Button("No");
         noBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override

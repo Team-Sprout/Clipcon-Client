@@ -49,12 +49,12 @@ public class ProgressRequestBody extends RequestBody {
 		try {
 			int read;
 
-			/* update progress on UI thread */
 			while ((read = in.read(buffer)) != -1) {
 				// handler.post(new ProgressUpdater(uploaded, fileLength));
 
 				double progressValue = (100 * uploaded / fileLength);
 				
+				// set progress value in progress bar
 				if(fileLength < CHUNKSIZE) {
 					ui.getProgressBarScene().setIndeterminateProgeress(progressBarIndex, false);
 				} else {

@@ -66,11 +66,12 @@ public class Endpoint {
 
 	@OnMessage
 	public void onMessage(Message message) {
-		System.out.println("message type: " + message.get(Message.TYPE) + " - " + Main.getTime());
+		System.out.println("message type: " + message.get(Message.TYPE));
 		switch (message.get(Message.TYPE)) {
 		case Message.RESPONSE_CONFIRM_VERSION:
 			switch (message.get(Message.RESULT)) {
 			case Message.REJECT:
+				// Show dialog
 				Platform.runLater(() -> {
 					dialog = new PlainDialog("You have to download update version http://113.198.84.53/globalclipboard/download", false);
 					dialog.showAndWait();
@@ -82,17 +83,8 @@ public class Endpoint {
 		case Message.RESPONSE_CREATE_GROUP:
 			switch (message.get(Message.RESULT)) {
 			case Message.CONFIRM:
-				ui.getStartingScene().showMainView(); // Show MainView
-				user = MessageParser.getUserAndGroupByMessage(message); // create Group Object using primaryKey, name(get from server) and set to user
-
-				while (true) {
-					if (ui.getMainScene() != null && user != null) {
-						break;
-					}
-					System.out.print(""); // [TODO] UI refresh
-				}
-
-				ui.getMainScene().initGroupParticipantList(); // UI list initialization
+				ui.getStartingScene().showMainView(); // Show main view
+				user = MessageParser.getUserAndGroupByMessage(message); // Create group object using primaryKey, name(get from server) and set to user
 				break;
 			}
 			break;
@@ -100,16 +92,15 @@ public class Endpoint {
 		case Message.RESPONSE_CHANGE_NAME:
 			switch (message.get(Message.RESULT)) {
 			case Message.CONFIRM:
-				String changeName = message.get(Message.CHANGE_NAME);
+				String changeName = message.get(Message.CHANGE_NAME); // Get change name
 				
-				System.out.println("changeName : " + changeName);
-
+				// Set change name
 				user.setName(changeName);
 				user.getGroup().getUserList().get(0).setName(changeName);
 				user.getGroup().getUserList().get(0).setNameProperty(new SimpleStringProperty(changeName));
 
-				ui.getMainScene().closeNicknameChangeStage();
-				ui.getMainScene().initGroupParticipantList(); // UI list initialization
+				ui.getMainScene().closeNicknameChangeStage(); // Close nickname change stage
+				ui.getMainScene().initGroupParticipantList(); // Group participant list initialization
 				break;
 			}
 			break;
@@ -119,46 +110,34 @@ public class Endpoint {
 			case Message.CONFIRM:
 				ui.getGroupJoinScene().showMainView(); // close group join and show MainView
 				user = MessageParser.getUserAndGroupByMessage(message); // create Group Object using primaryKey, name(get from server) and set to user
-
-				while (true) {
-					if (ui.getMainScene() != null && user != null) {
-						break;
-					}
-					System.out.print(""); // [TODO] UI refresh
-				}
-
-				ui.getMainScene().initGroupParticipantList(); // UI list initialization
 				break;
 
 			case Message.REJECT:
-				ui.getGroupJoinScene().failGroupJoin(); // UI list initialization
+				ui.getGroupJoinScene().failGroupJoin(); // Show fail dialog
 				break;
 			}
 			break;
 
 		case Message.RESPONSE_EXIT_GROUP:
-			while (true) {
-				if (ui.getMainScene() != null) {
-					break;
-				}
-			}
-
-			ui.getMainScene().showStartingView(); // show StartingView
+			ui.getMainScene().showStartingView(); // show starting view
 			user = null;
 			break;
 
-		case Message.NOTI_ADD_PARTICIPANT: // receive a message when another user enters the group and updates the UI
-			User newParticipant = new User(message.get(Message.PARTICIPANT_NAME));
+		// Receive a message when another user enters the group and updates the UI
+		case Message.NOTI_ADD_PARTICIPANT:
+			User newParticipant = new User(message.get(Message.PARTICIPANT_NAME)); // Get new participant nickname
 
+			// Add new participant nickname in participant list
 			user.getGroup().getUserList().add(newParticipant);
 			ui.getMainScene().getGroupParticipantList().add(newParticipant);
-			ui.getMainScene().addGroupParticipantList(); // update UI list
+			ui.getMainScene().addGroupParticipantList(); // Group participant list update
 			break;
 
 		case Message.NOTI_CHANGE_NAME:
-			String name = message.get(Message.NAME);
-			String changeName = message.get(Message.CHANGE_NAME);
+			String name = message.get(Message.NAME); // Get the origin nickname of the participant
+			String changeName = message.get(Message.CHANGE_NAME); // Get the changed nickname of the participant
 
+			// Find original nickname and change it to a new nickname
 			for (int i = 0; i < user.getGroup().getUserList().size(); i++) {
 				if (user.getGroup().getUserList().get(i).getName().equals(name)) {
 					user.getGroup().getUserList().remove(i);
@@ -166,10 +145,11 @@ public class Endpoint {
 				}
 			}
 
-			ui.getMainScene().initGroupParticipantList(); // UI list initialization
+			ui.getMainScene().initGroupParticipantList(); // Group participant list initialization
 			break;
 
 		case Message.NOTI_EXIT_PARTICIPANT:
+			// Find the nickname of the participant who left the group and remove it from the list
 			for (int i = 0; i < user.getGroup().getUserList().size(); i++) {
 				if (message.get(Message.PARTICIPANT_NAME).equals(user.getGroup().getUserList().get(i).getName())) {
 					int removeIndex = i;
@@ -178,16 +158,16 @@ public class Endpoint {
 				}
 			}
 
-			ui.getMainScene().initGroupParticipantList(); // update UI list
+			ui.getMainScene().initGroupParticipantList(); // Group participant list initialization
 			break;
 
 		case Message.NOTI_UPLOAD_DATA:
-			Contents contents = MessageParser.getContentsbyMessage(message);
+			Contents contents = MessageParser.getContentsbyMessage(message); // Get content
 
+			// Add new content in history list
 			user.getGroup().addContents(contents);
-
 			ui.getMainScene().getHistoryList().add(0, contents);
-			ui.getMainScene().addContentsInHistory(); // update UI list
+			ui.getMainScene().addContentsInHistory(); // History list update
 
 			break;
 			
@@ -213,7 +193,7 @@ public class Endpoint {
 
 	@OnClose
 	public void onClose() {
-		System.out.println("[on Close]");
+		// show dialog when the web socket is disconnected
 		Platform.runLater(() -> {
 			dialog = new PlainDialog("서버와의 연결이 끊겼습니다.", true);
 			dialog.showAndWait();
@@ -227,7 +207,6 @@ public class Endpoint {
 				try {
 					Thread.sleep(3 * 60 * 1000);
 					sendMessage(new Message().setType(Message.PING));
-
 				} catch (InterruptedException e) {
 					System.out.println("[ERROR] Pingping thread - InterruptedException");
 				} catch (IOException e) {

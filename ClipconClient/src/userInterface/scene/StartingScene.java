@@ -33,11 +33,11 @@ public class StartingScene implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setStartingScene(this);
 
+		// create button event handling
 		createBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-
-				// send REQUEST_REQUEST_CREATE_GROUP Messgae to server
+				// send create group message to server
 				Message createGroupMsg = new Message().setType(Message.REQUEST_CREATE_GROUP);
 				try {
 					endpoint.sendMessage(createGroupMsg);
@@ -47,6 +47,7 @@ public class StartingScene implements Initializable {
 			}
 		});
 
+		// join button event handling
 		joinBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -55,6 +56,7 @@ public class StartingScene implements Initializable {
 		});
 	}
 
+	/** Show main view */
 	public void showMainView() {
 		Platform.runLater(() -> {
 			try {
@@ -64,13 +66,13 @@ public class StartingScene implements Initializable {
 				
 				primaryStage.setScene(mainScene);
 				primaryStage.show();
-	
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		});
 	}
 
+	/** Show group join view */
 	public void showGroupJoinView() {
 		try {
 			Parent toGroupJoin = FXMLLoader.load(getClass().getResource("/view/GroupJoinView.fxml"));
@@ -79,7 +81,6 @@ public class StartingScene implements Initializable {
 			
 			primaryStage.setScene(groupJoinScene);
 			primaryStage.show();
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -10,7 +10,6 @@ public class ContentsUpload {
 	public static RetrofitUploadData uploader;
 
 	public void upload() {
-		// Endpoint.user.getGroup().getPrimaryKey());
 		uploader = new RetrofitUploadData(Endpoint.user.getName(), Endpoint.user.getGroup().getPrimaryKey());
 
 		Object clipboardData = ClipboardController.readClipboard();
