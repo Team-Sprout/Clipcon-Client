@@ -33,7 +33,7 @@ public class SettingScene implements Initializable {
 		else
 			uploadNotiCB.setSelected(true);
 		
-		
+		// X button event handling
 		XBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {

@@ -98,8 +98,6 @@ public class MultipleFileCompress {
 				String sFilePath = file.getPath();
 				String zipEntryName = sFilePath.substring(lastIndex + 1, sFilePath.length());
 				RetrofitUploadData.multipleFileListInfo += zipEntryName + "\n";
-				System.out.println("zipEntry <<sFilePath>>: " + sFilePath);
-				System.out.println("zipEntry <<zipEntryName>>: " + zipEntryName);
 				// String zipEntryName = sFilePath.substring(filePath.length() + 1, sFilePath.length());
 
 				bis = new BufferedInputStream(new FileInputStream(file));
@@ -140,7 +138,6 @@ public class MultipleFileCompress {
 
 			while ((zentry = zis.getNextEntry()) != null) {
 				String fileNameToUnzip = zentry.getName();
-				System.out.println("====fileNameToUnzip: " + fileNameToUnzip);
 
 				// fileName toLowerCase
 				if (fileNameToLowerCase) {
@@ -153,14 +150,12 @@ public class MultipleFileCompress {
 				// case: Directory. make directory
 				if (zentry.isDirectory()) {
 					targetFileDir = new File(targetFile.getAbsolutePath());
-					System.out.println("====targetFileDir(DIR): " + targetFile.getAbsolutePath());
 					targetFileDir.mkdir();
 					// FileUtils.forceMkdir(targetFile.getAbsolutePath());
 				}
 				// case: File. make parent directory
 				else {
 					targetFileDir = new File(targetFile.getParent());
-					System.out.println("====targetFileDir(FILE): " + targetFile.getParent());
 					targetFileDir.mkdir();
 					// FileUtils.makeDir(targetFile.getParent());
 					unzipEntry(zis, targetFile);

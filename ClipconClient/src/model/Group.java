@@ -16,10 +16,12 @@ public class Group {
 		this.primaryKey = primaryKey;
 	}
 
+	/** Add to history when new data is uploaded */
 	public void addContents(Contents contents) {
 		history.addContents(contents);
 	}
 
+	/** Return contents that match the primary key value that distinguishes the data */
 	public Contents getContents(String key) {
 		return history.getContentsByPK(key);
 	}

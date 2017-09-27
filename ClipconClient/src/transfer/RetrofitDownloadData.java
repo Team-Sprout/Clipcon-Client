@@ -64,9 +64,6 @@ public class RetrofitDownloadData {
 	 *            History of my group
 	 */
 	public void requestDataDownload(String downloadDataPK) throws MalformedURLException {
-		isDownloading = true;
-		ui.getMainScene().showProgressBar();
-
 		// retrieving Contents from My History
 		History myhistory = Endpoint.user.getGroup().getHistory();
 		requestContents = myhistory.getContentsByPK(downloadDataPK);
@@ -155,19 +152,19 @@ public class RetrofitDownloadData {
 				
 				ui.getProgressBarScene().completeProgress(progressBarIndex);
 				ui.getMainScene().closeProgressBarStage(progressBarIndex);
-				isDownloading = false;
+				MainScene.isDownloading = false;
 			}
 
 			@Override
 			public void onFailure(Call<ResponseBody> call, Throwable arg1) {
-				// TODO Auto-generated method stub
 				System.out.println("Download onFailure");
 			}
 
 		});
 	}
 
-	/** Download String Data */
+	/** Download string data
+	 * @return String object */
 	private String downloadStringData(InputStream inputStream) {
 		BufferedReader bufferedReader;
 		StringBuilder stringBuilder = null;
@@ -200,7 +197,7 @@ public class RetrofitDownloadData {
 	/**
 	 * Download Captured Image Data
 	 * Change to Image object from file form of Image data
-	 */
+	 * @return Image object */
 	private Image downloadCapturedImageData(InputStream inputStream) {
 		byte[] imageInByte = null;
 		BufferedImage bImageFromConvert = null;
@@ -232,7 +229,7 @@ public class RetrofitDownloadData {
 		return ImageData;
 	}
 
-	/** Download File Data to Temporary folder
+	/** Download file data to temporary folder
 	 * @return File object */
 	private File saveFileDataToDisk(ResponseBody body, String fileName, int progressBarIndex) {
 		try {
@@ -262,7 +259,6 @@ public class RetrofitDownloadData {
 					fileSizeDownloaded += bytesRead;
 
 					double progressValue = (100 * fileSizeDownloaded / fileSize);
-					// System.out.println((int) progressValue);
 					ui.getProgressBarScene().setProgeress(progressBarIndex, progressValue, fileSizeDownloaded, fileSize, true);
 
 					if (bytesRead == -1) {

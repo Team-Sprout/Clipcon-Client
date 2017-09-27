@@ -78,10 +78,6 @@ public abstract class Notification {
 		return isShowing;
 	}
 
-//	public void stop() {
-//		popups.clear();
-//	}
-	
 	public void startNotify() {
 		preOrder();
 		showPopup();

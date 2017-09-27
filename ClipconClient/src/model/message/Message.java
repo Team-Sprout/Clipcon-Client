@@ -57,6 +57,8 @@ public class Message {
 		return json.getLong(key);
 	}
 
+	
+	/** Define message */
 	public final static String TYPE = "message type";
 
 	public final static String REQUEST_CONFIRM_VERSION = "request/confirm version";

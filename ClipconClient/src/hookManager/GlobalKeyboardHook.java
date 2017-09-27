@@ -25,17 +25,16 @@ public class GlobalKeyboardHook {
 	/**
 	* Resets the installed hotkeys.
 	*/
-	// Hotkey Reset
+	// hotkey Reset
 	public native void resetHotKey();
 
 	private boolean uploadHookStopFlag;
 	private boolean downloadHookStopFlag;
 	private boolean stopFlag;
 
-	// -------- Java listeners --------
+	// Java listeners
 	private ArrayList<GlobalKeyboardListener> listeners = new ArrayList<GlobalKeyboardListener>();
 
-	// �깮�꽦�옄
 	public GlobalKeyboardHook() {
 		uploadHookStopFlag = false;
 		downloadHookStopFlag = false;

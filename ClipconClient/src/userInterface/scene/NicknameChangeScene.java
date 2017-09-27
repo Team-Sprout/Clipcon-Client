@@ -35,6 +35,7 @@ public class NicknameChangeScene implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setNicknameChangeScene(this);
 		
+		// nickname text field event handling
 		nicknameTF.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
@@ -48,6 +49,7 @@ public class NicknameChangeScene implements Initializable {
 			}
 		});
 		
+		// OK button event handling
 		OkBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -59,6 +61,7 @@ public class NicknameChangeScene implements Initializable {
 			}
 		});
 		
+		// X button event handling
 		XBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -68,11 +71,13 @@ public class NicknameChangeScene implements Initializable {
 		
 	}
 	
+	/** Show dialog when not input the nickname */
 	public void notInputNickname() {
-		dialog = new PlainDialog("Î≥ÄÍ≤ΩÌï† Nickname ÏùÑ ÏûÖÎ†•ÌïòÏÑ∏Ïöî.", false);
+		dialog = new PlainDialog("∫Ø∞Ê«“ Nickname ¿ª ¿‘∑¬«œººø‰.", false);
 		dialog.showAndWait();
 	}
 	
+	/** Send change name message and name to server */
 	public void sendNicknameChangeMessage(String nickname) {
 		Message changeNicknameMsg = new Message().setType(Message.REQUEST_CHANGE_NAME);
 		changeNicknameMsg.add(Message.CHANGE_NAME, nickname);

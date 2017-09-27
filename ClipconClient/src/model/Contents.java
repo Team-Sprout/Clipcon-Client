@@ -60,7 +60,7 @@ public class Contents {
 		this.uploaderProperty = new SimpleStringProperty(uploadUserName);
 	}
 
-	/** convert contents size format */
+	/** Convert contents size format */
 	public String convertContentsSize(long size) {
 		String contentsConvertedSize;
 

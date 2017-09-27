@@ -30,7 +30,7 @@ public class GroupJoinScene implements Initializable{
 
 	private UserInterface ui = UserInterface.getInstance();
 
-	@FXML private TextField groupKey;
+	@FXML private TextField groupKeyTF;
 	@FXML private Button confirmBtn, XBtn;
 	
 	private Dialog dialog;
@@ -41,11 +41,12 @@ public class GroupJoinScene implements Initializable{
 	public void initialize(URL location, ResourceBundle resources) {
 		ui.setGroupJoinScene(this);
 		
-		groupKey.setOnKeyPressed(new EventHandler<KeyEvent>() {
+		// group key text field event handling
+		groupKeyTF.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
 				if(event.getCode().equals(KeyCode.ENTER)) {
-					if(groupKey.getText().length() == 0) {
+					if(groupKeyTF.getText().length() == 0) {
 						notInputGroupKey();
 					} else {
 						sendGroupJoinMessage();
@@ -54,10 +55,11 @@ public class GroupJoinScene implements Initializable{
 			}
 		});
 		
+		// confirm button event handling
 		confirmBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if(groupKey.getText().length() == 0) {
+				if(groupKeyTF.getText().length() == 0) {
 					notInputGroupKey();
 				} else {
 					sendGroupJoinMessage();
@@ -65,6 +67,7 @@ public class GroupJoinScene implements Initializable{
 			}
 		});
 		
+		// X button event handling
 		XBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -82,17 +85,18 @@ public class GroupJoinScene implements Initializable{
 		});
 	}
 	
+	/** Show dialog when not input the group key */
 	public void notInputGroupKey() {
 		dialog = new PlainDialog("Group key 를 입력하세요.", false);
 		dialog.showAndWait();
 	}
 	
-	// send REQUEST_JOIN_GROUP Messgae to server
+	/** Send join group messgae and group key to server */
 	public void sendGroupJoinMessage() {
-		if (groupKey.getText().length() != 0) {
+		if (groupKeyTF.getText().length() != 0) {
 			
 			Message signUpMsg = new Message().setType(Message.REQUEST_JOIN_GROUP);
-			signUpMsg.add(Message.GROUP_PK, groupKey.getText());
+			signUpMsg.add(Message.GROUP_PK, groupKeyTF.getText());
 			try {
 				endpoint.sendMessage(signUpMsg);
 			} catch (IOException | EncodeException e) {
@@ -101,14 +105,16 @@ public class GroupJoinScene implements Initializable{
 		}
 	}
 	
+	/** Show dialog when input invalid group key */
 	public void failGroupJoin() {
 		Platform.runLater(() -> {
 			dialog = new PlainDialog("유효하지 않는 Group Key 입니다. 다시 입력하세요.", false);
 			dialog.showAndWait();
-			groupKey.setText("");
+			groupKeyTF.setText("");
 		});
 	}
 	
+	/** Show main view */
 	public void showMainView() {
 		Platform.runLater(() -> {
 			try {

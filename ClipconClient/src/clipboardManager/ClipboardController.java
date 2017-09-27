@@ -28,7 +28,7 @@ import model.Contents;
 import userInterface.UserInterface;
 
 public class ClipboardController {
-	private static Clipboard systemClipboard; // Own system clipboard
+	private static Clipboard systemClipboard; // own system clipboard
 	private static String type; // data type
 	
 	/**
@@ -174,7 +174,6 @@ public class ClipboardController {
 				try {
 					if(Main.isInMainScene) {
 						ui.getMainScene().showClipboardChangeNoti();
-						System.out.println("[delf] clipboard changed - " + Main.getTime());
 					}
 				} catch (IllegalStateException e) { }
 				break;
@@ -211,6 +210,7 @@ public class ClipboardController {
 			User32.INSTANCE.TranslateMessage(msg);
 			User32.INSTANCE.DispatchMessage(msg);
 		}
+		
 		// wait for input
 		try {
 			System.in.read();

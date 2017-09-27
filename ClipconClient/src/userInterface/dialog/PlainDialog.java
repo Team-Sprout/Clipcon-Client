@@ -21,6 +21,7 @@ public class PlainDialog extends Dialog {
     		btn = new Button("EXIT");
     	}
         
+    	// Button event handling
         btn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
