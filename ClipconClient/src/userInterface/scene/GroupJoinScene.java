@@ -113,22 +113,4 @@ public class GroupJoinScene implements Initializable{
 			groupKeyTF.setText("");
 		});
 	}
-	
-	/** Show main view */
-	public void showMainView() {
-		Platform.runLater(() -> {
-			try {
-				Parent toMain = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
-				Scene mainScene = new Scene(toMain);
-				Stage primaryStage = Main.getPrimaryStage();
-				
-				primaryStage.setScene(mainScene);
-				primaryStage.show();
-	
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
-
 }
