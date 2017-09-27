@@ -108,7 +108,7 @@ public class Endpoint {
 		case Message.RESPONSE_JOIN_GROUP:
 			switch (message.get(Message.RESULT)) {
 			case Message.CONFIRM:
-				ui.getGroupJoinScene().showMainView(); // close group join and show MainView
+				ui.getStartingScene().showMainView(); // close group join and show MainView
 				user = MessageParser.getUserAndGroupByMessage(message); // create Group Object using primaryKey, name(get from server) and set to user
 				break;
 
