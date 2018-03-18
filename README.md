@@ -20,7 +20,7 @@ Global Clipboard의 사용자들의 단위는 '그룹'입니다. 사용자는 �
 업로드 된 데이터의 이력은 ClipCon의 히스토리에 저장됩니다. 히스토리 목록에서 원하는 데이터를 더블클릭하면 마찬가지로 클립보드에 삽입되어 원하는 곳에 붙여넣을 수 있습니다.
 
 ## Demo
-[이 곳](http://113.198.84.53/globalclipboard/download)이나 [release](https://github.com/Team-Sprout/Clipcon-Client/releases) 탭에서 ClipCon을 다운받아 실행해 볼 수 있습니다. (임시 서버를 가동 중입니다)
+~~[이 곳](http://113.198.84.53/globalclipboard/download)이나 [release](https://github.com/Team-Sprout/Clipcon-Client/releases) 탭에서 ClipCon을 다운받아 실행해 볼 수 있습니다. (임시 서버를 가동 중입니다)~~
 
 ## Global Clipboard
 Global Clipboard는 다수의 사용자가 클립보드를 이용하여 데이터를 간편하게 주고 받을 수 있는 Server-Client
